@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="https://metadatacatalogue.com/xsd/test/complex/1.0"
+           targetNamespace="https://metadatacatalogue.com/xsd/test/complex/1.0" elementFormDefault="qualified">
+  <xs:element name="topElement" type="complexA">
+    <xs:annotation>
+      <xs:documentation>This is the root element</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="complexA">
+    <xs:annotation>
+      <xs:documentation>The top element complex type</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="elementP">
+        <xs:annotation>
+          <xs:documentation>Element with a local complex type</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="elementA" type="xs:string" fixed="Hello">
+              <xs:annotation>
+                <xs:appinfo>Hello</xs:appinfo>
+                <xs:documentation>This is a simple string which is fixed to 'Hello'</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="elementB" type="enumeratedString" default="Y">
+              <xs:annotation>
+                <xs:documentation>This is an enumerated string</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element maxOccurs="1" minOccurs="0" name="elementC">
+              <xs:annotation>
+                <xs:documentation>This is an optional local enumerated string</xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="1">
+                    <xs:annotation>
+                      <xs:documentation>Possible</xs:documentation>
+                    </xs:annotation>
+                  </xs:enumeration>
+                  <xs:enumeration value="2">
+                    <xs:annotation>
+                      <xs:documentation>Not Possible</xs:documentation>
+                    </xs:annotation>
+                  </xs:enumeration>
+                  <xs:enumeration value="3">
+                    <xs:annotation>
+                      <xs:documentation>Probable</xs:documentation>
+                    </xs:annotation>
+                  </xs:enumeration>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+            <xs:element name="elementG" type="mandatoryString">
+              <xs:annotation>
+                <xs:documentation>This is a string entry where there must be contents in the element</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element form="qualified" maxOccurs="unbounded" name="elementD" type="choice-B">
+              <xs:annotation>
+                <xs:documentation>This is a list of a new complex type which provides a choice of date or datetime</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="element_H" type="patterned_string">
+        <xs:annotation>
+          <xs:documentation>regex string</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="element-i" type="string-with_restrictions">
+        <xs:annotation>
+          <xs:documentation>remaining restrictions applied to a string</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ElementK" type="All_L">
+        <xs:annotation>
+          <xs:documentation>An element with an all complex element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="elementO" type="ComplexComplexM" />
+      <xs:element name="elementV" type="ComplexTypeQ" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="choice-B">
+    <xs:annotation>
+      <xs:documentation>A choice complex type</xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="elementE" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>The choice for date</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="elementF" type="xs:dateTime">
+        <xs:annotation>
+          <xs:documentation>The choice for datetime</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+    <xs:attribute name="mappingId" type="GUID" />
+  </xs:complexType>
+  <xs:complexType name="All_L">
+    <xs:annotation>
+      <xs:documentation>An all complex type</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="element-J-number" type="NumberWithRestrictions" />
+      <xs:element name="Element_J_Decimal" type="anotherNumber-WithRestrictions" />
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="ComplexComplexM">
+    <xs:annotation>
+      <xs:documentation>A complex element which extends another</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="choice-B">
+        <xs:sequence>
+          <xs:element name="elementN" type="mandatoryString" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ComplexTypeQ">
+    <xs:sequence>
+      <xs:element name="elementR" type="choice-B" />
+      <xs:sequence minOccurs="0">
+        <xs:element name="elementS" type="mandatoryString" />
+        <xs:element name="elementY" type="choice-B" />
+      </xs:sequence>
+      <xs:choice>
+        <xs:element name="elementT" type="xs:decimal" />
+        <xs:element name="elementU" type="NumberWithRestrictions" />
+      </xs:choice>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="elementW" type="string-with_restrictions" />
+        <xs:element name="elementX" type="patterned_string" />
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="mandatoryString">
+    <xs:annotation>
+      <xs:documentation>A mandatory string type</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="enumeratedString">
+    <xs:annotation>
+      <xs:documentation>An enumeration</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Y">
+        <xs:annotation>
+          <xs:appinfo>Yes</xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="N">
+        <xs:annotation>
+          <xs:appinfo>No</xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="U">
+        <xs:annotation>
+          <xs:appinfo>Unknown</xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="patterned_string">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\w+\.\w+" />
+      <xs:minLength value="3" />
+      <xs:maxLength value="20" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="string-with_restrictions">
+    <xs:restriction base="xs:string">
+      <xs:length value="15" />
+      <xs:whiteSpace value="replace" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NumberWithRestrictions">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1" />
+      <xs:maxInclusive value="100" />
+      <xs:totalDigits value="3" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="anotherNumber-WithRestrictions">
+    <xs:restriction base="xs:decimal">
+      <xs:totalDigits value="2" />
+      <xs:fractionDigits value="2" />
+      <xs:minExclusive value="0" />
+      <xs:maxExclusive value="100" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="GUID">
+    <xs:restriction base="xs:string">
+      <xs:pattern
+        value="([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})|(\{[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\})"
+      />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

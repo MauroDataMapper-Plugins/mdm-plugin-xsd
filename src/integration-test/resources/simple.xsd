@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="https://metadatacatalogue.com/xsd/test/simple/1.0"
+           targetNamespace="https://metadatacatalogue.com/xsd/test/simple/1.0" elementFormDefault="qualified">
+  <xs:element name="topElement" type="complexTypeA">
+    <xs:annotation>
+      <xs:documentation>This is the root element</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="complexTypeA">
+    <xs:annotation>
+      <xs:documentation>The top element complex type</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="elementA" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>This is a simple string</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="elementB" type="enumeratedString">
+        <xs:annotation>
+          <xs:documentation>This is an enumerated string</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="1" minOccurs="0" name="elementC">
+        <xs:annotation>
+          <xs:documentation>This is an optional local enumerated string</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="1">
+              <xs:annotation>
+                <xs:documentation>Possible</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="2">
+              <xs:annotation>
+                <xs:documentation>Not Possible</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="3">
+              <xs:annotation>
+                <xs:documentation>Probable</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element form="qualified" maxOccurs="unbounded" name="elementD" type="complexTypeB">
+        <xs:annotation>
+          <xs:documentation>This is a list of a new complex type which provides a choice of date or datetime</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="elementG" type="mandatoryString">
+        <xs:annotation>
+          <xs:documentation>This is a string entry where there must be contents in the element</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="complexTypeB">
+    <xs:annotation>
+      <xs:documentation>A choice complex type</xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="elementE" type="xs:date">
+        <xs:annotation>
+          <xs:documentation>The choice for date</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="elementF" type="xs:dateTime">
+        <xs:annotation>
+          <xs:documentation>The choice for datetime</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+  <xs:simpleType name="mandatoryString">
+    <xs:annotation>
+      <xs:documentation>A mandatory string type</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="enumeratedString">
+    <xs:annotation>
+      <xs:documentation>An enumeration</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Y">
+        <xs:annotation>
+          <xs:appinfo>Yes</xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="N">
+        <xs:annotation>
+          <xs:appinfo>No</xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="U">
+        <xs:annotation>
+          <xs:appinfo>Unknown</xs:appinfo>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

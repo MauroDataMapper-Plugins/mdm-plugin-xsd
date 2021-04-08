@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="https://genomicsengland.co.uk/xsd/cancer/3.1.2" targetNamespace="https://genomicsengland.co.uk/xsd/cancer/3.1.2" vc:minVersion="1.1"
+           elementFormDefault="qualified">
+   <xs:include schemaLocation="DataTypesCancer-v3.1.2.xsd" />
+   <xs:element name="registration-and-consents">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="metadata" type="metadata" minOccurs="1" maxOccurs="1" />
+            <xs:element name="subject" type="subject-29260" minOccurs="1" maxOccurs="unbounded" />
+         </xs:sequence>
+      </xs:complexType>
+   </xs:element>
+   <xs:complexType name="subject-29260">
+      <xs:sequence>
+         <xs:element name="participant-identifiers" type="participant-identifiers-39047" minOccurs="1" maxOccurs="1" />
+         <xs:element name="registration" type="registration-12831" minOccurs="1" maxOccurs="1" />
+         <xs:element name="consent" type="consent-12541" minOccurs="1" maxOccurs="1" />
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="registration-12831">
+      <xs:sequence>
+         <xs:element name="event-details" minOccurs="1" maxOccurs="1" type="event-details-40374">
+            <xs:annotation>
+               <xs:documentation>The local ‘Event Reference’ combined with the Event Date, is used to identify the actual participant event involved.
+                  GMCs must ensure that local event references are not re-used to refer to different events, therefore two different events on the
+                  same date can be easily identified. GMCs must also ensure no two participants are given the same event reference. If a second
+                  submission is received with the same local event reference, then Genomics England will assume that this is an update pertaining to
+                  the same participant event, and will be used in place of the original submission; any data values previously supplied that are still
+                  applicable must therefore be included.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="participant-contact-details" minOccurs="1" maxOccurs="1" type="participant-contact-details-12528">
+            <xs:annotation>
+               <xs:documentation>Please include all available contact details for the participant. At least one set of the contact details field MUST
+                  be supplied.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="disease-information-tumour-sample" minOccurs="1" maxOccurs="unbounded" type="disease-information-tumour-sample-33073">
+            <xs:annotation>
+               <xs:documentation>Disease type and subtype of the sample submitted to GEL for sequencing. This is to enable high-level grouping and
+                  analysis of the tumour type. It is understood that this may not be available at Registration or may change between Registration and
+                  submission of Core data therefore this can be provided during Core data submissions. The Disease Information Update Event Date will
+                  be the date that the information was updated. Multiple instances of this section can be provided where multiple tumour samples are
+                  submitted with different disease types. </xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="consultant-details" minOccurs="1" maxOccurs="1" type="consultant-details-14515">
+            <xs:annotation>
+               <xs:documentation>Include details of the consultant responsible for the patient’s clinical care, including receipt of clinical reports
+                  and communications with Genomics England. This should be completed for all participants including unaffected relatives, as the
+                  results may have individual clinical relevance for all participants. Please include the consultant’s GMC number to ensure the
+                  accuracy of this record.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="surname-at-birth" minOccurs="0" maxOccurs="1" type="personfamilynameatbirth-335">
+            <xs:annotation>
+               <xs:documentation>The participant's surname at birth, if available and different from current surname</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="person-stated-gender" minOccurs="1" maxOccurs="1" type="personstatedgendercode-42058">
+            <xs:annotation>
+               <xs:documentation>The participant's current gender</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="person-phenotypic-sex" minOccurs="1" maxOccurs="1" type="personphenotypicsexclassification-3368">
+            <xs:annotation>
+               <xs:documentation>The participant's sex classification at birth. 9 - Indeterminate, may only be used if the patients chromosomal sex at
+                  birth is ambiguous. Samples cannot be sequenced until the chromosomal sex is established and therefore all patients registered with
+                  a value of 9 must confirm that the patients chromosomal sex is ambiguous rather than unknown prior to sequencing.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="ethnicity" minOccurs="1" maxOccurs="1" type="ethniccategory-337">
+            <xs:annotation>
+               <xs:documentation>The ethnicity of a PERSON, as specified by the PERSON. The 16+1 ethnic data categories defined in the 2001 census is
+                  the national mandatory standard for the collection and analysis of ethnicity.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="recruiting-trust-id" minOccurs="1" maxOccurs="1" type="organisationsitecode-3371">
+            <xs:annotation>
+               <xs:documentation>ODS code of the recruiting trust – LDP (Local Delivery Partner) or main GMC trust</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="clinical-trial-number" minOccurs="0" maxOccurs="unbounded" type="isrctnumber-42155">
+            <xs:annotation>
+               <xs:documentation>ISRCTN number(s) of any clinical trial(s) that the patient is enrolled in. This information can be entered at a later
+                  date through resubmission of the Registration data.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="participant-contact-details-12528">
+      <xs:sequence>
+         <xs:element name="participant-email-address" minOccurs="0" maxOccurs="1" type="emailaddress-3400">
+            <xs:annotation>
+               <xs:documentation>Email address of participant</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="participant-home-telephone" minOccurs="0" maxOccurs="1" type="uktelephonenumber-40375">
+            <xs:annotation>
+               <xs:documentation>If available, the participant's home telephone number</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="participant-mobile-telephone" minOccurs="0" maxOccurs="1" type="uktelephonenumber-40375">
+            <xs:annotation>
+               <xs:documentation>If available, the participant's mobile telephone number</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="address-line-1" minOccurs="0" maxOccurs="1" type="addressline-3406">
+            <xs:annotation>
+               <xs:documentation>Premises ID and/or house name, e.g. 'Flat 1', 'The Old Schoolhouse'</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="address-line-2" minOccurs="0" maxOccurs="1" type="addressline-3406">
+            <xs:annotation>
+               <xs:documentation>House number, dependent thoroughfare name and descriptor without commas, e.g. '23 Mill Lane'</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="address-line-3" minOccurs="0" maxOccurs="1" type="addressline-3406">
+            <xs:annotation>
+               <xs:documentation>Dependent locality/village, e.g. 'Boxgrove'</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="address-line-4" minOccurs="0" maxOccurs="1" type="addressline-3406">
+            <xs:annotation>
+               <xs:documentation>Post town, e.g. 'Leeds'</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="address-line-5" minOccurs="0" maxOccurs="1" type="addressline-3406">
+            <xs:annotation>
+               <xs:documentation>County (if present), e.g. 'Hampshire', 'Hants'</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="postcode" minOccurs="0" maxOccurs="1" type="postcode-3412">
+            <xs:annotation>
+               <xs:documentation>The UK format Postcode, 8 character string, as per BS7666. The 8 characters field allows a space to be inserted to
+                  differentiate between the inward and outward segments of the code, enabling full use to be made of Royal Mail postcode
+                  functionality.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="disease-information-tumour-sample-33073">
+      <xs:sequence>
+         <xs:element name="disease-type" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>The cancer type of the tumour sample submitted to Genomics England. If this is unknown at registration, it can be
+                  updated as part of the patient information in the core data submissions.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="disease-subtype" minOccurs="1" maxOccurs="unbounded">
+            <xs:annotation>
+               <xs:documentation> The subtype of the cancer in question, recorded against a limited set of supplied enumerations. The list of disease
+                  subtypes will be validated against the subtypes contained in Appendix A. These may be subject to change and GMCs are requested to
+                  ensure that data capture systems are flexible enough to accommodate changes to the list of disease contained in Appendix A. This is
+                  to enable high-level grouping and analysis of the tumour type. It is understood that this may not be available at Registration or
+                  may change between Registration and submission of Core data. Note that the enumeration 'not_available', although available at
+                  Registration, should not be submitted for Core Disease Information Updates. If the diagnosis is not listed as a subtype it can be
+                  entered under “other”. A tumour comprised of more than one subtype should be entered as follows. The predominant tumour subtype in
+                  the sample sent for whole genome sequencing should be entered first. The remaining subtypes should be entered in descending order
+                  with the most prevalant subtype in the whole tumour listed second. It is helpful to include “mixed tumour type” as a subtype but
+                  this should not be entered alone. </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="consultant-details-14515">
+      <xs:sequence>
+         <xs:element name="full-name-of-responsible-consultant" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Nominated person responsible for patients clinical care and recipient of clinical reports and communications for
+                  Genomics England</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="consultant-gmc-number" minOccurs="1" maxOccurs="1" type="consultantcode-32403">
+            <xs:annotation>
+               <xs:documentation>GMC number of consultant with responsibility for the patient's clinical care</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="full-name-not-consultant" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Full name of person entering data on behalf of consultant</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="contact-number" minOccurs="0" maxOccurs="1" type="uktelephonenumber-40375">
+            <xs:annotation>
+               <xs:documentation>Phone number for the consultant.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="hospital-of-responsible-consultant" minOccurs="0" maxOccurs="1" type="organisationsitecode-3371">
+            <xs:annotation>
+               <xs:documentation>ODS code of the hospital to which the consultant is contracted under their MAIN SPECIALTY for the purposes of the
+                  current work.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name="consent-12541">
+      <xs:sequence>
+         <xs:element name="event-details" minOccurs="1" maxOccurs="1" type="event-details-40374">
+            <xs:annotation>
+               <xs:documentation>The local ‘Event Reference’ combined with the Event Date, is used to identify the actual participant event involved.
+                  GMCs must ensure that local event references are not re-used to refer to different events, therefore two different events on the
+                  same date can be easily identified. GMCs must also ensure no two participants are given the same event reference. If a second
+                  submission is received with the same local event reference, then Genomics England will assume that this is an update pertaining to
+                  the same participant event, and will be used in place of the original submission; any data values previously supplied that are still
+                  applicable must therefore be included.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="consent-details" minOccurs="1" maxOccurs="1" type="consent-details-29742">
+            <xs:annotation>
+               <xs:documentation>Details corresponding to the questions and responses on the consent form.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="name-and-version-of-consent-form" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Name and Version of form used. Please see appendix F for latest list of consent forms, participant information
+                  sheets, additional optional consent materials and enumerations.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="consent-given" minOccurs="1" maxOccurs="1" type="yesno-3418">
+            <xs:annotation>
+               <xs:documentation>Yes no answer to consent given</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="consent-form" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>File name of uploaded PDF copy of consent form - requested format
+                  [ParticipantId]_consent_[TimeStamp].pdf</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="person-taking-consent" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>The full name of the person taking consent</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="name-and-version-of-participant-information-sheet" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Name and Version of information sheet presented. Please see appendix F for latest list of consent forms, participant
+                  information sheets, additional optional consent materials and enumerations.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="name-and-version-of-assent-form" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Name and Version of Cancer Assent form used. Please see appendix F for latest list of consent forms, participant
+                  information sheets, additional optional consent materials and enumerations.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="assent-form" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>File name of the uploaded PDF copy of the assent form. Please see appendix F for latest list of consent forms,
+                  participant information sheets, additional optional consent materials and enumerations.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+         <xs:element name="additional-optional-consent-materials" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Names and versions of consent additional consent materials used. Please see appendix F for latest list of consent
+                  forms, participant information sheets, additional optional consent materials and enumerations.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+               <xs:restriction base="xs:string">
+                  <xs:minLength value="1" />
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+   <xs:simpleType name="personfamilynameatbirth-335">
+      <xs:restriction base="xs:string">
+         <xs:minLength value="1" />
+         <xs:pattern value="[a-zA-Z0-9\s-]{3,35}" />
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="personstatedgendercode-42058">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="1">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Male</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="2">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Female</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="9">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Indeterminate (Unable to be classified as either male or female) </display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="X">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Not Known (PERSON STATED GENDER CODE not recorded)</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="personphenotypicsexclassification-3368">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="2">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Female</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="1">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Male</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="9">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Indeterminate</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="personphenotypicsex-3370">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="2">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Female</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="1">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Male</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="9">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Indeterminate</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="ethniccategory-337">
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="D">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Mixed: White and Black Caribbean</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="E">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Mixed: White and Black African</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="F">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Mixed: White and Asian</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="G">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Mixed: Any other mixed background</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="A">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>White: British</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="B">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>White: Irish</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="C">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>White: Any other White background</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="L">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Asian or Asian British: Any other Asian background</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="M">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Black or Black British: Caribbean</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="N">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Black or Black British: African</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="H">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Asian or Asian British: Indian</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="J">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Asian or Asian British: Pakistani</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="K">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Asian or Asian British: Bangladeshi</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="P">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Black or Black British: Any other Black background</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="S">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Other Ethnic Groups: Any other ethnic group</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="R">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Other Ethnic Groups: Chinese</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="Z">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Not stated</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="99">
+            <xs:annotation>
+               <xs:appinfo>
+                  <display-text>Not known</display-text>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="organisationsitecode-3371">
+      <xs:restriction base="xs:string">
+         <xs:minLength value="1" />
+         <xs:pattern value="[a-zA-Z0-9]{3,9}" />
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="organisationsitecode-32405">
+      <xs:restriction base="xs:string">
+         <xs:minLength value="1" />
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="isrctnumber-42155">
+      <xs:restriction base="xs:string">
+         <xs:minLength value="1" />
+         <xs:pattern value="ISRCTN\d{8}" />
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="emailaddress-3400">
+      <xs:restriction base="xs:string">
+         <xs:minLength value="1" />
+         <xs:pattern value="[^\s]+@[^\s]+\.[^\s]+" />
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="uktelephonenumber-40375">
+      <xs:restriction base="xs:string">
+         <xs:minLength value="1" />
+         <xs:pattern
+           value="(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|\(?0\d{3}\)?)\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|\(?0\d{2}\)?)\s?\d{4}\s?\d{4}))(\s?#(\d{3,5}))?"
+         />
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="addressline-3406">
+      <xs:restriction base="xs:string">
+         <xs:minLength value="1" />
+         <xs:pattern value=".{2,175}" />
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="postcode-3412">
+      <xs:restriction base="xs:string">
+         <xs:minLength value="1" />
+         <xs:pattern value="(GIR ?0AA|[A-PR-UWYZ]([0-9]{1,2}|([A-HK-Y][0-9]([0-9ABEHMNPRV-Y])?)|[0-9][A-HJKPS-UW]) ?[0-9][ABD-HJLNP-UW-Z]{2})" />
+      </xs:restriction>
+   </xs:simpleType>
+   <xs:simpleType name="consultantcode-32403">
+      <xs:restriction base="xs:string">
+         <xs:minLength value="1" />
+         <xs:pattern value="[a-zA-Z0-9]{1,8}" />
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema>
