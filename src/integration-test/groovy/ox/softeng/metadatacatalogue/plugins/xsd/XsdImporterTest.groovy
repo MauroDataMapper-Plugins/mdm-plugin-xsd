@@ -1,4 +1,23 @@
+/*
+ * Copyright 2020 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package ox.softeng.metadatacatalogue.plugins.xsd
+
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImportParameters
 
 import ox.softeng.metadatacatalogue.core.api.exception.ApiException
 import ox.softeng.metadatacatalogue.core.catalogue.CatalogueItem
@@ -12,26 +31,26 @@ import ox.softeng.metadatacatalogue.core.facet.Metadata
 import org.apache.commons.lang3.tuple.Pair
 import org.junit.Test
 
-import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_XSD_ALL
-import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_XSD_CHOICE
-import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_XSD_DEFAULT
-import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_XSD_EXTENSION_BASE
-import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_XSD_FIXED
-import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
-import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.OpenAttrsWrapper.XS_NAMESPACE
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.fractionDigits
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.length
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.maxExclusive
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.maxInclusive
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.maxLength
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.minExclusive
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.minInclusive
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.minLength
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.pattern
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.totalDigits
-import static ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind.whiteSpace
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_ALL
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_CHOICE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_DEFAULT
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_EXTENSION_BASE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_FIXED
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.OpenAttrsWrapper.XS_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.fractionDigits
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.length
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.maxExclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.maxInclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.maxLength
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.minExclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.minInclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.minLength
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.pattern
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.totalDigits
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.whiteSpace
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull

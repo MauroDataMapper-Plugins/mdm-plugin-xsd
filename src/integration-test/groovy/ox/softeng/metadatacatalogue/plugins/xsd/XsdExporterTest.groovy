@@ -1,18 +1,38 @@
+/*
+ * Copyright 2020 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package ox.softeng.metadatacatalogue.plugins.xsd
 
-import ox.softeng.metadatacatalogue.core.api.exception.ApiException
-import ox.softeng.metadatacatalogue.core.catalogue.linkable.component.DataClass
-import ox.softeng.metadatacatalogue.core.catalogue.linkable.component.DataElement
-import ox.softeng.metadatacatalogue.core.catalogue.linkable.component.datatype.DataType
-import ox.softeng.metadatacatalogue.core.catalogue.linkable.component.datatype.PrimitiveType
-import ox.softeng.metadatacatalogue.core.catalogue.linkable.datamodel.DataModel
-import ox.softeng.metadatacatalogue.core.catalogue.linkable.datamodel.DataModelService
-import ox.softeng.metadatacatalogue.core.facet.Metadata
-import ox.softeng.metadatacatalogue.core.type.catalogue.DataModelType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter.XsdExporterProviderService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImporterProviderServiceParameters
+
+import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiException
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
+import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind
+import uk.ac.ox.softeng.maurodatamapper.test.xml.evalutator.IgnoreOrderDifferenceEvaluator
+import uk.ac.ox.softeng.maurodatamapper.test.xml.selector.CustomElementSelector
+
 import ox.softeng.metadatacatalogue.plugins.xsd.diff.evaluator.IgnoreNameAttributeDifferenceEvaluator
-import ox.softeng.metadatacatalogue.plugins.xsd.diff.evaluator.IgnoreOrderDifferenceEvaluator
-import ox.softeng.metadatacatalogue.plugins.xsd.diff.selector.CustomElementSelector
-import ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind
 
 import com.google.common.base.Strings
 import groovy.xml.XmlUtil
@@ -31,8 +51,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import javax.xml.transform.Source
 
-import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
 
 import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertNotNull
@@ -41,7 +61,7 @@ import static org.junit.Assert.assertTrue
 /**
  * @since 11/09/2017
  */
-class XsdExporterTest extends XsdTest {
+class XsdExporterTest {
 
     @Test
     void testExportComplex() throws IOException, ApiException {
@@ -51,7 +71,7 @@ class XsdExporterTest extends XsdTest {
     @Test
     void testExportModelWithSpacesInNames() throws Exception {
         DataModelService dataModelService = applicationContext.getBean(DataModelService.class)
-        DataModel dataModel = dataModelService.createDataModel(catalogueUser,
+        DataModel dataModel = dataModelService.createDataModel(User,
                                                                'space test', 'model description', 'authoer', 'org',
                                                                getTestFolder(), DataModelType.DATA_STANDARD, true)
 
@@ -171,8 +191,8 @@ class XsdExporterTest extends XsdTest {
 
     private void testExport(UUID dataModelId, String filename, String outFileName) throws IOException, ApiException {
         getLogger().info('------------ Exporting -------------')
-        XsdExporterService xsdExporterService = applicationContext.getBean(XsdExporterService.class)
-        ByteArrayOutputStream byteArrayOutputStream = xsdExporterService.exportDomain(catalogueUser, dataModelId)
+        XsdExporterProviderService xsdExporterProviderService = applicationContext.getBean(XsdExporterProviderService.class)
+        ByteArrayOutputStream byteArrayOutputStream = xsdExporterProviderService.exportDomain(catalogueUser, dataModelId)
         assertNotNull('Should have an exported model', byteArrayOutputStream)
 
         String exportedXsd = byteArrayOutputStream.toString('ISO-8859-1')
@@ -189,7 +209,7 @@ class XsdExporterTest extends XsdTest {
 
     private void testExportViaImport(String filename, String modelName, String outFileName) throws IOException, ApiException {
         // Import model first
-        XsdImportParameters params = createImportParameters(filename, modelName)
+        XsdImporterProviderServiceParameters params = createImportParameters(filename, modelName)
         DataModel importedModel = importDomain(params)
 
         getLogger().debug('DataModel to export: {}', importedModel.getId())

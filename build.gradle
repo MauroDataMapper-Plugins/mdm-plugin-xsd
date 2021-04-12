@@ -127,13 +127,14 @@ grailsPublish {
     // TODO: Provide values here
     user = 'user'
     key = 'key'
-    githubSlug = 'foo/bar'
+    githubSlug = 'MauroDataMapper-Plugins/mdm-plugin-xsd'
     license {
         name = 'Apache-2.0'
     }
-    title = "My Plugin"
-    desc = "Full plugin description"
-    developers = [johndoe:"John Doe"]
+    title = 'Mauro Data Mapper Xsd Plugin'
+    desc = '''The Xsd plugin for the MauroDataMapper backend.'''
+    developers = [olliefreeman: 'Oliver Freeman', jameswelch: 'James Welch', anthonywilliams: 'Anthony Williams',]
+    //issueTrackerUrl = 'https://maurodatamapper.myjetbrains.com' TODO
 }
 
 grails {
