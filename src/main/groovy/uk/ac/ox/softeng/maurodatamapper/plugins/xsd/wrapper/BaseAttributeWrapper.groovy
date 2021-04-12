@@ -15,22 +15,22 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleExtensionType;
-import uk.ac.ox.softeng.maurodatamapper.security.User;
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleExtensionType
+import uk.ac.ox.softeng.maurodatamapper.security.User
 
-import com.google.common.base.Strings;
+import com.google.common.base.Strings
 
-import javax.xml.namespace.QName;
+import javax.xml.namespace.QName
 
 /**
  * @since 05/09/2017

@@ -15,20 +15,19 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet;
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet
 
-import com.google.common.base.CaseFormat;
+import com.google.common.base.CaseFormat
 
-import java.util.Arrays;
-import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBElement
 
 /**
  * @since 12/09/2017
  */
-public enum RestrictionKind {
+enum RestrictionKind {
 
     maxExclusive("Max Exclusive"),
     minInclusive("Min Exclusive"),
@@ -43,21 +42,21 @@ public enum RestrictionKind {
     minExclusive("Min Exclusive"),
     maxInclusive("Max Exclusive");
 
-    public final String displayText;
+    public final String displayText
 
     RestrictionKind(String displayText) {
-        this.displayText = XsdPlugin.METADATA_LABEL_RESTRICTION_PREFIX + displayText;
+        this.displayText = XsdPlugin.METADATA_LABEL_RESTRICTION_PREFIX + displayText
     }
 
-    public static RestrictionKind findFromDisplayText(String displayText) {
-        return Arrays.stream(values()).filter(v -> v.displayText.equalsIgnoreCase(displayText)).findFirst().orElse(null);
+    static RestrictionKind findFromDisplayText(String displayText) {
+        values().find {v -> v.displayText.equalsIgnoreCase(displayText)}
     }
 
-    public static RestrictionKind findFromElement(JAXBElement element) {
-        return RestrictionKind.valueOf(element.getName().getLocalPart());
+    static RestrictionKind findFromElement(JAXBElement element) {
+        return RestrictionKind.valueOf(element.getName().getLocalPart())
     }
 
-    public static RestrictionKind findFromFacet(Facet facet) {
-        return RestrictionKind.valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, facet.getClass().getSimpleName()));
+    static RestrictionKind findFromFacet(Facet facet) {
+        return RestrictionKind.valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, facet.getClass().getSimpleName()))
     }
 }

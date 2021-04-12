@@ -15,33 +15,26 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NoFixedFacet;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Restriction;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleType;
-import uk.ac.ox.softeng.maurodatamapper.security.User;
+import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NoFixedFacet
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Restriction
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleType
+import uk.ac.ox.softeng.maurodatamapper.security.User
 
-import com.google.common.base.Strings;
+import com.google.common.base.Strings
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.xml.namespace.QName;
+import javax.xml.namespace.QName
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.AnnotationContentWrapper.APPINFO_CONTENT;
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.AnnotationContentWrapper.APPINFO_CONTENT
 
 /**
  * @since 24/08/2017
@@ -145,7 +138,7 @@ public class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> {
                 }
             } else if (wrappedElement.getUnion() != null && wrappedElement.getUnion().getMemberTypes() != null) {
                 StringBuilder members = new StringBuilder();
-                wrappedElement.getUnion().getMemberTypes().forEach(mem -> members.append(mem.getLocalPart()).append(" "));
+                wrappedElement.getUnion().getMemberTypes().each {mem -> members.append(mem.getLocalPart()).append(" ")}
                 addMetadataToComponent(pt, "XML Union", members.toString(), user);
             } else if (wrappedElement.getList() != null && wrappedElement.getList().getItemType() != null) {
                 addMetadataToComponent(pt, "XML List", wrappedElement.getList().getItemType().getLocalPart(), user);
@@ -159,11 +152,11 @@ public class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> {
         EnumerationType et = xsdSchemaService.createEnumerationTypeForDataModel(dm, typeName, extractDescriptionFromAnnotations(), user);
         addRestrictionsToMetadata(et, user, getRestriction());
 
-        enums.forEach(noFixedFacet ->
-                          xsdSchemaService.addEnumerationValueToEnumerationType(et, noFixedFacet.getValue(),
-                                                                                extractDescriptionFromAnnotations(noFixedFacet, APPINFO_CONTENT),
-                                                                                user)
-                     );
+        enums.each {noFixedFacet ->
+            xsdSchemaService.addEnumerationValueToEnumerationType(et, noFixedFacet.getValue(),
+                                                                  extractDescriptionFromAnnotations(noFixedFacet, APPINFO_CONTENT),
+                                                                  user)
+        }
         return et;
 
     }
@@ -176,7 +169,7 @@ public class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> {
         Restriction restriction = new Restriction();
         restriction.setBase(getTypeForName(restrictionType));
 
-        xsdMetadata.stream().filter(md -> !md.getKey().equalsIgnoreCase(XsdPlugin.METADATA_XSD_RESTRICTION_BASE)).forEach(md -> {
+        xsdMetadata.findAll {md -> !md.getKey().equalsIgnoreCase(XsdPlugin.METADATA_XSD_RESTRICTION_BASE)}.each {md ->
             RestrictionKind rk = RestrictionKind.findFromDisplayText(md.getKey());
 
             if (rk != null) {
@@ -186,16 +179,16 @@ public class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> {
             } else {
                 warn("Unknown restriction type {}", md.getKey());
             }
-        });
+        }
 
         if (dataType.instanceOf(EnumerationType.class)) {
             trace("DataType is enumerationType with {} values", ((EnumerationType) dataType).getEnumerationValues().size());
 
-            ((EnumerationType) dataType).getEnumerationValues().forEach(ev -> {
+            ((EnumerationType) dataType).getEnumerationValues().each {ev ->
                 Object element = RestrictionWrapper.createRestrictionElement(RestrictionKind.enumeration, ev.getKey(),
                                                                              createAnnotation(ev.getValue()));
                 if (element != null) restriction.getMinExclusivesAndMinInclusivesAndMaxExclusives().add(element);
-            });
+            }
         }
 
 
@@ -210,8 +203,8 @@ public class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> {
     }
 
     private String findMetadata(Set<Metadata> metadata, String key) {
-        Optional<Metadata> optional = metadata.stream().filter(md -> md.getKey().equalsIgnoreCase(key)).findFirst();
-        return optional.isPresent() ? optional.get().getValue() : null;
+        Metadata optional = metadata.find {md -> md.getKey().equalsIgnoreCase(key)}
+        return optional?.getValue()
     }
 
     private List<NoFixedFacet> getEnumerations(SchemaWrapper schema) {
@@ -220,9 +213,7 @@ public class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> {
 
             enums.addAll(getRestriction()
                              .findRestrictionsWithKind(RestrictionKind.enumeration)
-                             .stream()
-                             .map(e -> (NoFixedFacet) (e.getValue()))
-                             .collect(Collectors.toList()));
+                             .collect {e -> (NoFixedFacet) (e.getValue())})
 
 
             if (getRestriction().getBase() != null) {

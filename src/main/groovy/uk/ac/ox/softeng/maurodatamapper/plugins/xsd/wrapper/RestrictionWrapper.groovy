@@ -15,30 +15,40 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NoFixedFacet;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NumFacet;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Pattern;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Restriction;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.RestrictionType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.TotalDigits;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.WhiteSpace;
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NoFixedFacet
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NumFacet
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Pattern
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Restriction
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.RestrictionType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.TotalDigits
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.WhiteSpace
 
-import com.google.common.base.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.base.Strings
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
+import javax.xml.bind.JAXBElement
+import javax.xml.namespace.QName
+
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.enumeration
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.fractionDigits
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.length
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxExclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxInclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxLength
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minExclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minInclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minLength
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.pattern
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.totalDigits
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.whiteSpace;
 
 /**
  * @since 25/08/2017
@@ -110,15 +120,14 @@ public class RestrictionWrapper extends ComplexContentWrapper<Annotated> {
     }
 
     List<Object> findAllRestrictionsWithoutKind(RestrictionKind kind) {
-        return getMinExclusivesAndMinInclusivesAndMaxExclusives().stream()
-            .filter(e -> !(e instanceof JAXBElement) || (!isElementWithName(kind.name(), (JAXBElement) e)))
-            .collect(Collectors.toList());
+        return getMinExclusivesAndMinInclusivesAndMaxExclusives().findAll {
+            e -> !(e instanceof JAXBElement) || (!isElementWithName(kind.name(), (JAXBElement) e))
+        }
     }
 
     List<JAXBElement> findRestrictionsWithKind(RestrictionKind kind) {
-        return getMinExclusivesAndMinInclusivesAndMaxExclusives().stream()
-            .filter(e -> e instanceof JAXBElement && isElementWithName(kind.name(), (JAXBElement) e))
-            .map(e -> (JAXBElement) e).collect(Collectors.toList());
+        return getMinExclusivesAndMinInclusivesAndMaxExclusives()
+            .findAll {e -> e instanceof JAXBElement && isElementWithName(kind.name(), (JAXBElement) e)}
     }
 
     private List<Object> getMinExclusivesAndMinInclusivesAndMaxExclusives() {

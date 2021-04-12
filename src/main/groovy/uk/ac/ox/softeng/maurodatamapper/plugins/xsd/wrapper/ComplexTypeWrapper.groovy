@@ -15,36 +15,30 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata;
-import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.All;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexContent;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleContent;
-import uk.ac.ox.softeng.maurodatamapper.security.User;
+import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
+import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.All
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexContent
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleContent
+import uk.ac.ox.softeng.maurodatamapper.security.User
 
-import com.google.common.base.Strings;
+import com.google.common.base.Strings
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
+import javax.xml.bind.JAXBElement
+import javax.xml.namespace.QName
 
 /**
  * @since 24/08/2017
@@ -156,8 +150,8 @@ public class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexTyp
             warn("complexType has no content");
         }
 
-        subElements.forEach(subElement -> subElement.createDataModelElement(user, parentDataModel, dataClass, schema));
-        attributes.forEach(attribute -> attribute.createDataModelElement(user, parentDataModel, dataClass, schema));
+        subElements.each {subElement -> subElement.createDataModelElement(user, parentDataModel, dataClass, schema)}
+        attributes.each {attribute -> attribute.createDataModelElement(user, parentDataModel, dataClass, schema)}
 
         if (getExtension() != null) {
             return extendDataClass(user, parentDataModel, schema, dataClass);
@@ -170,7 +164,7 @@ public class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexTyp
         ExplicitGroup children;
         if (type.equalsIgnoreCase("all")) children = new All();
         else children = new ExplicitGroup();
-        elements.forEach(de -> children.getElementsAndGroupsAndAlls().add(ElementWrapper.createElement(schema, de).wrappedElement));
+        elements.each {de -> children.getElementsAndGroupsAndAlls().add(ElementWrapper.createElement(schema, de).wrappedElement)}
         return children;
     }
 
@@ -197,7 +191,7 @@ public class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexTyp
             }
 
             if (extension.getChildDataElements() != null) {
-                extension.getChildDataElements().forEach(el -> xsdSchemaService.createDuplicateElementForDataClass(user, dataClass, el));
+                extension.getChildDataElements().each {el -> xsdSchemaService.createDuplicateElementForDataClass(user, dataClass, el)}
             }
 
         }
@@ -234,7 +228,7 @@ public class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexTyp
             attributes.addAll(getExtension().getBaseAttributes());
         }
         debug("Found {} attributes to be added as elements", attributes.size());
-        return attributes.stream().map(baseAttribute -> new BaseAttributeWrapper(xsdSchemaService, baseAttribute)).collect(Collectors.toList());
+        return attributes.collect {baseAttribute -> new BaseAttributeWrapper(xsdSchemaService, baseAttribute)}
     }
 
     private SimpleContent getSimpleContent() {
@@ -263,15 +257,15 @@ public class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexTyp
 
         if (dataClass.getChildDataElements() != null) {
             Set<DataElement> childDataElements = xsdSchemaService.getChildDataElements(dataClass);
-            Map<String, List<DataElement>> grouped = childDataElements.stream()
-                .sorted(Comparator.comparing(CatalogueItem::getLabel))
-                .collect(Collectors.groupingBy(dataElement -> {
+            Map<String, List<DataElement>> grouped = childDataElements
+                .sort {it.getLabel()}
+                .groupBy {dataElement ->
                     Metadata md = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_CHOICE);
                     if (md != null) return md.getValue();
                     md = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_ALL);
                     if (md != null) return "all";
                     return "sequence";
-                }));
+                }
 
             if (grouped.isEmpty()) return;
 
@@ -290,14 +284,14 @@ public class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexTyp
                 }
             } else {
                 ExplicitGroup parent = new ExplicitGroup();
-                grouped.forEach((type, elements) -> {
+                grouped.each {type, elements ->
                     ExplicitGroup children = buildChildGroup(schema, type, elements);
                     String elType = type.contains("choice") ? "choice" : type;
                     JAXBElement<ExplicitGroup> jaxb = new JAXBElement<>(new QName(XS_NAMESPACE, elType), ExplicitGroup.class, children);
                     parent.getElementsAndGroupsAndAlls().add(jaxb);
 
 
-                });
+                }
                 wrappedElement.setSequence(parent);
             }
         }

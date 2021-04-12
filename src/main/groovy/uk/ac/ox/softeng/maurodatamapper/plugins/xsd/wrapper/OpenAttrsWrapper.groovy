@@ -15,28 +15,28 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Documentation;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.OpenAttrs;
+import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Documentation
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.OpenAttrs
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Strings;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Text;
+import com.google.common.base.CaseFormat
+import com.google.common.base.Strings
+import org.apache.commons.lang3.tuple.Pair
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.w3c.dom.Document
+import org.w3c.dom.Text
 
-import java.time.OffsetDateTime;
-import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import java.time.OffsetDateTime
+import javax.xml.bind.JAXBElement
+import javax.xml.namespace.QName
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.parsers.ParserConfigurationException
 
 /**
  * @since 24/08/2017

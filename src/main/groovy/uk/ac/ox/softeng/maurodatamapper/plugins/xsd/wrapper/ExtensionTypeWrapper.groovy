@@ -15,17 +15,16 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExtensionType;
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExtensionType
 
-import com.google.common.base.Strings;
+import com.google.common.base.Strings
 
-import java.util.List;
-import javax.xml.namespace.QName;
+import javax.xml.namespace.QName
 
 /**
  * @since 05/09/2017

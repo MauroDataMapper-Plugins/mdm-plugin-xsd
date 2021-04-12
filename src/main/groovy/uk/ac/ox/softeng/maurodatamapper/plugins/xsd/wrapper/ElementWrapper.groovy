@@ -15,28 +15,27 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Element;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.LocalElement;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleExtensionType;
-import uk.ac.ox.softeng.maurodatamapper.security.User;
+import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Element
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.LocalElement
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleExtensionType
+import uk.ac.ox.softeng.maurodatamapper.security.User
 
-import com.google.common.base.Strings;
+import com.google.common.base.Strings
 
-import java.math.BigInteger;
-import javax.xml.namespace.QName;
+import javax.xml.namespace.QName
 
 /**
  * @since 24/08/2017
@@ -149,9 +148,7 @@ public class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
 
     @Override
     public RestrictionWrapper getRestriction() {
-        return isLocalComplexType()
-               && getComplexType().getComplexContent() != null
-               && getComplexType().getComplexContent().getRestriction() != null ?
+        return isLocalComplexType() && getComplexType().getComplexContent() != null && getComplexType().getComplexContent().getRestriction() != null ?
                new RestrictionWrapper(xsdSchemaService, getComplexType().getComplexContent().getRestriction()) : null;
     }
 

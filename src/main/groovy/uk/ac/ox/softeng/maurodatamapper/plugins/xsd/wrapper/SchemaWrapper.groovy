@@ -23,11 +23,18 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Element
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.FormChoice
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Include
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.OpenAttrs
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleType
 import uk.ac.ox.softeng.maurodatamapper.security.User
 
@@ -49,7 +56,7 @@ import static java.util.stream.Collectors.toSet
 /**
  * @since 24/08/2017
  */
-class SchemaWrapper extends OpenAttrsWrapper<uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema> {
+class SchemaWrapper extends OpenAttrsWrapper<Schema> {
 
     private static Unmarshaller jaxbUnmarshallerInstance
     private final List<SchemaWrapper> importedSchemas
@@ -57,16 +64,16 @@ class SchemaWrapper extends OpenAttrsWrapper<uk.ac.ox.softeng.maurodatamapper.pl
     private DataStore dataStore
 
     SchemaWrapper(XsdSchemaService xsdSchemaService, String name) {
-        this(xsdSchemaService, new uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema(), name)
+        this(xsdSchemaService, new Schema(), name)
     }
 
-    SchemaWrapper(XsdSchemaService xsdSchemaService, uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema schema, String name) {
+    SchemaWrapper(XsdSchemaService xsdSchemaService, Schema schema, String name) {
         super(xsdSchemaService, schema, name)
         importedSchemas = new ArrayList<>()
     }
 
     private SchemaWrapper(XsdSchemaService xsdSchemaService, InputStream inputStream, String name) throws JAXBException {
-        this(xsdSchemaService, (uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema) getJaxbUnmarshaller().unmarshal(inputStream),
+        this(xsdSchemaService, (Schema) getJaxbUnmarshaller().unmarshal(inputStream),
              name)
     }
 
@@ -85,8 +92,7 @@ class SchemaWrapper extends OpenAttrsWrapper<uk.ac.ox.softeng.maurodatamapper.pl
 
         dataModelName = dataModel.getLabel()
 
-        dataModel.addToMetadata(uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE, uk.ac.ox.softeng.maurodatamapper.plugins.
-            xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE, wrappedElement.getTargetNamespace(), createdBy)
+        dataModel.addToMetadata(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_TARGET_NAMESPACE, wrappedElement.getTargetNamespace(), createdBy)
 
         dataStore = new DataStore(createdBy, xsdSchemaService.getSemanticLinkService(), createLinksRatherThanReferences)
         dataStore.putAllDataTypes(createXsdBasePrimitiveTypes(createdBy, dataModel))
@@ -101,8 +107,7 @@ class SchemaWrapper extends OpenAttrsWrapper<uk.ac.ox.softeng.maurodatamapper.pl
 
     void populateSchemaFromDataModel(DataModel dataModel, String defaultTargetNamespace) {
         info("Populating from {}", dataModel)
-        Metadata tn = dataModel.findMetadataByNamespaceAndKey(uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE, uk.ac.ox.
-            softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE)
+        Metadata tn = dataModel.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_TARGET_NAMESPACE)
         if (tn != null) wrappedElement.setTargetNamespace(tn.getValue())
         else wrappedElement.setTargetNamespace(defaultTargetNamespace)
 
@@ -274,32 +279,25 @@ class SchemaWrapper extends OpenAttrsWrapper<uk.ac.ox.softeng.maurodatamapper.pl
 
         getIncludesAndImportsAndRedefines().sort({o1, o2 ->
             // Elements at top
-            if (o1 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement) {
-                if (o2 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement) return ((uk.ac.ox.softeng
-                    .maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement)
-                o1 ).getName().compareTo(((uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement) o2).getName())
-                if (o2 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType || o2 instanceof uk.ac.ox
-                    .softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType) return -1
+            if (o1 instanceof AbstractElement) {
+                if (o2 instanceof AbstractElement) return ((AbstractElement) o1).getName().compareTo(((AbstractElement) o2).getName())
+                if (o2 instanceof AbstractComplexType || o2 instanceof AbstractSimpleType) return -1
             }
 
             // Complex types next
-            if (o1 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType) {
-                if (o2 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement) return 1
+            if (o1 instanceof AbstractComplexType) {
+                if (o2 instanceof AbstractElement) return 1
                 if (
-                o2 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType) return ((uk.ac.ox.softeng
-                    .maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType)
-                    o1).getName().compareTo(((uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType) o2).getName())
-                if (o2 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType) return -1
+                o2 instanceof AbstractComplexType) return ((AbstractComplexType) o1).getName().compareTo(((AbstractComplexType) o2).getName())
+                if (o2 instanceof AbstractSimpleType) return -1
             }
 
             // Simple types last
-            if (o1 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType) {
-                if (o2 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement ||
-                    o2 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType) return 1
+            if (o1 instanceof AbstractSimpleType) {
+                if (o2 instanceof AbstractElement ||
+                    o2 instanceof AbstractComplexType) return 1
                 if (
-                o2 instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType) return ((uk.ac.ox.softeng
-                    .maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType)
-                    o1).getName().compareTo(((uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType) o2).getName())
+                o2 instanceof AbstractSimpleType) return ((AbstractSimpleType) o1).getName().compareTo(((AbstractSimpleType) o2).getName())
             }
 
             // Anything else should be at the top
@@ -375,10 +373,8 @@ class SchemaWrapper extends OpenAttrsWrapper<uk.ac.ox.softeng.maurodatamapper.pl
 
         PRIMITIVE_XML_TYPES.forEach({t ->
             PrimitiveType pt = xsdSchemaService.createPrimitiveTypeForDataModel(dataModel, t, "XML primitive type: xs:" + t, user)
-            pt.addToMetadata(uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE, uk.ac.ox.softeng.maurodatamapper.plugins.xsd.
-                XsdPlugin.METADATA_XSD_TARGET_NAMESPACE, XS_NAMESPACE, user)
-            pt.addToMetadata(uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE, uk.ac.ox.softeng.maurodatamapper.plugins.xsd.
-                XsdPlugin.METADATA_XSD_TARGET_NAMESPACE_PREFIX, XS_PREFIX, user)
+            pt.addToMetadata(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_TARGET_NAMESPACE, XS_NAMESPACE, user)
+            pt.addToMetadata(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_TARGET_NAMESPACE_PREFIX, XS_PREFIX, user)
             dataTypes.put(t, pt)
         })
         return dataTypes
@@ -388,10 +384,10 @@ class SchemaWrapper extends OpenAttrsWrapper<uk.ac.ox.softeng.maurodatamapper.pl
         return findOrCreateDataClass(user, parentDataModel, null, complexType)
     }
 
-    private List<uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Include> getAllIncludes() {
+    private List<Include> getAllIncludes() {
         return getIncludesAndImportsAndRedefines().stream()
-            .filter({oa -> oa instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Include})
-            .map({oa -> (uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Include) oa})
+            .filter({oa -> oa instanceof Include})
+            .map({oa -> (Include) oa})
             .collect(toList())
     }
 
@@ -412,8 +408,8 @@ class SchemaWrapper extends OpenAttrsWrapper<uk.ac.ox.softeng.maurodatamapper.pl
 
     private List<ElementWrapper> getElements() {
         return getIncludesAndImportsAndRedefines().stream()
-            .filter({oa -> oa instanceof uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Element})
-            .map({element -> new ElementWrapper(xsdSchemaService, (uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Element) element)})
+            .filter({oa -> oa instanceof Element})
+            .map({element -> new ElementWrapper(xsdSchemaService, (Element) element)})
             .collect(toList())
     }
 
@@ -435,11 +431,11 @@ class SchemaWrapper extends OpenAttrsWrapper<uk.ac.ox.softeng.maurodatamapper.pl
     private void loadIncludedSchemas(XsdSchemaService xsdSchemaService, String directory, Map<String, SchemaWrapper> loadedSchemas)
         throws FileNotFoundException, JAXBException {
 
-        List<uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Include> includes = getAllIncludes()
+        List<Include> includes = getAllIncludes()
         if (includes.isEmpty()) return
 
         trace("Loading {} included schemas", includes.size())
-        for (uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Include inc : includes) {
+        for (Include inc : includes) {
             String schemaLocation = inc.getSchemaLocation()
             SchemaWrapper included = loadedSchemas.get(schemaLocation)
             if (included == null) {
@@ -466,7 +462,7 @@ class SchemaWrapper extends OpenAttrsWrapper<uk.ac.ox.softeng.maurodatamapper.pl
     private static Unmarshaller getJaxbUnmarshaller() throws JAXBException {
         if (jaxbUnmarshallerInstance == null) {
             jaxbUnmarshallerInstance =
-                JAXBContext.newInstance(uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema.class).createUnmarshaller()
+                JAXBContext.newInstance(Schema.class).createUnmarshaller()
         }
         return jaxbUnmarshallerInstance
     }

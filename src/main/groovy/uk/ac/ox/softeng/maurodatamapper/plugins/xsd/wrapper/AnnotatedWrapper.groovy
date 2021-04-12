@@ -15,28 +15,23 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet;
-import uk.ac.ox.softeng.maurodatamapper.security.User;
+import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet
+import uk.ac.ox.softeng.maurodatamapper.security.User
 
-import com.google.common.base.CaseFormat;
-import com.google.common.base.Strings;
-import org.w3c.dom.Node;
+import com.google.common.base.CaseFormat
+import com.google.common.base.Strings
+import org.w3c.dom.Node
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBElement
 
 /**
  * @since 25/08/2017
@@ -98,19 +93,18 @@ public abstract class AnnotatedWrapper<K extends Annotated> extends OpenAttrsWra
                  getElementName(element), contentPreference);
 
             if (!contentPreference.equals(annotationContent.getContentType())) {
-                Optional<AnnotationContentWrapper> optional = annotations.stream()
-                    .filter(a -> contentPreference.equals(a.getContentType())).findFirst();
-                if (optional.isPresent()) {
-                    annotationContent = optional.get();
+                AnnotationContentWrapper optional = annotations.find {a -> contentPreference.equals(a.getContentType())}
+                if (optional) {
+                    annotationContent = optional;
                 }
             }
         }
 
 
-        List<Object> contents = annotationContent.getContents().stream().filter(c -> {
+        List<Object> contents = annotationContent.contents.findAll {c ->
             if (c instanceof String) return !Strings.isNullOrEmpty(((String) c).trim());
             return c != null;
-        }).collect(Collectors.toList());
+        }
 
         if (contents.isEmpty()) {
             warn("XSD component {} has annotation but no content", getElementName(element));
@@ -128,15 +122,15 @@ public abstract class AnnotatedWrapper<K extends Annotated> extends OpenAttrsWra
         return getStringContent(content);
     }
 
-    private String extractDescriptionFromAnnotations(final String contentPreference) {
+    String extractDescriptionFromAnnotations(final String contentPreference) {
         return extractDescriptionFromAnnotations(wrappedElement, contentPreference);
     }
 
     private List<AnnotationContentWrapper> getAnnotationContent(Annotated element) {
-        return element.getAnnotation().getAppinfosAndDocumentations().stream()
-            .map(AnnotationContentWrapper::new)
-            .filter(c -> !c.getContents().isEmpty()) // Filter out all empty content
-            .collect(Collectors.toList());
+        return element.getAnnotation().getAppinfosAndDocumentations()
+            .collect {new AnnotationContentWrapper(it)}
+            .findAll {c -> !c.getContents().isEmpty()}
+
     }
 
     private String getElementName(Annotated element) {

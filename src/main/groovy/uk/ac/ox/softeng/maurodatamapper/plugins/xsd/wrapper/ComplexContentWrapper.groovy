@@ -15,20 +15,16 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Any;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup;
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Any
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBElement
 
 /**
  * @since 05/09/2017
@@ -55,12 +51,12 @@ public abstract class ComplexContentWrapper<K extends Annotated> extends Annotat
         }
         if (getChoice() != null) {
             List<ElementWrapper> elements = getSubElementsOfGroup(getChoice());
-            elements.forEach(e -> e.setChoiceGroup("choice"));
+            elements.each {e -> e.setChoiceGroup("choice")}
             return elements;
         }
         if (getAll() != null) {
             List<ElementWrapper> elements = getSubElementsOfGroup(getAll());
-            elements.forEach(ElementWrapper::setAllElement);
+            elements.each {it.setAllElement()}
             return elements;
         }
         if (hasBaseAttributes()) trace("complex content has attribute based content");
@@ -71,10 +67,8 @@ public abstract class ComplexContentWrapper<K extends Annotated> extends Annotat
     public abstract ExplicitGroup getSequence();
 
     List<BaseAttribute> getBaseAttributes() {
-        return getAttributesAndAttributeGroups().stream()
-            .filter(attr -> attr instanceof BaseAttribute)
-            .map(attr -> (BaseAttribute) attr)
-            .collect(Collectors.toList());
+        return getAttributesAndAttributeGroups()
+            .findAll {attr -> attr instanceof BaseAttribute} as List<BaseAttribute>
     }
 
     private List<ElementWrapper> getSubElementsOfGroup(ExplicitGroup group) {
@@ -90,7 +84,7 @@ public abstract class ComplexContentWrapper<K extends Annotated> extends Annotat
                 } else if (el.getValue() instanceof ExplicitGroup) {
                     List<ElementWrapper> subElements = getSubElementsOfGroup((ExplicitGroup) el.getValue());
                     int finalGroupMarker = groupMarker;
-                    subElements.forEach(e -> {
+                    subElements.each {e ->
                         switch (el.getName().getLocalPart()) {
                             case "choice":
                                 e.setChoiceGroup("choice-" + finalGroupMarker);
@@ -109,7 +103,7 @@ public abstract class ComplexContentWrapper<K extends Annotated> extends Annotat
                             default:
                                 warn("Handling sub element group with unknown type {}", el.getName().getLocalPart());
                         }
-                    });
+                    }
                     groupMarker++;
                     elements.addAll(subElements);
                 } else {

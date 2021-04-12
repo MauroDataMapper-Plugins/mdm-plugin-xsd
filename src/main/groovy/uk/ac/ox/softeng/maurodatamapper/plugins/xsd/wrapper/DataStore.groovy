@@ -15,25 +15,19 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.core.facet.SemanticLink;
-import uk.ac.ox.softeng.maurodatamapper.core.facet.SemanticLinkService;
-import uk.ac.ox.softeng.maurodatamapper.core.facet.SemanticLinkType;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType;
-import uk.ac.ox.softeng.maurodatamapper.security.User;
+import uk.ac.ox.softeng.maurodatamapper.core.facet.SemanticLink
+import uk.ac.ox.softeng.maurodatamapper.core.facet.SemanticLinkService
+import uk.ac.ox.softeng.maurodatamapper.core.facet.SemanticLinkType
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
+import uk.ac.ox.softeng.maurodatamapper.security.User
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.function.Function
 
 /**
  * @since 04/09/2017
@@ -85,28 +79,27 @@ class DataStore {
     }
 
     void putDataClass(String key, DataClass value) {
-        allDataClasses.compute(key, (type, existing) -> {
-            if (existing == null) existing = new HashSet<>();
+        Set<DataClass> existing = allDataClasses[key] ?: [] as Set
 
-            else if (createLinksRatherThanReferences && !existing.isEmpty()) {
-                logger.debug("Adding links for {} existing data classes with type {}", existing.size(), key);
-                existing.forEach(dc -> {
 
-                    SemanticLink linkTarget = semanticLinkService.createSemanticLink(user, value, dc, SemanticLinkType.REFINES);
-                    SemanticLink linkSource = semanticLinkService.createSemanticLink(user, dc, value, SemanticLinkType.REFINES);
+        if (createLinksRatherThanReferences && !existing.isEmpty()) {
+            logger.debug("Adding links for {} existing data classes with type {}", existing.size(), key);
+            existing.each {dc ->
 
-                    dc.addTo("sourceForLinks", linkSource);
-                    value.addTo("targetForLinks", linkSource);
+                SemanticLink linkTarget = semanticLinkService.createSemanticLink(user, value, dc, SemanticLinkType.REFINES);
+                SemanticLink linkSource = semanticLinkService.createSemanticLink(user, dc, value, SemanticLinkType.REFINES);
 
-                    dc.addTo("targetForLinks", linkTarget);
-                    value.addTo("sourceForLinks", linkTarget);
-                });
+                dc.addTo("sourceForLinks", linkSource);
+                value.addTo("targetForLinks", linkSource);
+
+                dc.addTo("targetForLinks", linkTarget);
+                value.addTo("sourceForLinks", linkTarget);
             }
+        }
 
-            existing.add(value);
-            return existing;
-        });
-        dataClasses.put(key, value);
+        existing.add(value);
+        allDataClasses[key] = existing
+        dataClasses[key] = value;
     }
 
     DataType putDataType(String key, DataType value) {

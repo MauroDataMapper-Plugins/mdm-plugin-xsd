@@ -15,27 +15,24 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement;
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.LocalSimpleType;
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleExtensionType;
-import uk.ac.ox.softeng.maurodatamapper.security.User;
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.LocalSimpleType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleExtensionType
+import uk.ac.ox.softeng.maurodatamapper.security.User
 
-import com.google.common.base.Strings;
+import com.google.common.base.Strings
 
-import java.util.Collections;
-import java.util.List;
-import javax.xml.namespace.QName;
-
+import javax.xml.namespace.QName
 
 /**
  * @since 24/08/2017
@@ -159,8 +156,7 @@ public abstract class ElementBasedWrapper<K extends Annotated> extends Annotated
             trace("Is a simpleType element");
             if (!Strings.isNullOrEmpty(simpleTypeWrapper.getName())) {
                 dataType = schema.computeIfDataTypeAbsent(
-                    simpleTypeWrapper.getName(),
-                    key -> simpleTypeWrapper.createDataType(user, dataModel, schema));
+                    simpleTypeWrapper.getName(), {key -> simpleTypeWrapper.createDataType(user, dataModel, schema)});
             }
             if (dataType == null) {
                 warn("Is a simpleType element but it has no wrapper name");
@@ -173,8 +169,10 @@ public abstract class ElementBasedWrapper<K extends Annotated> extends Annotated
             trace("Is a referenceType element");
             dataType = schema.computeIfDataTypeAbsent(
                 SimpleTypeWrapper.createSimpleTypeName(referencedDataClass.getLabel()),
-                key -> xsdSchemaService.createReferenceTypeForDataModel(dataModel, key, extractDescriptionFromAnnotations(), user,
-                                                                        referencedDataClass));
+                {key ->
+                    xsdSchemaService.createReferenceTypeForDataModel(dataModel, key, extractDescriptionFromAnnotations(), user,
+                                                                     referencedDataClass)
+                });
             if (dataType == null) {
                 warn("Is a referenceType element but it has not been created");
             }
@@ -220,8 +218,7 @@ public abstract class ElementBasedWrapper<K extends Annotated> extends Annotated
     }
 
     private List<Annotated> getAttributesAndAttributeGroups() {
-        return getRestriction() != null
-               && getRestriction().getAttributesAndAttributeGroups() != null ?
+        return getRestriction() != null && getRestriction().getAttributesAndAttributeGroups() != null ?
                getRestriction().getAttributesAndAttributeGroups() :
                Collections.emptyList();
     }
