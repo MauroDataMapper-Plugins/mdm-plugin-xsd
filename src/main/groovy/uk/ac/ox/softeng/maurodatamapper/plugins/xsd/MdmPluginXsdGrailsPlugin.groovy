@@ -17,10 +17,6 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdDefaultDataTypeProvider
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.XsdImporterProviderService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter.XsdExporterProviderService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.spi.XsdSchemaService
 
 import grails.plugins.Plugin
 
@@ -69,9 +65,6 @@ The Xsd services for the Mauro Data Mapper backend.
 
     Closure doWithSpring() {
         {->
-            xsdSchemaService(XsdSchemaService)
-            xsdExporterProviderService(XsdExporterProviderService)
-            xsdImporterProviderService(XsdImporterProviderService)
             xsdDefaultDataTypeProvider(XsdDefaultDataTypeProvider)
         }
     }

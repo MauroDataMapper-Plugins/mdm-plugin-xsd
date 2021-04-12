@@ -31,26 +31,26 @@ import ox.softeng.metadatacatalogue.core.facet.Metadata
 import org.apache.commons.lang3.tuple.Pair
 import org.junit.Test
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_ALL
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_CHOICE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_DEFAULT
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_EXTENSION_BASE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_FIXED
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.OpenAttrsWrapper.XS_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.fractionDigits
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.length
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.maxExclusive
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.maxInclusive
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.maxLength
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.minExclusive
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.minInclusive
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.minLength
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.pattern
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.totalDigits
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.xsd.wrapper.RestrictionKind.whiteSpace
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_ALL
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_CHOICE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_DEFAULT
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_EXTENSION_BASE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_FIXED
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.OpenAttrsWrapper.XS_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.fractionDigits
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.length
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxExclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxInclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxLength
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minExclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minInclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minLength
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.pattern
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.totalDigits
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.whiteSpace
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
