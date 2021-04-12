@@ -1,12 +1,13 @@
 package ox.softeng.metadatacatalogue.plugins.xsd
 
-import ox.softeng.metadatacatalogue.core.spi.MetadataCataloguePlugin
 import ox.softeng.metadatacatalogue.plugins.xsd.wrapper.RestrictionKind
 
 /**
  * @since 14/09/2017
  */
-abstract class XsdPlugin implements MetadataCataloguePlugin {
+abstract class XsdPlugin /*implements MetadataCataloguePlugin */ {
+
+    //TODO This will have to be implemented as a trait to be shared between the importer and exporter
 
     public static final String METADATA_LABEL_PREFIX = "XSD "
     public static final String METADATA_LABEL_RESTRICTION_PREFIX = METADATA_LABEL_PREFIX + "Restriction "
@@ -22,12 +23,12 @@ abstract class XsdPlugin implements MetadataCataloguePlugin {
     public static final String METADATA_XSD_CHOICE = METADATA_LABEL_PREFIX + "Choice Group"
     public static final String METADATA_XSD_ALL = METADATA_LABEL_PREFIX + "All Group"
 
-    @Override
+    //    @Override
     Boolean allowsExtraMetadataKeys() {
         false
     }
 
-    @Override
+    //    @Override
     Set<String> getKnownMetadataKeys() {
         ([METADATA_XSD_TARGET_NAMESPACE,
           METADATA_XSD_TARGET_NAMESPACE_PREFIX,

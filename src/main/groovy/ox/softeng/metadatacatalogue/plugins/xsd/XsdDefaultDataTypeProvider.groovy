@@ -1,8 +1,9 @@
 package ox.softeng.metadatacatalogue.plugins.xsd
 
-import ox.softeng.metadatacatalogue.core.catalogue.linkable.component.datatype.DataType
-import ox.softeng.metadatacatalogue.core.catalogue.linkable.component.datatype.PrimitiveType
-import ox.softeng.metadatacatalogue.core.traits.spi.datatype.DefaultDataTypeProvider
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
+import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
+import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.DefaultDataTypeProvider
+
 import ox.softeng.metadatacatalogue.plugins.xsd.wrapper.OpenAttrsWrapper
 
 import static ox.softeng.metadatacatalogue.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
@@ -27,5 +28,15 @@ class XsdDefaultDataTypeProvider implements DefaultDataTypeProvider {
     @Override
     String getDisplayName() {
         'XSD DataTypes'
+    }
+
+    @Override
+    String getVersion() {
+        return null
+    }
+
+    @Override
+    int getOrder() {
+        -1
     }
 }

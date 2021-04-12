@@ -17,6 +17,10 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins
 
+import ox.softeng.metadatacatalogue.plugins.xsd.XsdDefaultDataTypeProvider
+import ox.softeng.metadatacatalogue.plugins.xsd.XsdExporterService
+import ox.softeng.metadatacatalogue.plugins.xsd.XsdImporterService
+import ox.softeng.metadatacatalogue.plugins.xsd.spi.XsdSchemaService
 
 import grails.plugins.Plugin
 
@@ -60,7 +64,10 @@ Brief summary/description of the plugin.
 
     Closure doWithSpring() {
         {->
-            // TODO Implement runtime spring config (optional)
+            xsdSchemaService(XsdSchemaService)
+            xsdExporterService(XsdExporterService)
+            xsdImporterService(XsdImporterService)
+            xsdDefaultDataTypeProvider(XsdDefaultDataTypeProvider)
         }
     }
 
