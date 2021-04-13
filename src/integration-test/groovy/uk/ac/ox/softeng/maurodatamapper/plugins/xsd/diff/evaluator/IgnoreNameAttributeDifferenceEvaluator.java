@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package ox.softeng.metadatacatalogue.plugins.xsd.diff.evaluator;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.diff.evaluator;
 
 import com.google.common.base.Strings;
 import org.slf4j.Logger;

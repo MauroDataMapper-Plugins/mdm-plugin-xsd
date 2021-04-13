@@ -15,13 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package ox.softeng.metadatacatalogue.plugins.xsd.diff.selector;
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.diff.selector;
 
 import com.google.common.base.Strings;
 import org.w3c.dom.Element;
 import org.xmlunit.diff.ElementSelector;
 
-import static ox.softeng.metadatacatalogue.plugins.xsd.diff.evaluator.IgnoreNameAttributeDifferenceEvaluator.stripVersion;
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.diff.evaluator.IgnoreNameAttributeDifferenceEvaluator.stripVersion;
 
 import static org.xmlunit.diff.ElementSelectors.byName;
 
