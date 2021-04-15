@@ -19,8 +19,8 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
 
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
-import uk.ac.ox.softeng.maurodatamapper.core.spi.importer.parameter.FileParameter
-import uk.ac.ox.softeng.maurodatamapper.plugins.test.BaseImportPluginTest
+//import uk.ac.ox.softeng.maurodatamapper.core.spi.importer.parameter.FileParameter
+//import uk.ac.ox.softeng.maurodatamapper.plugins.test.BaseImportPluginTest
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.XsdImporterProviderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImporterProviderServiceParameters
 
@@ -34,7 +34,11 @@ import static org.junit.Assert.fail
 /**
  * @since 11/09/2017
  */
-abstract class XsdTest extends BaseImportPluginTest<DataModel, XsdImporterProviderServiceParameters, XsdImporterProviderService> {
+abstract class XsdTest {
+
+}
+
+/*extends BaseImportPluginTest<DataModel, XsdImporterProviderServiceParameters, XsdImporterProviderService> {
 
     @Override
     DataModel saveDomain(DataModel domain) {
@@ -70,3 +74,4 @@ abstract class XsdTest extends BaseImportPluginTest<DataModel, XsdImporterProvid
         return dataModel
     }
 }
+ */

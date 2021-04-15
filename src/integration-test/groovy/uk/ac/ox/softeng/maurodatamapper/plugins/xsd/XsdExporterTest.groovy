@@ -70,7 +70,7 @@ class XsdExporterTest {
     @Test
     void testExportModelWithSpacesInNames() throws Exception {
         DataModelService dataModelService = applicationContext.getBean(DataModelService.class)
-        DataModel dataModel = dataModelService.createDataModel(User,
+        DataModel dataModel = dataModelService.createDataModel(catalogueUser,
                                                                'space test', 'model description', 'authoer', 'org',
                                                                getTestFolder(), DataModelType.DATA_STANDARD, true)
 

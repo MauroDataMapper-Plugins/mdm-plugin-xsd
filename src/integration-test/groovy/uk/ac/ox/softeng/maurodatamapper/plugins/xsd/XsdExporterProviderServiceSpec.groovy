@@ -2,6 +2,8 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
 
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiException
 import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
+import uk.ac.ox.softeng.maurodatamapper.core.bootstrap.StandardEmailAddress
+import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
 import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
@@ -51,17 +53,29 @@ import static org.junit.Assert.assertTrue
 class XsdExporterProviderServiceSpec extends BaseIntegrationSpec {
 
     DataModelService dataModelService
+    XsdExporterProviderService xsdExporterProviderService
+    Folder folder
+    String testUser = reader1.emailAddress
+    Authority testAuthority
 
     @Override
     void setupDomainData() {
-
+        log.debug('Setting up DataModel for ExporterSpec unit')
     }
 
-    @Test
     void testExportModelWithSpacesInNames() throws Exception {
-        DataModel dataModel = dataModelService.createAndSaveDataModel(user as User, getTestFolder(), DataModelType.DATA_STANDARD,
-                                                                      'space test', 'model description', 'author', 'org',
-                                                                      'placeholder' as Authority, true)
+
+        folder = new Folder(label: 'xsdTestFolder', createdBy: reader1.emailAddress)
+        checkAndSave(folder)
+        String testUser = reader1.emailAddress
+        testAuthority = new Authority(label: 'XsdTestAuthority', url: 'http://localhost', createdBy: testUser)
+        checkAndSave(testAuthority)
+
+        DataModel dataModel = new DataModel(createdByUser: reader1, label: 'test XSD exporter', author: 'author', organisation:'org',
+                                            description:'XSD exporter test model description', type: DataModelType.DATA_STANDARD,
+                                            folder: folder, authority: testAuthority)
+        dataModel.save()
+        dataModel
 
         DataClass dataClass = createDataClass('class with label', dataModel)
         createDataClass('2 class with number', dataModel)
@@ -98,61 +112,64 @@ class XsdExporterProviderServiceSpec extends BaseIntegrationSpec {
 
         checkAndSave(dataModel)
 
+        expect:
         testExport(dataModel.getId(), 'simple_space_test.xsd', 'simple_space_test.xsd')
     }
 
     private DataClass createDataClass(String label, DataModel dataModel) {
         DataClass dataClass = new DataClass()
-        dataClass.setCreatedBy(user)
+        dataClass.setCreatedBy(testUser)
         dataClass.setLabel(label)
         dataClass.setMaxMultiplicity(1)
         dataClass.setMinMultiplicity(1)
 
-        dataModel.addTo('dataClasses', dataClass)
-        assertTrue('Dataclass must be valid', checkAndSave(dataClass) as boolean)
+        dataModel.addToDataClasses(dataClass)
+        checkAndSave(dataClass)
 
         dataClass
     }
 
     private void createDataElement(String label, DataClass dataClass, DataType dataType) {
         DataElement dataElement = new DataElement()
-        dataElement.setCreatedBy(user)
+        dataElement.setCreatedBy(testUser)
         dataElement.setLabel(label)
         dataElement.setMaxMultiplicity(1)
         dataElement.setMinMultiplicity(1)
         dataElement.setDataType(dataType)
 
-        dataClass.addTo('childDataElements', dataElement)
-        assertTrue('DataElement must be valid', checkAndSave(dataElement) as boolean)
+        dataClass.addToDataElements(dataElement)
+        checkAndSave(dataElement)
     }
 
     private DataType createDataType(DataModel dataModel) {
         DataType dataType = new PrimitiveType()
-        dataType.setCreatedBy(user)
+        dataType.setCreatedBy(testUser)
         dataType.setLabel('data type with space')
+
+        dataModel.addToDataTypes(dataType)
+        checkAndSave(dataType)
 
         Metadata metadata = new Metadata()
         metadata.setNamespace(METADATA_NAMESPACE)
         metadata.setKey(METADATA_XSD_RESTRICTION_BASE)
         metadata.setValue('string')
+        metadata.catalogueItemId = UUID.randomUUID()
         dataType.addToMetadata(metadata)
 
         Metadata metadata2 = new Metadata()
         metadata2.setNamespace(METADATA_NAMESPACE)
         metadata2.setKey(RestrictionKind.minLength.displayText)
         metadata2.setValue('1')
+        metadata2.setId(UUID.randomUUID())
         dataType.addToMetadata(metadata2)
 
-        dataModel.addTo('dataTypes', dataType)
-
-        assertTrue('DataType must be valid', checkAndSave(dataType) as boolean)
+        checkAndSave(dataType)
         dataType
     }
 
     private void testExport(UUID dataModelId, String filename, String outFileName) throws IOException, ApiException {
         log.info('------------ Exporting -------------')
-        XsdExporterProviderService xsdExporterProviderService = applicationContext.getBean(XsdExporterProviderService.class)
-        ByteArrayOutputStream byteArrayOutputStream = xsdExporterProviderService.exportDomain(user, dataModelId)
+        ByteArrayOutputStream byteArrayOutputStream = xsdExporterProviderService.exportDomain(reader1, dataModelId)
         assertNotNull('Should have an exported model', byteArrayOutputStream)
 
         String exportedXsd = byteArrayOutputStream.toString('ISO-8859-1')

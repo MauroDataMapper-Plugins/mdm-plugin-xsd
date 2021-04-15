@@ -1,82 +1,64 @@
-<!--
-
-    Copyright 2020 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
-    SPDX-License-Identifier: Apache-2.0
-
--->
-<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                                                 xmlns="https://metadatacatalogue.com/ox/softeng/metadatacatalogue/plugins/xsd/2.0.0"
-                                                 elementFormDefault="qualified"
-                                                 targetNamespace="https://metadatacatalogue.com/ox/softeng/metadatacatalogue/plugins/xsd/2.0.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           targetNamespace="https://metadatacatalogue.com/uk/ac/ox/softeng/maurodatamapper/plugins/xsd/datamodel/provider/exporter/SNAPSHOT"
+           xmlns="https://metadatacatalogue.com/uk/ac/ox/softeng/maurodatamapper/plugins/xsd/datamodel/provider/exporter/SNAPSHOT">
   <xs:annotation>
     <xs:documentation>
-      <p>Name: space test<br />Author: authoer<br />Organisation: org<br />Description: model description<br />Last Updated:<br />
+      <p>Name: test XSD exporter<br/>Author: author<br/>Organisation: org<br/>Description: XSD exporter test model description<br/>Last Updated:<br/>
       </p>
     </xs:documentation>
   </xs:annotation>
-  <xs:element name="_2ClassWithNumber" type="_2ClassWithNumberType-294516258" />
-  <xs:element name="_2HypenNamed" type="_2HypenNamedType-203900322" />
-  <xs:element name="_2UnderscoreNamed" type="_2UnderscoreNamedType-161077730" />
-  <xs:element name="_2camelcase" type="_2camelcaseType-250173986" />
-  <xs:element name="camel3case" type="camel3caseType-235074722" />
-  <xs:element name="camelcase" type="camelcaseType-263341858" />
-  <xs:element name="class3WithNumber" type="class3WithNumberType-282282850" />
-  <xs:element name="classWithLabel" type="classWithLabelType-31796191" />
-  <xs:element name="hypen3Named" type="hypen3NamedType-191702754" />
-  <xs:element name="hypenNamed" type="hypenNamedType-222841314" />
-  <xs:element name="hypenNamedWithCaps" type="hypenNamedWithCapsType-218066146" />
-  <xs:element name="properlyNamed" type="properlyNamedType-276537378" />
-  <xs:element name="underscore3Named" type="underscore3NamedType-147913954" />
-  <xs:element name="underscoreNamed" type="underscoreNamedType-179632162" />
-  <xs:element name="underscoreNamedWithCaps" type="underscoreNamedWithCapsType-137747106" />
-  <xs:complexType name="_2ClassWithNumberType-294516258" />
-  <xs:complexType name="_2HypenNamedType-203900322" />
-  <xs:complexType name="_2UnderscoreNamedType-161077730" />
-  <xs:complexType name="_2camelcaseType-250173986" />
-  <xs:complexType name="camel3caseType-235074722" />
-  <xs:complexType name="camelcaseType-263341858" />
-  <xs:complexType name="class3WithNumberType-282282850" />
+  <xs:element name="_2ClassWithNumber" type="_2ClassWithNumberType-294516258"/>
+  <xs:element name="_2HyphenNamed" type="_2HyphenNamedType-203900322"/>
+  <xs:element name="_2UnderscoreNamed" type="_2UnderscoreNamedType-161077730"/>
+  <xs:element name="_2camelcase" type="_2camelcaseType-250173986"/>
+  <xs:element name="camel3case" type="camel3caseType-235074722"/>
+  <xs:element name="camelcase" type="camelcaseType-263341858"/>
+  <xs:element name="class3WithNumber" type="class3WithNumberType-282282850"/>
+  <xs:element name="classWithLabel" type="classWithLabelType-31796191"/>
+  <xs:element name="hyphen3Named" type="hyphen3NamedType-191702754"/>
+  <xs:element name="hyphenNamed" type="hyphenNamedType-222841314"/>
+  <xs:element name="hyphenNamedWithCaps" type="hyphenNamedWithCapsType-218066146"/>
+  <xs:element name="properlyNamed" type="properlyNamedType-276537378"/>
+  <xs:element name="underscore3Named" type="underscore3NamedType-147913954"/>
+  <xs:element name="underscoreNamed" type="underscoreNamedType-179632162"/>
+  <xs:element name="underscoreNamedWithCaps" type="underscoreNamedWithCapsType-137747106"/>
+  <xs:complexType name="_2ClassWithNumberType-294516258"/>
+  <xs:complexType name="_2HyphenNamedType-203900322"/>
+  <xs:complexType name="_2UnderscoreNamedType-161077730"/>
+  <xs:complexType name="_2camelcaseType-250173986"/>
+  <xs:complexType name="camel3caseType-235074722"/>
+  <xs:complexType name="camelcaseType-263341858"/>
+  <xs:complexType name="class3WithNumberType-282282850"/>
   <xs:complexType name="classWithLabelType-31796191">
     <xs:sequence>
-      <xs:element maxOccurs="1" minOccurs="1" name="_2ElementWithNumber" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="_2HypenNamed" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="_2camelcase" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="_2UnderscoreNamed" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="hypenNamedWithCaps" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="properlyNamed" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="underscoreNamedWithCaps" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="camel3case" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="camelcase" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="element3WithNumber" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="hypen3Named" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="hypenNamed" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="underscore3Named" type="dataTypeWithSpace-108930594" />
-      <xs:element maxOccurs="1" minOccurs="1" name="underscoreNamed" type="dataTypeWithSpace-108930594" />
+      <xs:element maxOccurs="1" minOccurs="1" name="_2ElementWithNumber" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="_2HyphenNamed" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="_2camelcase" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="_2UnderscoreNamed" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="hyphenNamedWithCaps" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="properlyNamed" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="underscoreNamedWithCaps" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="camel3case" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="camelcase" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="element3WithNumber" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="hyphen3Named" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="hyphenNamed" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="underscore3Named" type="dataTypeWithSpace-108930594"/>
+      <xs:element maxOccurs="1" minOccurs="1" name="underscoreNamed" type="dataTypeWithSpace-108930594"/>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="hypen3NamedType-191702754" />
-  <xs:complexType name="hypenNamedType-222841314" />
-  <xs:complexType name="hypenNamedWithCapsType-218066146" />
-  <xs:complexType name="properlyNamedType-276537378" />
-  <xs:complexType name="underscore3NamedType-147913954" />
-  <xs:complexType name="underscoreNamedType-179632162" />
-  <xs:complexType name="underscoreNamedWithCapsType-137747106" />
+  <xs:complexType name="hyphen3NamedType-191702754"/>
+  <xs:complexType name="hyphenNamedType-222841314"/>
+  <xs:complexType name="hyphenNamedWithCapsType-218066146"/>
+  <xs:complexType name="properlyNamedType-276537378"/>
+  <xs:complexType name="underscore3NamedType-147913954"/>
+  <xs:complexType name="underscoreNamedType-179632162"/>
+  <xs:complexType name="underscoreNamedWithCapsType-137747106"/>
   <xs:simpleType name="dataTypeWithSpace-108930594">
     <xs:restriction base="xs:string">
-      <xs:minLength value="1" />
+      <xs:minLength value="1"/>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>
