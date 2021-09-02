@@ -28,36 +28,36 @@ import org.slf4j.LoggerFactory
  */
 class AnnotationContentWrapper {
 
-    static final String DOCUMENTATION_CONTENT = "documentation";
-    static final String APPINFO_CONTENT = "appinfo";
+    static final String DOCUMENTATION_CONTENT = 'documentation'
+    static final String APPINFO_CONTENT = 'appinfo'
 
-    private static final Logger logger = LoggerFactory.getLogger(AnnotationContentWrapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(AnnotationContentWrapper)
 
-    private final Object annotationContent;
+    private final Object annotationContent
 
     AnnotationContentWrapper(Object annotationContent) {
-        this.annotationContent = annotationContent;
+        this.annotationContent = annotationContent
     }
 
     String getContentType() {
         if (annotationContent instanceof Appinfo) {
-            return APPINFO_CONTENT;
+            return APPINFO_CONTENT
         }
         if (annotationContent instanceof Documentation) {
-            return DOCUMENTATION_CONTENT;
+            return DOCUMENTATION_CONTENT
         }
-        logger.warn("Unknown annotation content type inside wrapper {}", annotationContent.getClass().getCanonicalName());
-        return null;
+        logger.warn('Unknown annotation content type inside wrapper {}', annotationContent.getClass().getCanonicalName())
+        null
     }
 
     List<Object> getContents() {
         if (annotationContent instanceof Appinfo) {
-            return ((Appinfo) annotationContent).getContent();
+            return ((Appinfo) annotationContent).getContent()
         }
         if (annotationContent instanceof Documentation) {
-            return ((Documentation) annotationContent).getContent();
+            return ((Documentation) annotationContent).getContent()
         }
-        logger.warn("Unknown annotation content type inside wrapper {}", annotationContent.getClass().getCanonicalName());
-        return Collections.emptyList();
+        logger.warn('Unknown annotation content type inside wrapper {}', annotationContent.getClass().getCanonicalName())
+        Collections.emptyList()
     }
 }

@@ -29,94 +29,86 @@ import javax.xml.bind.JAXBElement
 /**
  * @since 05/09/2017
  */
-public abstract class ComplexContentWrapper<K extends Annotated> extends AnnotatedWrapper<K> {
+abstract class ComplexContentWrapper<K extends Annotated> extends AnnotatedWrapper<K> {
 
     ComplexContentWrapper(XsdSchemaService xsdSchemaService, K wrappedElement) {
-        super(xsdSchemaService, wrappedElement);
+        super(xsdSchemaService, wrappedElement)
     }
 
-    ComplexContentWrapper(XsdSchemaService xsdSchemaService, K wrappedElement, String name) {
-        super(xsdSchemaService, wrappedElement, name);
-    }
+    abstract List<Annotated> getAttributesAndAttributeGroups()
 
-    public abstract ExplicitGroup getAll();
+    abstract ExplicitGroup getAll()
 
-    public abstract List<Annotated> getAttributesAndAttributeGroups();
+    abstract ExplicitGroup getChoice()
 
-    public abstract ExplicitGroup getChoice();
-
-    public List<ElementWrapper> getElements() {
-        if (getSequence() != null) {
-            return getSubElementsOfGroup(getSequence());
-        }
-        if (getChoice() != null) {
-            List<ElementWrapper> elements = getSubElementsOfGroup(getChoice());
-            elements.each {e -> e.setChoiceGroup("choice")}
-            return elements;
-        }
-        if (getAll() != null) {
-            List<ElementWrapper> elements = getSubElementsOfGroup(getAll());
-            elements.each {it.setAllElement()}
-            return elements;
-        }
-        if (hasBaseAttributes()) trace("complex content has attribute based content");
-        else trace("complex content has no elements");
-        return Collections.emptyList();
-    }
-
-    public abstract ExplicitGroup getSequence();
+    abstract ExplicitGroup getSequence()
 
     List<BaseAttribute> getBaseAttributes() {
-        return getAttributesAndAttributeGroups()
-            .findAll {attr -> attr instanceof BaseAttribute} as List<BaseAttribute>
+        getAttributesAndAttributeGroups().findAll {it instanceof BaseAttribute && it.use != 'prohibited'} as List<BaseAttribute>
     }
 
-    private List<ElementWrapper> getSubElementsOfGroup(ExplicitGroup group) {
-        ArrayList<ElementWrapper> elements = new ArrayList<>();
+    Boolean hasBaseAttributes() {
+        getBaseAttributes()
+    }
 
-        int groupMarker = 0;
+    List<ElementWrapper> getElements() {
+        if (getSequence()) {
+            return getSubElementsOfGroup(getSequence())
+        }
+        if (getChoice()) {
+            List<ElementWrapper> elements = getSubElementsOfGroup(getChoice())
+            elements.each {e -> e.setChoiceGroup('choice')}
+            return elements
+        }
+        if (getAll()) {
+            List<ElementWrapper> elements = getSubElementsOfGroup(getAll())
+            elements.each {it.setAllElement()}
+            return elements
+        }
+        if (hasBaseAttributes()) trace('complex content has attribute based content')
+        else trace('complex content has no elements')
+        Collections.emptyList()
+    }
+
+    List<ElementWrapper> getSubElementsOfGroup(ExplicitGroup group) {
+        List<ElementWrapper> elements = []
+
+        int groupMarker = 0
         for (Object o : group.getElementsAndGroupsAndAlls()) {
 
             if (o instanceof JAXBElement) {
-                JAXBElement el = (JAXBElement) o;
+                JAXBElement el = (JAXBElement) o
                 if (el.getValue() instanceof AbstractElement) {
-                    elements.add(new ElementWrapper(xsdSchemaService, (AbstractElement) el.getValue()));
+                    elements.add(new ElementWrapper(xsdSchemaService, (AbstractElement) el.getValue()))
                 } else if (el.getValue() instanceof ExplicitGroup) {
-                    List<ElementWrapper> subElements = getSubElementsOfGroup((ExplicitGroup) el.getValue());
-                    int finalGroupMarker = groupMarker;
+                    List<ElementWrapper> subElements = getSubElementsOfGroup((ExplicitGroup) el.getValue())
+                    int finalGroupMarker = groupMarker
                     subElements.each {e ->
+                        e.setMaxOccurs(((ExplicitGroup) el.getValue()).getMaxOccurs())
+                        e.setMinOccurs(((ExplicitGroup) el.getValue()).getMinOccurs())
                         switch (el.getName().getLocalPart()) {
-                            case "choice":
-                                e.setChoiceGroup("choice-" + finalGroupMarker);
-                                e.setMaxOccurs(((ExplicitGroup) el.getValue()).getMaxOccurs());
-                                e.setMinOccurs(((ExplicitGroup) el.getValue()).getMinOccurs());
-                                break;
-                            case "all":
-                                e.setAllElement();
-                                e.setMaxOccurs(((ExplicitGroup) el.getValue()).getMaxOccurs());
-                                e.setMinOccurs(((ExplicitGroup) el.getValue()).getMinOccurs());
-                                break;
-                            case "sequence":
-                                e.setMaxOccurs(((ExplicitGroup) el.getValue()).getMaxOccurs());
-                                e.setMinOccurs(((ExplicitGroup) el.getValue()).getMinOccurs());
-                                break;
+                            case 'choice':
+                                e.setChoiceGroup('choice-' + finalGroupMarker)
+                                break
+                            case 'all':
+                                e.setAllElement()
+                                break
+                            case 'sequence':
+                                break
                             default:
-                                warn("Handling sub element group with unknown type {}", el.getName().getLocalPart());
+                                warn('Handling sub element group with unknown type {}', el.getName().getLocalPart())
                         }
                     }
-                    groupMarker++;
-                    elements.addAll(subElements);
+                    groupMarker++
+                    elements.addAll(subElements)
                 } else {
-                    warn("complex content jaxb element with value {}", el.getValue().getClass().getSimpleName());
+                    warn('complex content jaxb element with value {}', el.getValue().getClass().getSimpleName())
                 }
             } else if (!(o instanceof Any)) {
-                warn("complex content encountered sub element of type {}", o.getClass().getSimpleName());
+                warn('complex content encountered sub element of type {}', o.getClass().getSimpleName())
             }
         }
-        return elements;
+        elements.findAll {it.maxOccurs != 0}
     }
 
-    private Boolean hasBaseAttributes() {
-        return !getBaseAttributes().isEmpty();
-    }
 }

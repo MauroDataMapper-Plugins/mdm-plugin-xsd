@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified"
+           xmlns="https://metadatacatalogue.com/xsd/test/sdto/1.0" targetNamespace="https://metadatacatalogue.com/xsd/test/sdto/1.0"
+           vc:minVersion="1.1">
+    <xs:simpleType name="participantid-3375">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:pattern value="\d{9}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="personfamilyname-321">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:pattern value="[a-zA-Z0-9\s\-']{1,50}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="persongivenname-323">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:pattern value="[a-zA-Z0-9\s\-']{1,50}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="nhsnumber-3378">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="10" />
+            <xs:pattern value="[0-9]{10}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="yesno-1193">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="Y">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <display-text>Yes</display-text>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="N">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <display-text>No</display-text>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="healthandcarenumber-42127">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:pattern value="[a-zA-Z0-9]{10}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="tumourid-42261">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:pattern value="[a-zA-Z0-9]{3,9}_[a-zA-Z0-9]{1,16}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="primarydiagnosisicd-311">
+        <xs:annotation>
+            <xs:documentation>Something interesting</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:pattern value="[a-zA-Z0-9.]{3,6}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="listSimpleType">
+        <xs:list itemType="xs:string" />
+    </xs:simpleType>
+    <xs:simpleType name="unionSimpleType">
+        <xs:union memberTypes="xs:string xs:date" />
+    </xs:simpleType>
+</xs:schema>

@@ -17,6 +17,7 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter
 
+import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelFileImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.config.ImportGroupConfig
 import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.config.ImportParameterConfig
@@ -24,7 +25,7 @@ import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.config.
 /**
  * Created by james on 31/05/2017.
  */
-class XsdImporterProviderServiceParameters extends DataModelImporterProviderServiceParameters {
+class XsdImporterProviderServiceParameters extends DataModelFileImporterProviderServiceParameters {
 
     //TODO scrap the public private, what are these roots
     @ImportParameterConfig(
@@ -37,13 +38,5 @@ class XsdImporterProviderServiceParameters extends DataModelImporterProviderServ
             order = 1
         )
     )
-    private String rootElement;
-
-    public String getRootElement() {
-        return rootElement;
-    }
-
-    public void setRootElement(String rootElement) {
-        this.rootElement = rootElement;
-    }
+     String rootElement
 }

@@ -28,247 +28,256 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.LocalSimpleType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleExtensionType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.RestrictionCapable
 import uk.ac.ox.softeng.maurodatamapper.security.User
 
 import com.google.common.base.Strings
 
 import javax.xml.namespace.QName
 
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_ATTRIBUTE_NAME
+
 /**
  * @since 24/08/2017
  */
-public abstract class ElementBasedWrapper<K extends Annotated> extends AnnotatedWrapper<K> {
+abstract class ElementBasedWrapper<K extends Annotated> extends AnnotatedWrapper<K> implements RestrictionCapable {
+
+    Map<String, String> additionalMetadata = [:]
 
     ElementBasedWrapper(XsdSchemaService xsdSchemaService, K element) {
-        super(xsdSchemaService, element);
+        super(xsdSchemaService, element)
     }
 
-    ElementBasedWrapper(XsdSchemaService xsdSchemaService, K wrappedElement, String name) {
-        super(xsdSchemaService, wrappedElement, name);
+    //    ElementBasedWrapper(XsdSchemaService xsdSchemaService, K wrappedElement, String name) {
+    //        super(xsdSchemaService, wrappedElement, name)
+    //    }
+
+    abstract SimpleExtensionType getComplexSimpleContentExtension();
+
+    abstract AbstractComplexType getComplexType();
+
+    abstract Integer getMaxOccurs();
+
+    abstract Integer getMinOccurs();
+
+    abstract QName getRef();
+
+    abstract AbstractSimpleType getSimpleType();
+
+    abstract QName getType();
+
+    boolean isReferenceElement() {
+        getName() == null && getRef()
     }
 
-    public DataElement createDataTypeElement(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema) {
-        debug("Is a DataType/simpleType element");
+    boolean isLocalComplexType() {
+        getComplexType()
+    }
 
-        DataType dataType = findOrCreateDataType(user, parentDataModel, schema);
-        if (dataType != null) {
-            return xsdSchemaService.createDataElementForDataClass(parentDataClass, getName(), extractDescriptionFromAnnotations(), user, dataType,
-                                                                  getMinOccurs(), getMaxOccurs());
+    boolean isLocalSimpleType() {
+        getSimpleType()
+    }
+
+    List<Annotated> getAttributesAndAttributeGroups() {
+        getRestriction()?.getAttributesAndAttributeGroups() ?: Collections.emptyList() as List<Annotated>
+    }
+
+    BaseAttribute getBaseTypeAttribute() {
+        for (Annotated annotated : getAttributesAndAttributeGroups()) {
+            if (annotated instanceof BaseAttribute && ((BaseAttribute) annotated).getSimpleType()) {
+                return (BaseAttribute) annotated
+            }
         }
-        warn("No DataElement has been created as no DataType found");
-        return null;
+        null
     }
-
-    public abstract SimpleExtensionType getComplexSimpleContentExtension();
-
-    public abstract AbstractComplexType getComplexType();
-
-    public abstract Integer getMaxOccurs();
-
-    public abstract Integer getMinOccurs();
-
-    public abstract QName getRef();
-
-    public abstract AbstractSimpleType getSimpleType();
-
-    public abstract QName getType();
-
-    public abstract boolean isLocalComplexType();
-
-    public abstract boolean isLocalSimpleType();
 
     DataElement createDataModelElement(User user, DataModel parentDataModel, SchemaWrapper schema) {
-        return createDataModelElement(user, parentDataModel, null, schema);
+        createDataModelElement(user, parentDataModel, null, schema)
     }
 
     DataElement createDataModelElement(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema) {
-
+        long start = System.currentTimeMillis()
+        debug('Creating DataModel Element')
+        DataElement dataElement
         if (isReferenceElement()) {
-            debug("Creating element '{}' from reference", getRef().getLocalPart());
-            ElementBasedWrapper refElement = schema.getElementByName(getRef().getLocalPart());
-            return refElement.createDataModelElement(user, parentDataModel, parentDataClass, schema);
+            debug('Creating element "{}" from reference', getRef().getLocalPart())
+            ElementBasedWrapper refElement = schema.getElementByName(getRef().getLocalPart())
+            dataElement = refElement.createDataModelElement(user, parentDataModel, parentDataClass, schema)
+        } else {
+            ComplexTypeWrapper complexTypeWrapper = getComplexTypeWrapper(schema)
+
+            if (complexTypeWrapper) {
+                debug('Has a complex type {}', complexTypeWrapper.name)
+
+                if (!complexTypeWrapper.isActuallySimpleType()) {
+                    dataElement = createDataClassElement(user, parentDataModel, parentDataClass, schema, complexTypeWrapper)
+                } else {
+                    debug('Complex type {} is actually a simple type masquerading as a complex type', complexTypeWrapper.name)
+                    SimpleTypeWrapper simpleTypeWrapper = complexTypeWrapper.convertToSimpleType()
+                    additionalMetadata[(METADATA_XSD_ATTRIBUTE_NAME)] = complexTypeWrapper.attributes.first().name
+                    dataElement = createDataTypeElement(user, parentDataModel, parentDataClass, schema, simpleTypeWrapper)
+                }
+            } else dataElement = createDataTypeElement(user, parentDataModel, parentDataClass, schema, getSimpleTypeWrapper(schema))
         }
-
-        ComplexTypeWrapper complexType = getComplexTypeWrapper(schema);
-
-        // Complex type element
-        return complexType != null ?
-               createDataClassElement(user, parentDataModel, parentDataClass, schema, complexType) :
-               createDataTypeElement(user, parentDataModel, parentDataClass, schema);
+        schema.dataStore.dataElementCreations << System.currentTimeMillis() - start
+        dataElement
     }
 
-    private DataElement createDataClassElement(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema,
-                                               ComplexTypeWrapper complexType) {
-        debug("Is a DataClass/complexType element");
+    DataElement createDataTypeElement(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema,
+                                      SimpleTypeWrapper wrapper) {
+        debug('Creating a DataType/simpleType element')
 
-        DataClass dataClass = findOrCreateDataClass(user, parentDataModel, parentDataClass, schema, complexType);
+        DataType dataType = findOrCreateDataType(user, parentDataModel, schema, wrapper)
+        if (dataType) {
+            DataElement dataElement = xsdSchemaService.createDataElementForDataClass(parentDataClass, getName(),
+                                                                                     extractDescriptionFromAnnotations(), user, dataType,
+                                                                                     getMinOccurs(), getMaxOccurs())
+            additionalMetadata.each {k, v ->
+                addMetadataToComponent(dataElement, k, v, user)
+            }
+            return dataElement
+        }
+        warn('No DataElement has been created as no DataType found')
+        null
+    }
+
+    DataElement createDataClassElement(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema,
+                                       ComplexTypeWrapper complexType) {
+        debug('Creating a DataClass/complexType element')
+
+        DataClass dataClass = findOrCreateDataClass(user, parentDataModel, parentDataClass, schema, complexType)
 
         // Will only happen if dataclass is already under construction
-        if (dataClass == null) {
-            warn("Tried to create DataClass {} but got null back as its already under construction",
-                 getType().getLocalPart());
-            return null;
+        if (!dataClass) {
+            warn('Tried to create DataClass {} but got null back as its already under construction', getType().getLocalPart())
+            return null
         }
 
-        if (parentDataClass == null || schema.isCreateLinksRatherThanReferences()) {
+        if (!parentDataClass) {
             // Top level dataclass/element, so should use the name of element rather than the type.
-            dataClass.setMaxMultiplicity(getMaxOccurs());
-            dataClass.setMinMultiplicity(getMinOccurs());
-            dataClass.setLabel(getName());
-            return null;
+            dataClass.setMaxMultiplicity(getMaxOccurs())
+            dataClass.setMinMultiplicity(getMinOccurs())
+            dataClass.setLabel(getName())
+            return null
         }
 
         // Use referencetypes to link as data elements
-        DataType dataType = findOrCreateDataType(user, parentDataModel, schema, dataClass);
-        return xsdSchemaService.createDataElementForDataClass(parentDataClass, getName(), extractDescriptionFromAnnotations(), user, dataType,
-                                                              getMinOccurs(), getMaxOccurs());
+        DataType dataType = findOrCreateDataType(user, parentDataModel, schema, dataClass, null)
+        xsdSchemaService.createDataElementForDataClass(parentDataClass, getName(), extractDescriptionFromAnnotations(), user, dataType,
+                                                       getMinOccurs(), getMaxOccurs())
     }
 
-    private DataClass findOrCreateDataClass(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema,
-                                            ComplexTypeWrapper complexType) {
+    DataClass findOrCreateDataClass(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema,
+                                    ComplexTypeWrapper complexType) {
 
         if (isLocalComplexType()) {
             // Local complex type so no need to store into schema memory
-            trace("Is a local complexType, creating DataClass using element name");
-            complexType.setName(getName());
-            return complexType.createDataClass(user, parentDataModel, parentDataClass, schema, getType(), getMinOccurs(), getMaxOccurs());
-        }
-        if (schema.isCreateLinksRatherThanReferences()) {
-            complexType.setName(getName());
-            return schema.createAndStoreDataClass(user, parentDataModel, parentDataClass, complexType, getType(),
-                                                  getMinOccurs(), getMaxOccurs());
+            trace('Is a local complexType, creating DataClass using element name')
+            complexType.setName(createComplexTypeName(getName()))
+            return complexType.createDataClass(user, parentDataModel, parentDataClass, schema, getType(), getMinOccurs(), getMaxOccurs())
         }
         // Find from schema memory or create and save
-        return schema.findOrCreateDataClass(user, parentDataModel, parentDataClass, complexType);
-
+        schema.findOrCreateDataClass(user, parentDataModel, parentDataClass, complexType)
     }
 
-    private DataType findOrCreateDataType(User user, DataModel dataModel, SchemaWrapper schema) {
-        return findOrCreateDataType(user, dataModel, schema, null);
+    DataType findOrCreateDataType(User user, DataModel dataModel, SchemaWrapper schema, SimpleTypeWrapper wrapper) {
+        findOrCreateDataType(user, dataModel, schema, null, wrapper)
     }
 
-    private DataType findOrCreateDataType(User user, DataModel dataModel, SchemaWrapper schema, DataClass referencedDataClass) {
-        SimpleTypeWrapper simpleTypeWrapper = getSimpleTypeWrapper(schema);
-        DataType dataType = null;
+    DataType findOrCreateDataType(User user, DataModel dataModel, SchemaWrapper schema, DataClass referencedDataClass,
+                                  SimpleTypeWrapper simpleTypeWrapper) {
+        DataType dataType = null
 
         // Is a simple type element
-        if (simpleTypeWrapper != null) {
-            trace("Is a simpleType element");
-            if (!Strings.isNullOrEmpty(simpleTypeWrapper.getName())) {
-                dataType = schema.computeIfDataTypeAbsent(
-                    simpleTypeWrapper.getName(), {key -> simpleTypeWrapper.createDataType(user, dataModel, schema)});
+        if (simpleTypeWrapper) {
+            trace('Is a simpleType element')
+            if (simpleTypeWrapper.getName()) {
+                dataType = schema.findOrCreateDataType(simpleTypeWrapper, user, dataModel)
             }
-            if (dataType == null) {
-                warn("Is a simpleType element but it has no wrapper name");
-            }
-            return dataType;
+            if (!dataType) warn('Is a simpleType element but it has no wrapper name')
+            return dataType
         }
 
         // Creating or finding a reference datatype
-        if (referencedDataClass != null) {
-            trace("Is a referenceType element");
-            dataType = schema.computeIfDataTypeAbsent(
-                SimpleTypeWrapper.createSimpleTypeName(referencedDataClass.getLabel()),
-                {key ->
-                    xsdSchemaService.createReferenceTypeForDataModel(dataModel, key, extractDescriptionFromAnnotations(), user,
-                                                                     referencedDataClass)
-                });
+        if (referencedDataClass) {
+            trace('Is a referenceType element')
+            dataType = schema.findOrCreateReferenceDataType(user, dataModel, referencedDataClass, extractDescriptionFromAnnotations())
             if (dataType == null) {
-                warn("Is a referenceType element but it has not been created");
+                warn('Is a referenceType element but it has not been created')
             }
-            return dataType;
+            return dataType
         }
 
         // Type defined but not previously provided by schema, otherwise it would have been found as simpleTypeWrapper
         // This will enter for all elements which base primitive types
-        if (getType() != null) {
-            trace("Is of type {}", getType());
-            String typeName = SimpleTypeWrapper.createSimpleTypeName(getType().getLocalPart());
-            if (getType().getLocalPart() != null) {
-                dataType = schema.getDataType(typeName);
+        if (getType()) {
+            trace('Is of type {}', getType())
+            String typeName = createSimpleTypeName(getType().getLocalPart())
+            if (getType().getLocalPart()) {
+                dataType = schema.getDataType(typeName)
             } else {
-                warn("Has a null type local part");
+                warn('Has a null type local part')
             }
             if (dataType == null) {
-                warn("Is a '{}' typed element but it has not been created", typeName);
+                warn('Is a "{}" typed element but it has not been created', typeName)
             }
-            return dataType;
+            return dataType
         }
 
         // Complex element with simple content
-        SimpleExtensionType extensionType = getComplexSimpleContentExtension();
-        if (extensionType != null) {
-            warn("Is a complexType with simple content");
+        SimpleExtensionType extensionType = getComplexSimpleContentExtension()
+        if (extensionType) {
+            warn('Is a complexType with simple content')
 
-            String typeName = extensionType.getBase().getLocalPart();
+            String typeName = extensionType.getBase().getLocalPart()
 
-            if (typeName != null) {
-                dataType = schema.getDataType(typeName);
+            if (typeName) {
+                dataType = schema.getDataType(typeName)
             } else {
-                warn("Has a null type local part");
+                warn('Has a null type local part')
             }
             if (dataType == null) {
-                warn("Is a {} complex simple element but it has not been created", typeName);
+                warn('Is a {} complex simple element but it has not been created', typeName)
             }
-            return dataType;
-        } else {
-            error("Cannot be identified as any type");
+            return dataType
         }
-        return null;
+        error('Cannot be identified as any type')
+        null
     }
 
-    private List<Annotated> getAttributesAndAttributeGroups() {
-        return getRestriction() != null && getRestriction().getAttributesAndAttributeGroups() != null ?
-               getRestriction().getAttributesAndAttributeGroups() :
-               Collections.emptyList();
-    }
-
-    private AbstractSimpleType getBaseTypeAttribute() {
-        for (Annotated annotated : getAttributesAndAttributeGroups()) {
-            if (annotated instanceof BaseAttribute && ((BaseAttribute) annotated).getSimpleType() != null) {
-                return ((BaseAttribute) annotated).getSimpleType();
-            }
-        }
-        return null;
-    }
-
-    private ComplexTypeWrapper getComplexTypeWrapper(SchemaWrapper schema) {
+    ComplexTypeWrapper getComplexTypeWrapper(SchemaWrapper schema) {
         // Local complex type
         if (isLocalComplexType()) {
-            return new ComplexTypeWrapper(xsdSchemaService, getComplexType());
+            return new ComplexTypeWrapper(xsdSchemaService, getComplexType(), createComplexTypeName(getName()))
         }
         // Defined complex type
-        if (getType() != null) {
-            ComplexTypeWrapper wrapper = schema.getComplexTypeByName(getType().getLocalPart());
-            return wrapper != null ? wrapper : schema.getComplexTypeByName(
-                ComplexTypeWrapper.createComplexTypeName(getType().getLocalPart()));
+        if (getType()) {
+            ComplexTypeWrapper wrapper = schema.getComplexTypeByName(getType().getLocalPart())
+            return wrapper ?: schema.getComplexTypeByName(createComplexTypeName(getType().getLocalPart()))
         }
-        return null;
+        null
     }
 
-    private SimpleTypeWrapper getSimpleTypeWrapper(SchemaWrapper schema) {
+    SimpleTypeWrapper getSimpleTypeWrapper(SchemaWrapper schema) {
         if (isLocalSimpleType()) {
-            trace("Is a local simpleType");
-            return new SimpleTypeWrapper(xsdSchemaService, getSimpleType(), getName());
+            trace('Is a local simpleType')
+            return new SimpleTypeWrapper(xsdSchemaService, getSimpleType(), createSimpleTypeName(getName(), true))
         }
 
-        if (getBaseTypeAttribute() != null) {
-            debug("Has a base attribute {}", getBaseTypeAttribute().getName());
-            if (getBaseTypeAttribute() instanceof LocalSimpleType) return new SimpleTypeWrapper(xsdSchemaService, getBaseTypeAttribute(), getName());
-            return new SimpleTypeWrapper(xsdSchemaService, getBaseTypeAttribute());
+        if (getType()) {
+            trace('Has a type {}', getType())
+            SimpleTypeWrapper wrapper = schema.getSimpleTypeByName(getType().getLocalPart())
+            return wrapper ?: schema.getSimpleTypeByName(createSimpleTypeName(getType().getLocalPart()))
         }
 
-        if (getType() != null) {
-            trace("Has a type {}", getType());
-            SimpleTypeWrapper wrapper = schema.getSimpleTypeByName(getType().getLocalPart());
-            return wrapper != null ? wrapper : schema.getSimpleTypeByName(
-                SimpleTypeWrapper.createSimpleTypeName(getType().getLocalPart()));
+        BaseAttribute baseAttribute = getBaseTypeAttribute()
+        if (baseAttribute) {
+            debug('Has a base attribute {}', baseAttribute.getName())
+            if (getBaseTypeAttribute().simpleType)
+                return new SimpleTypeWrapper(xsdSchemaService, baseAttribute.simpleType, createSimpleTypeName(getName(), true))
         }
 
-        return null;
+        null
     }
 
-    private boolean isReferenceElement() {
-        return getName() == null && getRef() != null;
-    }
 }

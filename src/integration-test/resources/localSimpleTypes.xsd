@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="https://metadatacatalogue.com/xsd/test/simple/1.0"
+           targetNamespace="https://metadatacatalogue.com/xsd/test/simple/1.0" elementFormDefault="qualified">
+  <xs:element name="topElement" type="complexTypeA" />
+  <xs:complexType name="complexTypeA">
+    <xs:sequence>
+      <xs:element name="elementA">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="10" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="elementB">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Y">
+              <xs:annotation>
+                <xs:appinfo>Yes</xs:appinfo>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="N">
+              <xs:annotation>
+                <xs:appinfo>No</xs:appinfo>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="U">
+              <xs:annotation>
+                <xs:appinfo>Unknown</xs:appinfo>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="elementC">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="10" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="elementD" type="complexTypeB"> </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="complexTypeB">
+    <xs:sequence>
+      <xs:element name="elementA">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="[a-z]+" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="elementB">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Y">
+              <xs:annotation>
+                <xs:appinfo>Yes</xs:appinfo>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="N">
+              <xs:annotation>
+                <xs:appinfo>No</xs:appinfo>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="U">
+              <xs:annotation>
+                <xs:appinfo>Unknown</xs:appinfo>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="elementC">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="10" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

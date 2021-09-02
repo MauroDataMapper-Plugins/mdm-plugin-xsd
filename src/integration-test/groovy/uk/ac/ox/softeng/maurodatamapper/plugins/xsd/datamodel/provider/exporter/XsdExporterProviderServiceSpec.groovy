@@ -28,7 +28,9 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.BaseXsdImportorExporterProviderServiceSpec
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.BaseXsdImporterExporterProviderServiceSpec
+
+import spock.lang.PendingFeature
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -39,17 +41,12 @@ import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
 @Integration
 @Rollback
 @Slf4j
-class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServiceSpec {
+class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServiceSpec {
 
     DataModelService dataModelService
     XsdExporterProviderService xsdExporterProviderService
 
-    @Override
-    XsdExporterProviderService getXsdExporterProviderService() {
-        xsdExporterProviderService
-    }
-
-
+    @PendingFeature(reason = 'Exporter disabled while rebuilding importer')
     void "test export simple"() {
         given:
         setupData()
@@ -168,6 +165,7 @@ class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServ
 
     }
 
+    @PendingFeature(reason = 'Exporter disabled while rebuilding importer')
     void "test export complex"() {
         given:
         setupData()
@@ -494,6 +492,7 @@ class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServ
         completeCompareXml(fudgeDates(expected), fudgeDates(exportedXsd))
     }
 
+    @PendingFeature(reason = 'Exporter disabled while rebuilding importer')
     void "test export hepatitis"() {
         given:
         setupData()

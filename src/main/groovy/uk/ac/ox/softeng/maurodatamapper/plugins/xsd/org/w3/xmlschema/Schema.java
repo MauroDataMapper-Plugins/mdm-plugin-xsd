@@ -233,7 +233,7 @@ public class Schema
      *
      * <p> For example, to add a new item, do as follows:
      * <pre>
-     *    getIncludesAndImportsAndRedefines().add(newItem);
+     *    getContent().add(newItem);
      * </pre>
      *
      *
