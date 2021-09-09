@@ -30,7 +30,7 @@ import javax.xml.bind.JAXBElement
 enum RestrictionKind {
 
     maxExclusive("Max Exclusive"),
-    minInclusive("Min Exclusive"),
+    minInclusive("Min Inclusive"),
     minLength("Min Length"),
     enumeration("Enumeration"),
     length("Length"),

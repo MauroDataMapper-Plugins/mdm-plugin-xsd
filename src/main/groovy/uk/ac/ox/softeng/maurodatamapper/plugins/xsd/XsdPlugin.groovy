@@ -37,6 +37,7 @@ abstract class XsdPlugin /*implements MetadataCataloguePlugin*/ {
     public static final String METADATA_XSD_FIXED = METADATA_LABEL_PREFIX + "Fixed"
     public static final String METADATA_XSD_CHOICE = METADATA_LABEL_PREFIX + "Choice Group"
     public static final String METADATA_XSD_ALL = METADATA_LABEL_PREFIX + "All Group"
+    public static final String METADATA_XSD_MIN_LENGTH =METADATA_LABEL_PREFIX + "Min Length"
 
     //    @Override
     Boolean allowsExtraMetadataKeys() {
@@ -52,6 +53,7 @@ abstract class XsdPlugin /*implements MetadataCataloguePlugin*/ {
           METADATA_XSD_DEFAULT,
           METADATA_XSD_FIXED,
           METADATA_XSD_CHOICE,
+          METADATA_XSD_MIN_LENGTH,
           METADATA_XSD_ALL] +
          uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.values().collect {it.displayText}) as HashSet
     }
