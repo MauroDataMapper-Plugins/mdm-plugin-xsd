@@ -184,7 +184,7 @@ public class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> {
         if (dataType.instanceOf(EnumerationType.class)) {
             trace("DataType is enumerationType with {} values", ((EnumerationType) dataType).getEnumerationValues().size());
 
-            ((EnumerationType) dataType).getEnumerationValues().each {ev ->
+            ((EnumerationType) dataType).getEnumerationValues().toSorted().each {ev ->
                 Object element = RestrictionWrapper.createRestrictionElement(RestrictionKind.enumeration, ev.getKey(),
                                                                              createAnnotation(ev.getValue()));
                 if (element != null) restriction.getMinExclusivesAndMinInclusivesAndMaxExclusives().add(element);

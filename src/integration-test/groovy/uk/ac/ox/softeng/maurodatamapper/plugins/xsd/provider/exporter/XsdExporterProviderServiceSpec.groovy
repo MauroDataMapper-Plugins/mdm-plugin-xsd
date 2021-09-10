@@ -21,12 +21,14 @@ import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
 import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
 import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
+import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.DataModelJsonImporterService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter.XsdExporterProviderService
 
 import grails.gorm.transactions.Rollback
@@ -54,6 +56,8 @@ import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XS
 class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServiceSpec {
 
     XsdExporterProviderService xsdExporterProviderService
+    DataModelService dataModelService
+
 
 
     void "test export simple"() {
@@ -69,9 +73,9 @@ class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServ
         checkAndSave(dataModel)
 
         EnumerationType et = new EnumerationType(label: "element C", createdByUser: reader1)
-        et.addToEnumerationValues(key: '1', value: 'Possible')
-        et.addToEnumerationValues(key: '2', value: 'Not Possible')
-        et.addToEnumerationValues(key: '3', value: 'Probable')
+        et.addToEnumerationValues(key: '1', value: 'Possible', index: 0)
+        et.addToEnumerationValues(key: '2', value: 'Not Possible', index: 1)
+        et.addToEnumerationValues(key: '3', value: 'Probable', index: 2)
         dataModel.addToDataTypes(et)
         checkAndSave(et)
 
@@ -494,6 +498,32 @@ class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServ
         Files.write(p, exportedXsd.getBytes('ISO-8859-1'))
 
         Path expPath = Paths.get('src/integration-test/resources/expected/complex.xsd')
+        String expected = new String(Files.readAllBytes(expPath), 'ISO-8859-1')
+
+        then:
+        completeCompareXml(fudgeDates(expected), fudgeDates(exportedXsd))
+    }
+
+    void "test export hepatitis"() {
+        given:
+        setupData()
+
+        byte[] file = loadTestFile('hic__hepatitis_v2.0.0', 'json')
+        DataModel dm = importModel(file)
+        dataModelService.validate(dm)
+        dataModelService.saveModelWithContent(dm)
+
+        when:
+
+
+        ByteArrayOutputStream byteArrayOutputStream = xsdExporterProviderService.exportDomain(reader1, dm.getId())
+
+        String exportedXsd = byteArrayOutputStream.toString('ISO-8859-1')
+
+        Path p = Paths.get('build/tmp/', 'hic__hepatitis_v2.0.0.xsd')
+        Files.write(p, exportedXsd.getBytes('ISO-8859-1'))
+
+        Path expPath = Paths.get('src/integration-test/resources/expected/hic__hepatitis_v2.0.0.xsd')
         String expected = new String(Files.readAllBytes(expPath), 'ISO-8859-1')
 
         then:
