@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.provider.importer
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer
 
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiException
 import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem

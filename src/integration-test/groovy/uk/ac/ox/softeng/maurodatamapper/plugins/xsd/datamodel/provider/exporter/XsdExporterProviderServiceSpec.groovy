@@ -15,49 +15,39 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter
 
-import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
-import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
+import grails.gorm.transactions.Rollback
+import grails.testing.mixin.integration.Integration
+import groovy.util.logging.Slf4j
 import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
-import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.DataModelJsonImporterService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter.XsdExporterProviderService
-
-import grails.gorm.transactions.Rollback
-import grails.testing.mixin.integration.Integration
-import groovy.util.logging.Slf4j
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.BaseXsdImportorExporterProviderServiceSpec
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_LABEL_PREFIX
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_LABEL_RESTRICTION_PREFIX
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_ALL
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_CHOICE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_DEFAULT
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
 
 @Integration
 @Rollback
 @Slf4j
 class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServiceSpec {
 
-    XsdExporterProviderService xsdExporterProviderService
     DataModelService dataModelService
+    XsdExporterProviderService xsdExporterProviderService
 
+    @Override
+    XsdExporterProviderService getXsdExporterProviderService() {
+        xsdExporterProviderService
+    }
 
 
     void "test export simple"() {
@@ -163,7 +153,7 @@ class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServ
         checkAndSave(dataModel)
 
         when:
-        ByteArrayOutputStream byteArrayOutputStream = xsdExporterProviderService.exportDomain(reader1, dataModel.getId())
+        ByteArrayOutputStream byteArrayOutputStream = getXsdExporterProviderService().exportDomain(reader1, dataModel.getId())
 
         String exportedXsd = byteArrayOutputStream.toString('ISO-8859-1')
 
@@ -490,7 +480,7 @@ class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServ
         checkAndSave(dataModel)
 
         when:
-        ByteArrayOutputStream byteArrayOutputStream = xsdExporterProviderService.exportDomain(reader1, dataModel.getId())
+        ByteArrayOutputStream byteArrayOutputStream = getXsdExporterProviderService().exportDomain(reader1, dataModel.getId())
 
         String exportedXsd = byteArrayOutputStream.toString('ISO-8859-1')
 
@@ -516,7 +506,7 @@ class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServ
         when:
 
 
-        ByteArrayOutputStream byteArrayOutputStream = xsdExporterProviderService.exportDomain(reader1, dm.getId())
+        ByteArrayOutputStream byteArrayOutputStream = getXsdExporterProviderService().exportDomain(reader1, dm.getId())
 
         String exportedXsd = byteArrayOutputStream.toString('ISO-8859-1')
 

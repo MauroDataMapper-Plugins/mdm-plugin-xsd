@@ -1,4 +1,4 @@
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.provider.importer
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer
 
 import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration

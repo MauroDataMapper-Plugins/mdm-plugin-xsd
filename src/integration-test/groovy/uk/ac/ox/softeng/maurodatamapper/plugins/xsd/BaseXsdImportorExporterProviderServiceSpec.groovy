@@ -17,7 +17,6 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
 
-
 import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
 import grails.testing.spock.OnceBefore
@@ -26,30 +25,19 @@ import groovy.util.logging.Slf4j
 import groovy.xml.XmlUtil
 import org.xmlunit.builder.DiffBuilder
 import org.xmlunit.builder.Input
-import org.xmlunit.diff.DefaultNodeMatcher
-import org.xmlunit.diff.Diff
-import org.xmlunit.diff.DifferenceEvaluator
-import org.xmlunit.diff.DifferenceEvaluators
-import org.xmlunit.diff.ElementSelector
+import org.xmlunit.diff.*
 import org.xmlunit.input.CommentLessSource
 import spock.lang.Shared
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiException
 import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
 import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
-import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
 import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.FileParameter
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
-
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
-import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.DataModelJsonImporterService
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelFileImporterProviderServiceParameters
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter.XsdExporterProviderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.diff.evaluator.IgnoreNameAttributeDifferenceEvaluator
-
 import uk.ac.ox.softeng.maurodatamapper.test.integration.BaseIntegrationSpec
 import uk.ac.ox.softeng.maurodatamapper.test.xml.evalutator.IgnoreOrderDifferenceEvaluator
 import uk.ac.ox.softeng.maurodatamapper.test.xml.selector.CustomElementSelector
@@ -59,21 +47,17 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_LABEL_RESTRICTION_PREFIX
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_CHOICE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_MIN_LENGTH
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
-
 @Slf4j
 @Integration
 @Rollback
-class BaseXsdImportorExporterProviderServiceSpec extends BaseIntegrationSpec {
+abstract class BaseXsdImportorExporterProviderServiceSpec extends BaseIntegrationSpec {
 
 
     DataModel dataModel
     Folder folder
     DataModelJsonImporterService dataModelJsonImporterService
+
+    abstract XsdExporterProviderService getXsdExporterProviderService()
 
     @Shared
     Path resourcesPath
@@ -81,10 +65,11 @@ class BaseXsdImportorExporterProviderServiceSpec extends BaseIntegrationSpec {
     @Shared
     DataModelFileImporterProviderServiceParameters basicParameters
 
+
     @OnceBefore
     void setupResourcesPath() {
         resourcesPath = Paths.get(BuildSettings.BASE_DIR.absolutePath, 'src', 'integration-test', 'resources')
-        }
+    }
 
 
     @Override
@@ -142,7 +127,7 @@ class BaseXsdImportorExporterProviderServiceSpec extends BaseIntegrationSpec {
     }
 
 
-    byte[] loadTestFile(String filename,  String filetype) {
+    byte[] loadTestFile(String filename, String filetype) {
         Path testFilePath = resourcesPath.resolve("${filename}.${filetype}").toAbsolutePath()
         assert Files.exists(testFilePath)
         Files.readAllBytes(testFilePath)
@@ -164,7 +149,7 @@ class BaseXsdImportorExporterProviderServiceSpec extends BaseIntegrationSpec {
         DataModel imported = dataModelJsonImporterService.importDomain(admin, basicParameters) as DataModel
         imported.folder = importFolder
         imported
-   }
+    }
 
     String failureReason
 
