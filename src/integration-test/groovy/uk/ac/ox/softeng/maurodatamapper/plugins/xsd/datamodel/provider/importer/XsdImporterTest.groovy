@@ -15,8 +15,9 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer
 
+import spock.lang.PendingFeature
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiException
 import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
@@ -25,6 +26,7 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
 import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdTest
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImporterProviderServiceParameters
 
 import org.apache.commons.lang3.tuple.Pair
@@ -60,7 +62,7 @@ import static org.junit.Assert.assertTrue
  */
 class XsdImporterTest extends XsdTest {
 
-    @Test
+    @PendingFeature
     void testImportComplex() throws IOException, ApiException {
         XsdImporterProviderServiceParameters params = createImportParameters("complex.xsd", "XSD Test: Complex model")
 
@@ -211,7 +213,7 @@ class XsdImporterTest extends XsdTest {
         verifyDataElement(elements, "elementN", "mandatoryString", "PrimitiveType", "complexComplexM")
     }
 
-    @Test
+    @PendingFeature
     void testImportGelCancerRac() throws IOException {
         XsdImporterProviderServiceParameters params = createImportParameters("RegistrationAndConsentsCancer-v3.1.2.xsd", "XSD Test: GEL CAN RAC")
 
@@ -267,7 +269,7 @@ class XsdImporterTest extends XsdTest {
         assertEquals("Number of elements", 59, elements.size())
     }
 
-    @Test
+    @PendingFeature
     void testImportSimple() throws IOException {
         XsdImporterProviderServiceParameters params = createImportParameters("simple.xsd", "XSD Test: Simple model")
 
