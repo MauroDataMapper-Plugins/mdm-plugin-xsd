@@ -62,7 +62,6 @@ import static org.junit.Assert.assertTrue
  */
 class XsdImporterTest extends XsdTest {
 
-    @Test
     @PendingFeature
     void testImportComplex() throws IOException, ApiException {
         XsdImporterProviderServiceParameters params = createImportParameters("complex.xsd", "XSD Test: Complex model")
@@ -214,7 +213,6 @@ class XsdImporterTest extends XsdTest {
         verifyDataElement(elements, "elementN", "mandatoryString", "PrimitiveType", "complexComplexM")
     }
 
-    @Test
     @PendingFeature
     void testImportGelCancerRac() throws IOException {
         XsdImporterProviderServiceParameters params = createImportParameters("RegistrationAndConsentsCancer-v3.1.2.xsd", "XSD Test: GEL CAN RAC")
@@ -271,7 +269,6 @@ class XsdImporterTest extends XsdTest {
         assertEquals("Number of elements", 59, elements.size())
     }
 
-    @Test
     @PendingFeature
     void testImportSimple() throws IOException {
         XsdImporterProviderServiceParameters params = createImportParameters("simple.xsd", "XSD Test: Simple model")
