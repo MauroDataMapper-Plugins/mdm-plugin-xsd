@@ -90,46 +90,46 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     }
 
     List<Include> getIncludes() {
-        getContent().findAll {it instanceof Include} as List<Include>
+        getContent().findAll { it instanceof Include } as List<Include>
     }
 
     Set<SimpleTypeWrapper> getSimpleTypes() {
-        List<SimpleTypeWrapper> wrappers = getContent().findAll {it instanceof SimpleType}.collect {
+        List<SimpleTypeWrapper> wrappers = getContent().findAll { it instanceof SimpleType }.collect {
             new SimpleTypeWrapper(xsdSchemaService, it as SimpleType)
         }
-        importedSchemas.each {wrappers.addAll(it.getSimpleTypes())}
+        importedSchemas.each { wrappers.addAll(it.getSimpleTypes()) }
         wrappers
     }
 
     SimpleTypeWrapper getSimpleTypeByName(String name) {
         if (!name) return null
-        simpleTypes.find {it.matchesName(name)}
+        simpleTypes.find { it.matchesName(name) }
     }
 
     List<ElementWrapper> getElements() {
-        List<ElementWrapper> wrappers = getContent().findAll {it instanceof Element}.collect {
+        List<ElementWrapper> wrappers = getContent().findAll { it instanceof Element }.collect {
             new ElementWrapper(xsdSchemaService, it as Element)
         }
-        importedSchemas.each {wrappers.addAll(it.getElements())}
+        importedSchemas.each { wrappers.addAll(it.getElements()) }
         wrappers
     }
 
     ElementWrapper getElementByName(String name) {
         if (!name) return null
-        elements.find {name == it.getName()}
+        elements.find { name == it.getName() }
     }
 
     List<ComplexTypeWrapper> getComplexTypes() {
-        List<ComplexTypeWrapper> wrappers = getContent().findAll {it instanceof ComplexType}.collect {
+        List<ComplexTypeWrapper> wrappers = getContent().findAll { it instanceof ComplexType }.collect {
             new ComplexTypeWrapper(xsdSchemaService, it as ComplexType)
         }
-        importedSchemas.each {wrappers.addAll(it.getComplexTypes())}
+        importedSchemas.each { wrappers.addAll(it.getComplexTypes()) }
         wrappers
     }
 
     ComplexTypeWrapper getComplexTypeByName(String name) {
         if (!name) return null
-        complexTypes.find {it.matchesName(name)}
+        complexTypes.find { it.matchesName(name) }
     }
 
     DataType getDataType(String key) {
@@ -160,19 +160,19 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
         cleanUnusedNonXsdBasePrimitiveTypes(dataModel)
 
         debug('Created DataModel')
-        float dta = dataStore.dataTypeCreations.sum() / dataStore.dataTypeCreations.size()
-        float dca = dataStore.dataClassCreations.sum() / dataStore.dataClassCreations.size()
-        float dea = dataStore.dataElementCreations.sum() / dataStore.dataElementCreations.size()
+        float dta = dataStore.dataTypeCreations.sum() == null ? 0 : dataStore.dataTypeCreations.sum() / dataStore.dataTypeCreations.size() == 0 ? 1 : dataStore.dataTypeCreations.size()
+        float dca = dataStore.dataClassCreations.sum() == null ? 0 : dataStore.dataClassCreations.sum() / dataStore.dataClassCreations.size() == 0 ? 1 : dataStore.dataClassCreations.size()
+        float dea = dataStore.dataElementCreations.sum() == null ? 0 : dataStore.dataElementCreations.sum() / dataStore.dataElementCreations.size() == 0 ? 1 : dataStore.dataElementCreations.size()
         debug('AVG Times: \n  DataTypes: {}\n  DataClasses: {}\n  DataElements: {}', Utils.getTimeString(dta.toLong()),
-              Utils.getTimeString(dca.toLong()),
-              Utils.getTimeString(dea.toLong()))
+                Utils.getTimeString(dca.toLong()),
+                Utils.getTimeString(dea.toLong()))
         dataModel
     }
 
     void createXsdBasePrimitiveTypes(User user, DataModel dataModel) {
         info('Adding {} primitive base types', PRIMITIVE_XML_TYPES.size())
 
-        PRIMITIVE_XML_TYPES.each {t ->
+        PRIMITIVE_XML_TYPES.each { t ->
             PrimitiveType pt = xsdSchemaService.createPrimitiveTypeForDataModel(dataModel, t, 'XML primitive type: xs:' + t, user)
             pt.addToMetadata(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE, XS_NAMESPACE, user)
             pt.addToMetadata(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE_PREFIX, XS_PREFIX, user)
@@ -183,7 +183,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     void createSimpleTypes(User user, DataModel dataModel) {
         if (simpleTypes.isEmpty()) return
         info('Adding {} simple types', simpleTypes.size())
-        simpleTypes.each {st -> findOrCreateDataType(st, user, dataModel)}
+        simpleTypes.each { st -> findOrCreateDataType(st, user, dataModel) }
     }
 
     void createElements(User user, DataModel dataModel, String rootElement, DataStore dataStore) {
@@ -197,7 +197,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
 
             // Root element defined so want to import that only
             if (rootElement) {
-                ElementWrapper element = elements.find {e -> rootElement.equalsIgnoreCase(e.getName())}
+                ElementWrapper element = elements.find { e -> rootElement.equalsIgnoreCase(e.getName()) }
                 if (element) {
                     info('Adding root element {}', rootElement)
                     element.createDataModelElement(user, dataModel, this)
@@ -209,17 +209,17 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
             else {
                 info('Adding {} elements', elements.size())
                 // Assuming at this point that every element defined is a data class / complex data element
-                elements.each {e -> e.createDataModelElement(user, dataModel, this)}
+                elements.each { e -> e.createDataModelElement(user, dataModel, this) }
             }
         }
 
-        importedSchemas.each {schema -> schema.createElements(user, dataModel, rootElement, this.dataStore)}
+        importedSchemas.each { schema -> schema.createElements(user, dataModel, rootElement, this.dataStore) }
     }
 
     DataType findOrCreateDataType(SimpleTypeWrapper simpleTypeWrapper, User user, DataModel dataModel) {
         long start = System.currentTimeMillis()
         try {
-            DataType dataType = dataStore.addDataType(simpleTypeWrapper.name) {key, existing ->
+            DataType dataType = dataStore.addDataType(simpleTypeWrapper.name) { key, existing ->
                 // New local simple type so just create
                 if (!existing) return simpleTypeWrapper.createDataType(user, dataModel, this)
                 //Non-local simple types are always unique
@@ -244,7 +244,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     DataType findOrCreateReferenceDataType(User user, DataModel dataModel, DataClass referencedDataClass, String description) {
         long start = System.currentTimeMillis()
         String dataTypeName = createSimpleTypeName(referencedDataClass.getLabel())
-        DataType dataType = dataStore.addDataType(dataTypeName) {key, existing ->
+        DataType dataType = dataStore.addDataType(dataTypeName) { key, existing ->
             if (existing) return existing
             xsdSchemaService.createReferenceTypeForDataModel(dataModel, dataTypeName, description, user, referencedDataClass)
         }
@@ -253,7 +253,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     }
 
     DataClass findOrCreateDataClass(User user, DataModel parentDataModel, DataClass parentDataClass, ComplexTypeWrapper complexTypeWrapper)
-        throws ApiInternalException {
+            throws ApiInternalException {
         debug('Find or create DataClass for {}', complexTypeWrapper)
         try {
             complexTypeWrapper.setName(complexTypeWrapper.getName())
@@ -309,7 +309,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     void cleanUnusedNonXsdBasePrimitiveTypes(DataModel dataModel) {
         dataModel.dataTypes.findAll {
             !it.dataElements &&
-            it.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE)?.value != XS_NAMESPACE
+                    it.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE)?.value != XS_NAMESPACE
         }.each {
             dataModel.removeFromDataTypes(it)
         }
@@ -453,7 +453,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
      */
 
     void loadIncludedSchemas(XsdSchemaService xsdSchemaService, String directory, Map<String, SchemaWrapper> loadedSchemas)
-        throws FileNotFoundException, JAXBException {
+            throws FileNotFoundException, JAXBException {
 
         List<Include> includes = getIncludes()
         if (includes.isEmpty()) return
@@ -479,13 +479,13 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     }
 
     static SchemaWrapper createSchemaWrapperFromInputStream(XsdSchemaService xsdSchemaService, InputStream is, String filename, String directory)
-        throws JAXBException, FileNotFoundException {
+            throws JAXBException, FileNotFoundException {
         createSchemaWrapperFromInputStream(xsdSchemaService, is, filename, directory, [:])
     }
 
     static SchemaWrapper createSchemaWrapperFromInputStream(XsdSchemaService xsdSchemaService, InputStream inputStream, String filename,
                                                             String directory, Map<String, SchemaWrapper> loadedSchemas)
-        throws JAXBException, FileNotFoundException {
+            throws JAXBException, FileNotFoundException {
 
         SchemaWrapper schemaWrapper = new SchemaWrapper(xsdSchemaService, inputStream, filename.replaceFirst('\\.xsd', ''))
         schemaWrapper.loadIncludedSchemas(xsdSchemaService, directory, loadedSchemas)

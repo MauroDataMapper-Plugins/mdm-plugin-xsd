@@ -72,19 +72,22 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
     XsdExporterProviderService xsdExporterProviderService
     XsdImporterProviderService xsdImporterProviderService
 
-    @Test
-    @Ignore
+
     void testImportEmpty() {
+        given:
+        setupData()
         XsdImporterProviderServiceParameters params = createImportParameters('empty.xsd', 'XSD Test')
 
         DataModel dataModel = importDataModelAndRetrieveFromDatabase(params)
 
+        when:
         verifyDataModelValues(dataModel, params, 'XSD Test', 'https://metadatacatalogue.com/xsd/test/empty/1.0')
 
         /*
        DataType checking
         */
 
+        then:
         Set<DataType> types = dataModel.getDataTypes()
         assertEquals('Number of datatypes', 44, types.size())
 
@@ -93,7 +96,6 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
     }
 
     @Test
-    @Ignore
     void testImportSimpleDataTypesOnly() {
         XsdImporterProviderServiceParameters params = createImportParameters('simpleDataTypesOnly.xsd', 'XSD Test')
 

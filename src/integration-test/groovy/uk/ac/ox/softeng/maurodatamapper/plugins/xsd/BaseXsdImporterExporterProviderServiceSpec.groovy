@@ -17,6 +17,8 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
 
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.XsdImporterProviderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImporterProviderServiceParameters
 
 import grails.gorm.transactions.Rollback
@@ -61,8 +63,12 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
     DataModel dataModel
     Folder folder
     DataModelJsonImporterService dataModelJsonImporterService
+    DataModelService dataModelService
+
 
     abstract XsdExporterProviderService getXsdExporterProviderService()
+    abstract XsdImporterProviderService getXsdImporterProviderService()
+
 
     @Shared
     Path resourcesPath
@@ -151,6 +157,24 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
     }
 
     DataModel importModel(XsdImporterProviderServiceParameters params){
+        DataModel imported = getXsdImporterProviderService().importDomain(admin, params) as DataModel
+        imported.folder = folder
+        imported
+    }
+
+    DataModel importJsonModel(byte[] bytes) {
+        basicParameters = new DataModelFileImporterProviderServiceParameters().tap {
+            importAsNewBranchModelVersion = false
+            importAsNewDocumentationVersion = false
+            finalised = false
+        }
+
+        log.trace('Importing:\n {}', new String(bytes))
+        basicParameters.importFile = new FileParameter(fileContents: bytes)
+        importModel(basicParameters)
+    }
+
+    DataModel importJsonModel(DataModelFileImporterProviderServiceParameters params){
         DataModel imported = dataModelJsonImporterService.importDomain(admin, params) as DataModel
         imported.folder = folder
         imported
@@ -203,10 +227,13 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
 
     DataModel importDataModelAndRetrieveFromDatabase(XsdImporterProviderServiceParameters params) {
         DataModel importedModel = importModel(params)
+        dataModelService.validate(importedModel)
+        dataModelService.saveModelWithContent(importedModel)
 
         log.debug('Getting datamodel {} from database to verify', importedModel.getId())
         // Rather than use the one returned from the import, we want to check whats actually been saved into the DB
         DataModel dataModel = DataModel.get(importedModel.getId())
+
         assertNotNull('DataModel should exist in Database', dataModel)
         dataModel
     }

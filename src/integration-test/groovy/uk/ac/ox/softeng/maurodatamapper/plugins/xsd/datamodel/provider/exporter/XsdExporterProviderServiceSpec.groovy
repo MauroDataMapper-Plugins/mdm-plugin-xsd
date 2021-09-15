@@ -31,6 +31,7 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.BaseXsdImporterExporterProviderServiceSpec
 
 import spock.lang.PendingFeature
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.XsdImporterProviderService
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -45,6 +46,7 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
 
     DataModelService dataModelService
     XsdExporterProviderService xsdExporterProviderService
+    XsdImporterProviderService xsdImporterProviderService
 
     @PendingFeature(reason = 'Exporter disabled while rebuilding importer')
     void "test export simple"() {
@@ -498,7 +500,7 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         setupData()
 
         byte[] file = loadTestFile('hic__hepatitis_v2.0.0', 'json')
-        DataModel dm = importModel(file)
+        DataModel dm = importJsonModel(file)
         dataModelService.validate(dm)
         dataModelService.saveModelWithContent(dm)
 
