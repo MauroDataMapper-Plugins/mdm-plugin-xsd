@@ -17,6 +17,9 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter
 
+import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
+
 import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
 import groovy.util.logging.Slf4j
@@ -52,6 +55,16 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
     void "test export simple"() {
         given:
         setupData()
+
+        String testUser = reader1.emailAddress
+
+        def testAuthority = new Authority(label: 'XsdTestAuthority', url: 'http://localhost', createdBy: testUser)
+        checkAndSave(testAuthority)
+
+        dataModel = new DataModel(createdByUser: reader1, label: 'XSD Test: Simple model', author: 'Test Author', organisation: 'Test Org',
+                                  description: 'Test description', type: DataModelType.DATA_STANDARD,
+                                  folder: folder, authority: testAuthority)
+        dataModel.save()
 
         //Create Simple Data Model : TODO Replace with import once importer is completed
         Metadata targetNamespace = new Metadata(createdByUser: reader1, namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE, value: ' https://metadatacatalogue.com/xsd/test/simple/1.0', multiFacetAwareItemId: UUID.randomUUID())
@@ -171,6 +184,16 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
     void "test export complex"() {
         given:
         setupData()
+
+        String testUser = reader1.emailAddress
+
+        def testAuthority = new Authority(label: 'XsdTestAuthority', url: 'http://localhost', createdBy: testUser)
+        checkAndSave(testAuthority)
+
+        dataModel = new DataModel(createdByUser: reader1, label: 'XSD Test: Simple model', author: 'Test Author', organisation: 'Test Org',
+                                  description: 'Test description', type: DataModelType.DATA_STANDARD,
+                                  folder: folder, authority: testAuthority)
+        dataModel.save()
 
         //Create Complex Data Model : TODO Replace with import once importer is completed
         Metadata targetNamespace = new Metadata(createdByUser: reader1, namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE, value: 'https://metadatacatalogue.com/xsd/test/complex/1.0', multiFacetAwareItemId: UUID.randomUUID())

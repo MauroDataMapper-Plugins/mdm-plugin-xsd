@@ -87,18 +87,7 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
     void setupDomainData() {
         folder = new Folder(label: 'xsdTestFolder', createdBy: reader1.emailAddress)
         checkAndSave(folder)
-
-        String testUser = reader1.emailAddress
-
-        def testAuthority = new Authority(label: 'XsdTestAuthority', url: 'http://localhost', createdBy: testUser)
-        checkAndSave(testAuthority)
-
-        dataModel = new DataModel(createdByUser: reader1, label: 'XSD Test: Simple model', author: 'Test Author', organisation: 'Test Org',
-                description: 'Test description', type: DataModelType.DATA_STANDARD,
-                folder: folder, authority: testAuthority)
-        dataModel.save()
-
-    }
+   }
 
 
     def testExport(UUID dataModelId, String filename, String outFileName) throws IOException, ApiException {
@@ -208,12 +197,11 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
 
     XsdImporterProviderServiceParameters createImportParameters(String filename, String modelName) throws IOException {
         XsdImporterProviderServiceParameters params = new XsdImporterProviderServiceParameters()
-        params.setAuthor('Test Author')
-        params.setOrganisation('Test Org')
-        params.setDescription('Test description')
-        params.setFinalised(true)
         params.setModelName(modelName)
         params.setFolderId(folder.id)
+        params.importAsNewBranchModelVersion = false
+        params.importAsNewDocumentationVersion = false
+        params.finalised = false
 
         Path p = Paths.get('src/integration-test/resources/' + filename)
         if (!Files.exists(p)) {
@@ -227,6 +215,7 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
 
     DataModel importDataModelAndRetrieveFromDatabase(XsdImporterProviderServiceParameters params) {
         DataModel importedModel = importModel(params)
+        importedModel.setCreatedBy(admin.emailAddress)
         dataModelService.validate(importedModel)
         dataModelService.saveModelWithContent(importedModel)
 

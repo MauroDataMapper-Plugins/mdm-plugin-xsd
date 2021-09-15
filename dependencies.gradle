@@ -1,3 +1,6 @@
+
+import java.util.concurrent.TimeUnit
+
 dependencies {
 
     // JAXB Support
@@ -17,4 +20,9 @@ dependencies {
     runtime "org.hibernate:hibernate-jcache"
     runtime group: 'org.ehcache', name: 'ehcache'
     runtime group: 'org.postgresql', name: 'postgresql'
+}
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, TimeUnit.SECONDS
 }

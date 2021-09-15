@@ -32,6 +32,7 @@ import grails.testing.mixin.integration.Integration
 import groovy.util.logging.Slf4j
 import org.junit.Ignore
 import org.junit.Test
+import spock.lang.PendingFeature
 
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_LABEL_PREFIX
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
@@ -72,7 +73,6 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
     XsdExporterProviderService xsdExporterProviderService
     XsdImporterProviderService xsdImporterProviderService
 
-
     void testImportEmpty() {
         given:
         setupData()
@@ -95,18 +95,21 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         assertEquals('Number of xs datatypes', 44, wsTypes.size())
     }
 
-    @Test
+
     void testImportSimpleDataTypesOnly() {
+        given:
+        setupData()
         XsdImporterProviderServiceParameters params = createImportParameters('simpleDataTypesOnly.xsd', 'XSD Test')
 
         DataModel dataModel = importDataModelAndRetrieveFromDatabase(params)
 
+        when:
         verifyDataModelValues(dataModel, params, 'XSD Test', 'https://metadatacatalogue.com/xsd/test/sdto/1.0')
 
         /*
        DataType checking
         */
-
+        then:
         Set<DataType> types = dataModel.getDataTypes()
         assertEquals('Number of datatypes', 44, types.size())
 
@@ -114,19 +117,21 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         assertEquals('Number of xs datatypes', 44, wsTypes.size())
     }
 
-    @Test
-    @Ignore
+
     void testImportMixedDataTypesOnly() {
+        given:
+        setupData()
         XsdImporterProviderServiceParameters params = createImportParameters('mixedDataTypesOnly.xsd', 'XSD Test')
 
         DataModel dataModel = importDataModelAndRetrieveFromDatabase(params)
 
+        when:
         verifyDataModelValues(dataModel, params, 'XSD Test', 'https://genomicsengland.co.uk/xsd/cancer/3.1.2')
 
         /*
        DataType checking
         */
-
+then:
         Set<DataType> types = dataModel.getDataTypes()
         assertEquals('Number of datatypes', 44, types.size())
 
@@ -208,19 +213,20 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
                           [(METADATA_XSD_CHOICE): 'choice'])
     }
 
-    @Test
-    @Ignore
+
     void testImportLocalSimpleTypesInsideElementsWithSameNames() {
+        given:
+        setupData()
         XsdImporterProviderServiceParameters params = createImportParameters('localSimpleTypes.xsd', 'XSD Test')
 
         DataModel dataModel = importDataModelAndRetrieveFromDatabase(params)
-
+        when:
         verifyDataModelValues(dataModel, params, 'XSD Test', 'https://metadatacatalogue.com/xsd/test/simple/1.0')
 
         /*
         DataType checking
          */
-
+        then:
         Set<DataType> types = dataModel.getDataTypes()
         assertEquals('Number of datatypes', 50, types.size())
 
