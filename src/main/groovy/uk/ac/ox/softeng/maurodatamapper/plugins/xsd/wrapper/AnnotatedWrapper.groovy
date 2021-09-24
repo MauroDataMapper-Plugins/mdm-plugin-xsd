@@ -111,7 +111,7 @@ abstract class AnnotatedWrapper<K extends Annotated> extends OpenAttrsWrapper<K>
     }
 
     void addMetadataToComponent(CatalogueItem component, String key, String value, User user) {
-        component.addToMetadata(XsdPlugin.METADATA_NAMESPACE, key, value, user)
+        component.addToMetadata(XsdPlugin.METADATA_NAMESPACE, key, value, user.emailAddress)
     }
 
 }

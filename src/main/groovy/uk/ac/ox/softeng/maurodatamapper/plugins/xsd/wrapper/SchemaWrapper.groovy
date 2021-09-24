@@ -45,6 +45,7 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
 import javax.xml.bind.Unmarshaller
 import javax.xml.namespace.QName
+import java.util.function.BiFunction
 
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
@@ -144,7 +145,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
 
         dataModelName = dataModel.getLabel()
 
-        dataModel.addToMetadata(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE, wrappedElement.getTargetNamespace(), createdBy)
+        dataModel.addToMetadata(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE, wrappedElement.getTargetNamespace(), createdBy.emailAddress)
 
         int sizeOfDataTypes = getSimpleTypes().size() + PRIMITIVE_XML_TYPES.size() + getComplexTypes().size()
         int sizeOfDataClasses = getComplexTypes().size() + getElements().size()
@@ -219,21 +220,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     DataType findOrCreateDataType(SimpleTypeWrapper simpleTypeWrapper, User user, DataModel dataModel) {
         long start = System.currentTimeMillis()
         try {
-            DataType dataType = dataStore.addDataType(simpleTypeWrapper.name) { key, existing ->
-                // New local simple type so just create
-                if (!existing) return simpleTypeWrapper.createDataType(user, dataModel, this)
-                //Non-local simple types are always unique
-                if (!simpleTypeWrapper.isLocalSimpleType()) return existing
-                // Enumeration types with the same name will always be identical
-                if (existing.instanceOf(EnumerationType)) return existing
-
-                // Local simple type with same name
-                // This is an issue as it could be the same or a new type, will occur as the containing element has the same name
-                // this is very common in COSD
-                if (simpleTypeWrapper.isSameAsDataType(existing, this)) return existing
-                simpleTypeWrapper.incrementName()
-                findOrCreateDataType(simpleTypeWrapper, user, dataModel)
-            }
+            DataType dataType = findOrCreateDataTypes(simpleTypeWrapper, user,dataModel)
             dataStore.dataTypeCreations << System.currentTimeMillis() - start
             return dataType
         } catch (Exception ex) {
@@ -241,10 +228,28 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
         }
     }
 
+    DataType findOrCreateDataTypes(SimpleTypeWrapper simpleTypeWrapper, User user, DataModel dataModel){
+        DataType existing = dataStore.getDataType(simpleTypeWrapper.name)
+        if (!existing) {
+            return dataStore.putDataType(simpleTypeWrapper.name,  simpleTypeWrapper.createDataType(user, dataModel, this))
+        }
+        //Non-local simple types are always unique
+        if (!simpleTypeWrapper.isLocalSimpleType()) return existing
+        // Enumeration types with the same name will always be identical
+        if (existing.instanceOf(EnumerationType)) return existing
+
+        // Local simple type with same name
+        // This is an issue as it could be the same or a new type, will occur as the containing element has the same name
+        // this is very common in COSD
+        if (simpleTypeWrapper.isSameAsDataType(existing, this)) existing
+        simpleTypeWrapper.incrementName()
+        findOrCreateDataType(simpleTypeWrapper, user, dataModel)
+    }
+
     DataType findOrCreateReferenceDataType(User user, DataModel dataModel, DataClass referencedDataClass, String description) {
         long start = System.currentTimeMillis()
         String dataTypeName = createSimpleTypeName(referencedDataClass.getLabel())
-        DataType dataType = dataStore.addDataType(dataTypeName) { key, existing ->
+        DataType dataType = dataStore.addDataType(dataTypeName)  { key, existing ->
             if (existing) return existing
             xsdSchemaService.createReferenceTypeForDataModel(dataModel, dataTypeName, description, user, referencedDataClass)
         }

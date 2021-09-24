@@ -56,6 +56,7 @@ class DataStore {
         !underConstruction.contains(s) && underConstruction.add(s)
     }
 
+    @Deprecated
     DataType addDataType(String key, BiFunction<String, DataType, DataType> mappingFunction) {
         dataTypes.compute(key, mappingFunction)
     }

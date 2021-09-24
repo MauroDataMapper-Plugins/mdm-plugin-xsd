@@ -152,7 +152,7 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> impl
         if (!local && standardiseTypeName(wrappedElement.name, false) == dataClass.label) return true
 
         Set<String> elements = getAllElements().collect {it.getName()}.toSet() + getAttributes().collect {it.name}
-        Set<String> dcElements = dataClass.childDataElements.collect {it.label}.toSet()
+        Set<String> dcElements = dataClass.dataElements.collect {it.label}.toSet()
 
         if (dcElements == elements) return true
         else if (elements.every {it in dcElements}) {
@@ -276,8 +276,8 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> impl
                 return dataClass
             }
 
-            if (extension.getChildDataElements()) {
-                extension.getChildDataElements().each {el -> xsdSchemaService.createDuplicateElementForDataClass(user, dataClass, el)}
+            if (extension.getDataElements()) {
+                extension.getDataElements().each {el -> xsdSchemaService.createDuplicateElementForDataClass(user, dataClass, el)}
             }
 
         }

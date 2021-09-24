@@ -66,12 +66,18 @@ class XsdSchemaService {
 
     //TODO CatalogueItem or ModelItem?
     // What can the parent of a DC be???
-    DataClass createDataClass(CatalogueItem parent, String label, String description, User createdBy, Integer minMultiplicity,
+    DataClass createDataClass(DataModel parent, String label, String description, User createdBy, Integer minMultiplicity,
                               Integer maxMultiplicity) {
-        DataClass dataClass = dataClassService.createDataClass(label, description, createdBy, minMultiplicity, maxMultiplicity)
-        moveDataClassToParent(dataClass, parent)
+        DataClass dataClass = dataClassService.findOrCreateDataClass(parent, label, description, createdBy, minMultiplicity, maxMultiplicity)
         dataClass
     }
+
+    DataClass createDataClass(DataClass parent, String label, String description, User createdBy, Integer minMultiplicity,
+                              Integer maxMultiplicity) {
+        DataClass dataClass = dataClassService.findOrCreateDataClass(parent, label, description, createdBy, minMultiplicity, maxMultiplicity)
+        dataClass
+    }
+
 
     EnumerationType addEnumerationValueToEnumerationType(EnumerationType enumerationType, String key, String value, User createdBy) {
         enumerationTypeService.addEnumerationValueToEnumerationType(enumerationType, key, value, createdBy)
@@ -88,15 +94,15 @@ class XsdSchemaService {
     DataElement createDuplicateElementForDataClass(User user, DataClass parent, DataElement original) {
 
         DataElement duplicate = createDataElementForDataClass(parent, original.label, original.description, user, original.dataType,
-                                                              original.minMultiplicity, original.maxMultiplicity)
-        original.getMetadata()?.each {md ->
+                original.minMultiplicity, original.maxMultiplicity)
+        original.getMetadata()?.each { md ->
             duplicate.addToMetadata(md.namespace, md.key, md.value, user)
         }
 
         duplicate
     }
 
-    Set<DataElement> getChildDataElements(DataClass dataClass) {
+    Set<DataElement> getDataElements(DataClass dataClass) {
         dataElementService.findAllByDataClassIdJoinDataType(dataClass.id)
     }
 
