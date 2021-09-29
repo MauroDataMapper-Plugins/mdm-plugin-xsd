@@ -17,6 +17,8 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
+import com.google.common.base.Strings
+import org.apache.commons.lang3.tuple.Pair
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiInternalException
 import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
 import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem
@@ -27,17 +29,7 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Element
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.FormChoice
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Include
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.OpenAttrs
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
 import uk.ac.ox.softeng.maurodatamapper.security.User
 import uk.ac.ox.softeng.maurodatamapper.util.Utils
 
@@ -45,13 +37,12 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
 import javax.xml.bind.Unmarshaller
 import javax.xml.namespace.QName
-import java.util.function.BiFunction
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.List
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE_PREFIX
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.PRIMITIVE_XML_TYPES
-
+import static java.util.stream.Collectors.toSet
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
 /**
  * @since 24/08/2017
  */
@@ -126,6 +117,10 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
         }
         importedSchemas.each { wrappers.addAll(it.getComplexTypes()) }
         wrappers
+    }
+
+    List<OpenAttrs> getIncludesAndImportsAndRedefines() {
+        return wrappedElement.getIncludesAndImportsAndRedefines()
     }
 
     ComplexTypeWrapper getComplexTypeByName(String name) {
@@ -311,7 +306,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
         dataClass
     }
 
-    void cleanUnusedNonXsdBasePrimitiveTypes(DataModel dataModel) {
+    static void cleanUnusedNonXsdBasePrimitiveTypes(DataModel dataModel) {
         dataModel.dataTypes.findAll {
             !it.dataElements &&
                     it.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE)?.value != XS_NAMESPACE
@@ -324,134 +319,146 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
      * Exporting DataModel
      */
 
-    //    void populateSchemaFromDataModel(DataModel dataModel, String defaultTargetNamespace) {
-    //        info('Populating from {}', dataModel)
-    //        Metadata tn = dataModel.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE)
-    //        if (tn) wrappedElement.setTargetNamespace(tn.getValue())
-    //        else wrappedElement.setTargetNamespace(defaultTargetNamespace)
-    //
-    //        wrappedElement.getOtherAttributes()[new QName('xmlns')] = wrappedElement.getTargetNamespace()
-    //        wrappedElement.setElementFormDefault(FormChoice.QUALIFIED)
-    //
-    //        debug('Adding schema annotation')
-    //        Annotation annotationDocumentation = createAnnotationDocumentation(
-    //            Pair.of('Name', dataModel.getLabel()),
-    //            Pair.of('Author', dataModel.getAuthor()),
-    //            Pair.of('Organisation', dataModel.getOrganisation()),
-    //            Pair.of('Description', dataModel.getDescription()),
-    //            Pair.of('Last Updated', dataModel.getLastUpdated()
-    //                .withOffsetSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
-    //
-    //        if (annotationDocumentation) {
-    //            getContent().add(annotationDocumentation)
-    //        }
-    //
-    //        debug('Adding in XSD elements')
-    //        addXsdElements(dataModel.getChildDataClasses().findAll {dc ->
-    //            dc.getMaxMultiplicity() &&
-    //            dc.getMinMultiplicity()
-    //        })
-    //    }
-    //
+    void populateSchemaFromDataModel(DataModel dataModel, String defaultTargetNamespace) {
+        info("Populating from {}", dataModel)
+        Metadata tn = dataModel.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_TARGET_NAMESPACE)
+        if (tn != null) wrappedElement.setTargetNamespace(tn.getValue())
+        else wrappedElement.setTargetNamespace(defaultTargetNamespace)
+
+        wrappedElement.getOtherAttributes().put(new QName("xmlns"), wrappedElement.getTargetNamespace())
+        wrappedElement.setElementFormDefault(FormChoice.QUALIFIED)
+
+        debug("Adding schema annotation")
+        Annotation annotationDocumentation = createAnnotationDocumentation(
+                Pair.of("Name", dataModel.getLabel()),
+                Pair.of("Author", dataModel.getAuthor()),
+                Pair.of("Organisation", dataModel.getOrganisation()),
+                Pair.of("Description", dataModel.getDescription()),
+                Pair.of("Last Updated", dataModel.getLastUpdated()
+                        .withOffsetSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
+
+        if (annotationDocumentation != null) {
+            getIncludesAndImportsAndRedefines().add(annotationDocumentation)
+        }
+
+        debug("Adding in XSD elements")
+        addXsdElements(dataModel.getChildDataClasses().stream()
+                .filter({ dc ->
+                    dc.getMaxMultiplicity() != null &&
+                            dc.getMinMultiplicity() != null
+                }
+                ).collect(toSet()))
+    }
 
 
-    //    ComplexTypeWrapper findOrCreateComplexType(DataClass dataClass) {
-    //        String typeName = createComplexTypeName(dataClass)
-    //        debug('Find or create complexType {}', typeName)
-    //        ComplexTypeWrapper complexTypeWrapper = getComplexTypeByName(typeName)
-    //        if (complexTypeWrapper) {
-    //            complexTypeWrapper.setName(typeName)
-    //            trace('Found complexType {} matching {}', complexTypeWrapper.getName(), typeName)
-    //            return complexTypeWrapper
-    //        }
-    //
-    //        ComplexTypeWrapper wrapper = ComplexTypeWrapper.createComplexType(this, dataClass)
-    //        getContent().add(wrapper.wrappedElement)
-    //        wrapper
-    //    }
-    //
-    //    SimpleTypeWrapper findOrCreateSimpleType(DataType dataType) {
-    //        String typeName = createSimpleTypeName(dataType)
-    //        debug('Find or create simpleType {}', typeName)
-    //        SimpleTypeWrapper wrapper = getSimpleTypeByName(typeName)
-    //        if (wrapper) {
-    //            wrapper.setName(typeName)
-    //            debug('Found simpleType {} matching {}', wrapper.getName(), typeName)
-    //            return wrapper
-    //        }
-    //
-    //        wrapper = SimpleTypeWrapper.createSimpleType(xsdSchemaService, dataType, typeName)
-    //        if (!PRIMITIVE_XML_TYPES.contains(wrapper.getName())) {
-    //            debug('Adding {} to schema as not base XSD type', typeName)
-    //            getContent().add(wrapper.wrappedElement)
-    //        }
-    //        wrapper
-    //    }
-    //
 
-    //
+    ComplexTypeWrapper findOrCreateComplexType(DataClass dataClass) {
+        String typeName = createComplexTypeName(dataClass)
+        debug('Find or create complexType {}', typeName)
+        ComplexTypeWrapper complexTypeWrapper = getComplexTypeByName(typeName)
+        if (complexTypeWrapper) {
+            complexTypeWrapper.setName(typeName)
+            trace('Found complexType {} matching {}', complexTypeWrapper.getName(), typeName)
+            return complexTypeWrapper
+        }
 
-    //    private void addXsdElements(Set<DataClass> rootDataClasses) {
-    //
-    //        // These are all DataClasses which directly belong to the DataModel and have a multiplicity
-    //        // We need to create a complex type for each and an element,
-    //        // This method will recurse through the model creating only the elements into the XSD which are used to create the top level elements
-    //        rootDataClasses.each {dc -> getContent().add(ElementWrapper.createElement(this, dc).wrappedElement)}
-    //
-    //        getContent().sort {o1, o2 ->
-    //            // Elements at top
-    //            if (o1 instanceof AbstractElement) {
-    //                if (o2 instanceof AbstractElement) return ((AbstractElement) o1).getName() <=> ((AbstractElement) o2).getName()
-    //                if (o2 instanceof AbstractComplexType || o2 instanceof AbstractSimpleType) return -1
-    //            }
-    //
-    //            // Complex types next
-    //            if (o1 instanceof AbstractComplexType) {
-    //                if (o2 instanceof AbstractElement) return 1
-    //                if (o2 instanceof AbstractComplexType) return ((AbstractComplexType) o1).getName() <=> ((AbstractComplexType) o2).getName()
-    //                if (o2 instanceof AbstractSimpleType) return -1
-    //            }
-    //
-    //            // Simple types last
-    //            if (o1 instanceof AbstractSimpleType) {
-    //                if (o2 instanceof AbstractElement || o2 instanceof AbstractComplexType) return 1
-    //                if (o2 instanceof AbstractSimpleType) return ((AbstractSimpleType) o1).getName() <=> ((AbstractSimpleType) o2).getName()
-    //            }
-    //
-    //            // Anything else should be at the top
-    //            1
-    //        }
-    //    }
-    //
-    //    private void createComplexTypes(User user, DataModel dataModel) {
-    //
-    //        // Hopefully the order they are provided from the schema class is the order they are inside the actual schema
-    //        List<ComplexTypeWrapper> complexTypes = getComplexTypes()
-    //        info('Adding {} complex types, {} known complex types', complexTypes.size())
-    //        complexTypes.each {ct -> findOrCreateDataClass(user, dataModel, ct)}
-    //
-    //        // Complex types need to belong in the correct place in the datamodel, so we need to create all "dependent types first"
-    //        // This is easy by adding all the imported schemas first.
-    //        // Issue will be the order of addition inside the schema
-    //        importedSchemas.each {schema -> schema.createComplexTypes(user, dataModel, this.dataStore)}
-    //
-    //    }
-    //
-    //
-    //    private void createComplexTypes(User user, DataModel dataModel, DataStore dataStore) {
-    //        this.dataStore = dataStore
-    //        createComplexTypes(user, dataModel)
-    //    }
-    //
-    //
-    //    DataClass findOrCreateDataClass(User user, DataModel parentDataModel, ComplexTypeWrapper complexType) {
-    //        findOrCreateDataClass(user, parentDataModel, null, complexType)
-    //    }
-    //
-    //    private String getDataModelName() {
-    //        Strings.isNullOrEmpty(dataModelName) ? getName() : dataModelName
-    //    }
-    //
+        ComplexTypeWrapper wrapper = ComplexTypeWrapper.createComplexType(this, dataClass)
+        getContent().add(wrapper.wrappedElement)
+        wrapper
+    }
+
+    SimpleTypeWrapper findOrCreateSimpleType(DataType dataType) {
+        String typeName = createSimpleTypeName(dataType)
+        debug('Find or create simpleType {}', typeName)
+        SimpleTypeWrapper wrapper = getSimpleTypeByName(typeName)
+        if (wrapper) {
+            wrapper.setName(typeName)
+            debug('Found simpleType {} matching {}', wrapper.getName(), typeName)
+            return wrapper
+        }
+
+        wrapper = SimpleTypeWrapper.createSimpleType(xsdSchemaService, dataType, typeName)
+        if (!PRIMITIVE_XML_TYPES.contains(wrapper.getName())) {
+            debug('Adding {} to schema as not base XSD type', typeName)
+            getContent().add(wrapper.wrappedElement)
+        }
+        wrapper
+    }
+
+    void addXsdElements(Set<DataClass> rootDataClasses) {
+
+        // These are all DataClasses which directly belong to the DataModel and have a multiplicity
+        // We need to create a complex type for each and an element,
+        // This method will recurse through the model creating only the elements into the XSD which are used to create the top level elements
+        rootDataClasses.forEach({ dc -> getIncludesAndImportsAndRedefines().add(ElementWrapper.createElement(this, dc).wrappedElement) })
+
+        getIncludesAndImportsAndRedefines().sort({o1, o2 ->
+            // Elements at top
+            if (o1 instanceof AbstractElement) {
+                if (o2 instanceof AbstractElement) return ((AbstractElement) o1).getName() <=> ((AbstractElement) o2).getName()
+                if (o2 instanceof AbstractComplexType || o2 instanceof AbstractSimpleType) return -1
+            }
+
+            // Complex types next
+            if (o1 instanceof AbstractComplexType) {
+                if (o2 instanceof AbstractElement) return 1
+                if (
+                o2 instanceof AbstractComplexType) return ((AbstractComplexType) o1).getName() <=> ((AbstractComplexType) o2).getName()
+                if (o2 instanceof AbstractSimpleType) return -1
+            }
+
+            // Simple types last
+            if (o1 instanceof AbstractSimpleType) {
+                if (o2 instanceof AbstractElement ||
+                        o2 instanceof AbstractComplexType) return 1
+                if (
+                o2 instanceof AbstractSimpleType) return ((AbstractSimpleType) o1).getName() <=> ((AbstractSimpleType) o2).getName()
+            }
+
+            // Anything else should be at the top
+            return 1
+        })
+    }
+
+    void createComplexTypes(User user, DataModel dataModel) {
+
+        // Hopefully the order they are provided from the schema class is the order they are inside the actual schema
+        List<ComplexTypeWrapper> complexTypes = getComplexTypes()
+        info('Adding {} complex types, {} known complex types', complexTypes.size())
+        complexTypes.each {ct -> findOrCreateDataClass(user, dataModel, ct)}
+
+        // Complex types need to belong in the correct place in the datamodel, so we need to create all "dependent types first"
+        // This is easy by adding all the imported schemas first.
+        // Issue will be the order of addition inside the schema
+        importedSchemas.each {schema -> schema.createComplexTypes(user, dataModel, this.dataStore)}
+
+    }
+
+
+    void createComplexTypes(User user, DataModel dataModel, DataStore dataStore) {
+
+        this.dataStore = dataStore
+
+        createComplexTypes(user, dataModel)
+
+    }
+
+
+    DataClass findOrCreateDataClass(User user, DataModel parentDataModel, ComplexTypeWrapper complexType) {
+
+        findOrCreateDataClass(user, parentDataModel, null, complexType)
+
+    }
+
+
+
+    String getDataModelName() {
+
+        Strings.isNullOrEmpty(dataModelName) ? getName() : dataModelName
+
+    }
+
+
 
     /*
     Load schemas

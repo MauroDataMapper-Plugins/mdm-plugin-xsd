@@ -48,11 +48,11 @@ enum RestrictionKind {
         this.displayText = XsdPlugin.METADATA_LABEL_RESTRICTION_PREFIX + displayText
     }
 
-    //
-    //    static RestrictionKind findFromDisplayText(String displayText) {
-    //        values().find {v -> v.displayText.equalsIgnoreCase(displayText)}
-    //    }
-    //
+
+    static RestrictionKind findFromDisplayText(String displayText) {
+        values().find {v -> v.displayText.equalsIgnoreCase(displayText)}
+    }
+
     static RestrictionKind findFromElement(JAXBElement element) {
         valueOf(element.getName().getLocalPart())
     }

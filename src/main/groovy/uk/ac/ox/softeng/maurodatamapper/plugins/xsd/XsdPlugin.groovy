@@ -34,7 +34,7 @@ abstract class XsdPlugin implements MauroDataMapperPlugin
 
     public static final String METADATA_XSD_TARGET_NAMESPACE = METADATA_LABEL_PREFIX + 'XML Target Namespace'
     public static final String METADATA_XSD_TARGET_NAMESPACE_PREFIX = METADATA_LABEL_PREFIX + 'XML Target Namespace Prefix'
-    public static final String METADATA_XSD_RESTRICTION_BASE = METADATA_LABEL_RESTRICTION_PREFIX + 'Base'
+    public static final String METADATA_XSD_RESTRICTION_BASE = METADATA_LABEL_RESTRICTION_PREFIX + "Restriction Base"
     public static final String METADATA_XSD_UNION = METADATA_LABEL_PREFIX + 'Union'
     public static final String METADATA_XSD_LIST = METADATA_LABEL_PREFIX + 'List'
     public static final String METADATA_XSD_EXTENSION_BASE = METADATA_LABEL_PREFIX + 'Extension Base'

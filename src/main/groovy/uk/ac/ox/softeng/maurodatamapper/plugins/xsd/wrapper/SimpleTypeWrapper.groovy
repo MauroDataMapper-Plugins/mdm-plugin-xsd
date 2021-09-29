@@ -35,10 +35,13 @@ import uk.ac.ox.softeng.maurodatamapper.security.User
 
 import com.google.common.base.Strings
 
+import javax.xml.namespace.QName
+
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_LIST
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_UNION
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.AnnotationContentWrapper.APPINFO_CONTENT
 
 /**
  * @since 24/08/2017
@@ -52,6 +55,54 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
      * restricts that already.
      */
     public static final Map<String, List<String>> KNOWN_UNNECESSARY_TYPES = [cosd: []]
+
+    public static final List<String> PRIMITIVE_XML_TYPES = Arrays.asList(
+            // Primitive Types
+            "string",
+            "boolean",
+            "decimal",
+            "float",
+            "double",
+            "duration",
+            "dateTime",
+            "time",
+            "date",
+            "gYearMonth",
+            "gYear",
+            "gMonthDay",
+            "gDay",
+            "gMonth",
+            "hexBinary",
+            "base64Binary",
+            "anyURI",
+            "QName",
+            "NOTATION",
+            // Derived Types
+            "normalizedString",
+            "token",
+            "language",
+            "IDREFS",
+            "ENTITIES",
+            "NMTOKEN",
+            "NMTOKENS",
+            "Name",
+            "NCName",
+            "ID",
+            "IDREF",
+            "ENTITY",
+            "integer",
+            "nonPositiveInteger",
+            "negativeInteger",
+            "long",
+            "int",
+            "short",
+            "byte",
+            "nonNegativeInteger",
+            "unsignedLong",
+            "unsignedInt",
+            "unsignedShort",
+            "unsignedByte",
+            "positiveInteger");
 
     SimpleTypeWrapper(XsdSchemaService xsdSchemaService, AbstractSimpleType wrappedElement) {
         super(xsdSchemaService, wrappedElement)
@@ -213,99 +264,98 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
     }
 
 
-    //
-    //    void setName(String name) {
-    //        givenName = name
-    //        wrappedElement.setName(name)
-    //    }
-    //
-    //
-    //    QName getType() {
-    //        getTypeForName(getName())
-    //    }
-    //
+    void setName(String name) {
+        givenName = name;
+        wrappedElement.setName(name);
+    }
+
+    QName getType() {
+        return getTypeForName(getName());
+    }
+
+    private void checkBaseTypeExists(User user, DataModel dataModel, SchemaWrapper schema, QName baseType) {
+        debug("Find or create base type '{}'", baseType.getLocalPart());
+        SimpleTypeWrapper base = schema.getSimpleTypeByName(getRestriction().getBase().getLocalPart());
+        if (base == null) return;
+        base.createDataType(user, dataModel, schema);
+    }
+
+    private void populateFromDataType(DataType dataType, String typeName) {
+        setName(typeName);
+        debug("Populating from {}", dataType);
+        wrappedElement.setAnnotation(createAnnotation(dataType.getDescription()));
+
+        Set<Metadata> xsdMetadata = dataType.findMetadataByNamespace(XsdPlugin.METADATA_NAMESPACE);
+
+        if (xsdMetadata.isEmpty()) {
+            warn("SimpleType cannot be reliably created as no defined XSD data in {}", dataType.getLabel());
+            return;
+        }
+
+        String restrictionType = findMetadata(xsdMetadata, XsdPlugin.METADATA_XSD_RESTRICTION_BASE);
+        if (Strings.isNullOrEmpty(restrictionType)) {
+            warn("SimpleType cannot be reliably created as no XSD restriction base defined in {}", dataType.getLabel());
+            return;
+        }
+
+        Restriction restriction = buildRestriction(xsdMetadata, restrictionType, dataType);
+
+        // Remove unnecessary simple types which only restrict a base type but dont add anything
+        if (restriction.getMinExclusivesAndMinInclusivesAndMaxExclusives().isEmpty()) {
+            warn("SimpleType is unnecessary as no additional XSD metadata in {}, therefore removing", dataType.getLabel());
+            wrappedElement.setName(restrictionType);
+            return;
+        }
+
+        wrappedElement.setRestriction(restriction);
+        // TODO List & Union
+    }
+
+    private Restriction buildRestriction(Collection<Metadata> xsdMetadata, String restrictionType, DataType dataType) {
+        Restriction restriction = new Restriction();
+        restriction.setBase(getTypeForName(restrictionType));
+
+        xsdMetadata.findAll {md -> !md.getKey().equalsIgnoreCase(XsdPlugin.METADATA_XSD_RESTRICTION_BASE)}.each {md ->
+            RestrictionKind rk = RestrictionKind.findFromDisplayText(md.getKey());
+
+            if (rk != null) {
+                trace("Defining restriction {} : {}", rk, md.getValue());
+                Object element = RestrictionWrapper.createRestrictionElement(rk, md.getValue());
+                if (element != null) restriction.getMinExclusivesAndMinInclusivesAndMaxExclusives().add(element);
+            } else {
+                warn("Unknown restriction type {}", md.getKey());
+            }
+        }
+
+        if (dataType.instanceOf(EnumerationType.class)) {
+            trace("DataType is enumerationType with {} values", ((EnumerationType) dataType).getEnumerationValues().size());
+
+            ((EnumerationType) dataType).getEnumerationValues().sort().each {ev ->
+                Object element = RestrictionWrapper.createRestrictionElement(RestrictionKind.enumeration, ev.getKey(),
+                        createAnnotation(ev.getValue()));
+                if (element != null) restriction.getMinExclusivesAndMinInclusivesAndMaxExclusives().add(element);
+            }
+        }
 
 
-    //
-    //    void populateFromDataType(DataType dataType, String typeName) {
-    //        setName(typeName)
-    //        debug('Populating from {}', dataType)
-    //        wrappedElement.setAnnotation(createAnnotation(dataType.getDescription()))
-    //
-    //        Set<Metadata> xsdMetadata = dataType.findMetadataByNamespace(METADATA_NAMESPACE)
-    //
-    //        if (xsdMetadata.isEmpty()) {
-    //            warn('SimpleType cannot be reliably created as no defined XSD data in {}', dataType.getLabel())
-    //            return
-    //        }
-    //
-    //        String restrictionType = findMetadata(xsdMetadata, METADATA_XSD_RESTRICTION_BASE)
-    //        if (Strings.isNullOrEmpty(restrictionType)) {
-    //            warn('SimpleType cannot be reliably created as no XSD restriction base defined in {}', dataType.getLabel())
-    //            return
-    //        }
-    //
-    //        Restriction restriction = buildRestriction(xsdMetadata, restrictionType, dataType)
-    //
-    //        // Remove unnecessary simple types which only restrict a base type but dont add anything
-    //        if (restriction.getMinExclusivesAndMinInclusivesAndMaxExclusives().isEmpty()) {
-    //            warn('SimpleType is unnecessary as no additional XSD metadata in {}, therefore removing', dataType.getLabel())
-    //            wrappedElement.setName(restrictionType)
-    //            return
-    //        }
-    //
-    //        wrappedElement.setRestriction(restriction)
-    //        // TODO List & Union
-    //    }
-    //
-    //    private Restriction buildRestriction(Collection<Metadata> xsdMetadata, String restrictionType, DataType dataType) {
-    //        Restriction restriction = new Restriction();
-    //        restriction.setBase(getTypeForName(restrictionType));
-    //
-    //        xsdMetadata.findAll {md -> !md.getKey().equalsIgnoreCase(XsdPlugin.METADATA_XSD_RESTRICTION_BASE)}.each {md ->
-    //            RestrictionKind rk = RestrictionKind.findFromDisplayText(md.getKey());
-    //
-    //            if (rk != null) {
-    //                trace("Defining restriction {} : {}", rk, md.getValue());
-    //                Object element = RestrictionWrapper.createRestrictionElement(rk, md.getValue());
-    //                if (element != null) restriction.getMinExclusivesAndMinInclusivesAndMaxExclusives().add(element);
-    //            } else {
-    //                warn("Unknown restriction type {}", md.getKey());
-    //            }
-    //        }
-    //
-    //        if (dataType.instanceOf(EnumerationType.class)) {
-    //            trace("DataType is enumerationType with {} values", ((EnumerationType) dataType).getEnumerationValues().size());
-    //
-    //            ((EnumerationType) dataType).getEnumerationValues().sort().each {ev ->
-    //                Object element = RestrictionWrapper.createRestrictionElement(RestrictionKind.enumeration, ev.getKey(),
-    //                                                                             createAnnotation(ev.getValue()));
-    //                if (element != null) restriction.getMinExclusivesAndMinInclusivesAndMaxExclusives().add(element);
-    //            }
-    //        }
-    //
-    //
-    //        return restriction;
-    //    }
-    //
+        return restriction;
+    }
 
-    //
-    //    static SimpleTypeWrapper createSimpleType(XsdSchemaService xsdSchemaService, DataType dataType, String typeName) {
-    //        SimpleTypeWrapper wrapper = new SimpleTypeWrapper(xsdSchemaService, new SimpleType())
-    //
-    //        if (PRIMITIVE_XML_TYPES.contains(typeName)) {
-    //            wrapper.wrappedElement.setName(typeName)
-    //            return wrapper
-    //        }
-    //
-    //        wrapper.populateFromDataType(dataType, typeName)
-    //        wrapper
-    //    }
-    //
-    //
-    //
-    //    static String findMetadata(Set<Metadata> metadata, String key) {
-    //        Metadata optional = metadata.find {md -> md.getKey().equalsIgnoreCase(key)}
-    //        optional?.getValue()
-    //    }
+    static SimpleTypeWrapper createSimpleType(XsdSchemaService xsdSchemaService, DataType dataType, String typeName) {
+        SimpleTypeWrapper wrapper = new SimpleTypeWrapper(xsdSchemaService, new SimpleType());
+
+        if (PRIMITIVE_XML_TYPES.contains(typeName)) {
+            wrapper.wrappedElement.setName(typeName);
+            return wrapper;
+        }
+
+        wrapper.populateFromDataType(dataType, typeName);
+        return wrapper;
+    }
+
+
+    private String findMetadata(Set<Metadata> metadata, String key) {
+        Metadata optional = metadata.find {md -> md.getKey().equalsIgnoreCase(key)}
+        return optional?.getValue()
+    }
 }

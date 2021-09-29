@@ -160,7 +160,7 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
 
         log.trace('Importing:\n {}', new String(bytes))
         basicParameters.importFile = new FileParameter(fileContents: bytes)
-        importModel(basicParameters)
+        importJsonModel(basicParameters)
     }
 
     DataModel importJsonModel(DataModelFileImporterProviderServiceParameters params){

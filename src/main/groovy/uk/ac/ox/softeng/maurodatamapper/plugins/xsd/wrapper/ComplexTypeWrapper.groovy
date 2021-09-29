@@ -25,25 +25,16 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.All
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexContent
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleContent
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.RestrictionCapable
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.XsdNaming
 import uk.ac.ox.softeng.maurodatamapper.security.User
 
+import javax.xml.bind.JAXBElement
 import javax.xml.namespace.QName
+import java.util.List
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_LABEL_PREFIX
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_EXTENSION_BASE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
-
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
 /**
  * @since 24/08/2017
  */
@@ -67,6 +58,7 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> impl
         if (!givenName) givenName = createComplexTypeName(wrappedElement.getName())
         givenName
     }
+
 
     @Override
     RestrictionWrapper getRestriction() {
@@ -193,7 +185,13 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> impl
         Integer min = parentDataClass ? null : minOccurs
         Integer max = parentDataClass ? null : maxOccurs
         debug('Creating new DataClass with parent "{}"', parent.getLabel())
-        DataClass dataClass = xsdSchemaService.createDataClass(parent, getName(), extractDescriptionFromAnnotations(), user, min, max)
+        DataClass dataClass
+        if(parentDataClass)  {
+            dataClass = xsdSchemaService.createDataClass(parentDataClass, getName(), extractDescriptionFromAnnotations(), user, min, max)
+        }
+        else{
+            dataClass = xsdSchemaService.createDataClass(parentDataModel, getName(), extractDescriptionFromAnnotations(), user, min, max)
+        }
 
         if (!dataClass.getDescription() && type) dataClass.setDescription(type.getLocalPart())
 
@@ -285,79 +283,80 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> impl
     }
 
     DataType findBaseTypeDataType(SchemaWrapper schema, QName baseType) {
-        String typeName = SimpleTypeWrapper.createSimpleTypeName(baseType.getLocalPart())
-        debug('Type has base type {} loading DataType into model', typeName)
+        String typeName = createSimpleTypeName(baseType.getLocalPart(),false)
+        debug("Type has base type {} loading DataType into model", typeName)
 
         DataType dataType = schema.getDataType(typeName)
         if (dataType == null) {
-            warn('element is a {} typed element but it has not been created', typeName)
+            warn("element is a {} typed element but it has not been created", typeName)
         }
 
-        dataType
+        return dataType
     }
 
 
-    //
-    //    void populateFromDataClass(SchemaWrapper schema, DataClass dataClass) {
-    //        setName(createComplexTypeName(dataClass))
-    //        debug('Populating from {}', dataClass)
-    //        wrappedElement.setAnnotation(createAnnotation(dataClass.getDescription()))
-    //
-    //        if (dataClass.getChildDataElements()) {
-    //            Set<DataElement> childDataElements = xsdSchemaService.getChildDataElements(dataClass)
-    //
-    //            Map<String, List<DataElement>> grouped = childDataElements.groupBy {dataElement ->
-    //
-    //                Metadata md = dataElement.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_CHOICE)
-    //                if (md) return md.getValue()
-    //                md = dataElement.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_ALL)
-    //                if (md) return 'all'
-    //                'sequence'
-    //            }
-    //
-    //            if (grouped.isEmpty()) return
-    //
-    //            if (grouped.size() == 1) {
-    //                String type = (String) grouped.keySet().toArray()[0]
-    //                ExplicitGroup children = buildChildGroup(schema, type, grouped[type])
-    //                switch (type) {
-    //                    case 'all':
-    //                        wrappedElement.setAll((All) children)
-    //                        break
-    //                    case 'sequence':
-    //                        wrappedElement.setSequence(children)
-    //                        break
-    //                    default:
-    //                        wrappedElement.setChoice(children)
-    //                }
-    //            } else {
-    //                ExplicitGroup parent = new ExplicitGroup()
-    //                grouped.each {type, elements ->
-    //                    ExplicitGroup children = buildChildGroup(schema, type, elements)
-    //                    String elType = type.contains('choice') ? 'choice' : type
-    //                    JAXBElement<ExplicitGroup> jaxb = new JAXBElement<>(new QName(XS_NAMESPACE, elType), ExplicitGroup, children)
-    //                    parent.getElementsAndGroupsAndAlls().add(jaxb)
-    //                }
-    //                wrappedElement.setSequence(parent)
-    //            }
-    //        }
-    //    }
-    //
+    void populateFromDataClass(SchemaWrapper schema, DataClass dataClass) {
+        setName(createComplexTypeName(dataClass), true)
+        debug("Populating from {}", dataClass)
+        wrappedElement.setAnnotation(createAnnotation(dataClass.getDescription()))
 
-    //
-    //    ComplexTypeWrapper createComplexType(SchemaWrapper schema, DataClass dataClass) {
-    //        ComplexTypeWrapper wrapper = new ComplexTypeWrapper(schema.xsdSchemaService, new ComplexType())
-    //        wrapper.populateFromDataClass(schema, dataClass)
-    //        wrapper
-    //    }
+        if (dataClass.getDataElements() != null) {
+            Set<DataElement> childDataElements = xsdSchemaService.getDataElements(dataClass)
+            Map<String, List<DataElement>> grouped = childDataElements
+                    .sort {it.getLabel()}
+                    .groupBy {dataElement ->
+                        Metadata md = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_CHOICE)
+                        if (md != null) return md.getValue()
+                        md = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_ALL)
+                        if (md != null) return "all"
+                        return "sequence"
+                    }
 
-    //    static private ExplicitGroup buildChildGroup(SchemaWrapper schema, String type, List<DataElement> elements) {
-    //        ExplicitGroup children
-    //        if (type.equalsIgnoreCase('all')) children = new All()
-    //        else children = new ExplicitGroup()
-    //        elements.each {de -> children.getElementsAndGroupsAndAlls().add(ElementWrapper.createElement(schema, de).wrappedElement)}
-    //        children
-    //    }
-    //
+            if (grouped.isEmpty()) return
+
+            if (grouped.size() == 1) {
+                String type = (String) grouped.keySet().toArray()[0]
+                ExplicitGroup children = buildChildGroup(schema, type, grouped.get(type))
+                switch (type) {
+                    case "all":
+                        wrappedElement.setAll((All) children)
+                        break
+                    case "sequence":
+                        wrappedElement.setSequence(children)
+                        break
+                    default:
+                        wrappedElement.setChoice(children)
+                }
+            } else {
+                ExplicitGroup parent = new ExplicitGroup()
+                grouped.each {type, elements ->
+                    ExplicitGroup children = buildChildGroup(schema, type, elements)
+                    String elType = type.contains("choice") ? "choice" : type
+                    JAXBElement<ExplicitGroup> jaxb = new JAXBElement<>(new QName(XS_NAMESPACE, elType), ExplicitGroup.class, children)
+                    parent.getElementsAndGroupsAndAlls().add(jaxb)
+
+
+                }
+                wrappedElement.setSequence(parent)
+            }
+        }
+    }
+
+
+   static ComplexTypeWrapper createComplexType(SchemaWrapper schema, DataClass dataClass) {
+        ComplexTypeWrapper wrapper = new ComplexTypeWrapper(schema.xsdSchemaService, new ComplexType())
+        wrapper.populateFromDataClass(schema, dataClass)
+        return wrapper
+    }
+
+   static private ExplicitGroup buildChildGroup(SchemaWrapper schema, String type, List<DataElement> elements) {
+       ExplicitGroup children
+       if (type.equalsIgnoreCase('all')) children = new All()
+       else children = new ExplicitGroup()
+       elements.each {de -> children.getElementsAndGroupsAndAlls().add(ElementWrapper.createElement(schema, de).wrappedElement)}
+       children
+   }
+
+
 
 }

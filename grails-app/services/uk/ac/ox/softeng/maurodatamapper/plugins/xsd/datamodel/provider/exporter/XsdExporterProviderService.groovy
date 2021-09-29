@@ -79,7 +79,7 @@ class XsdExporterProviderService extends DataModelExporterProviderService {
         log.info('Exporting DataModel {}', dataModel.getLabel())
         SchemaWrapper sw = new SchemaWrapper(xsdSchemaService, dataModel.getLabel())
 
-//        sw.populateSchemaFromDataModel(dataModel, getDefaultTargetNamespace())
+        sw.populateSchemaFromDataModel(dataModel, getDefaultTargetNamespace())
 
         log.debug('DataModel exported to schema wrapper')
         exportSchema(sw)

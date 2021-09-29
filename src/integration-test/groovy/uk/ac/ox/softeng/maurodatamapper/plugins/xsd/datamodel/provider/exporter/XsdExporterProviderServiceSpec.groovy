@@ -17,23 +17,20 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter
 
-import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
-
 import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
 import groovy.util.logging.Slf4j
+import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
 import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.BaseXsdImporterExporterProviderServiceSpec
-
-import spock.lang.PendingFeature
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.XsdImporterProviderService
 
 import java.nio.file.Files
@@ -51,7 +48,6 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
     XsdExporterProviderService xsdExporterProviderService
     XsdImporterProviderService xsdImporterProviderService
 
-    @PendingFeature(reason = 'Exporter disabled while rebuilding importer')
     void "test export simple"() {
         given:
         setupData()
@@ -180,7 +176,6 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
 
     }
 
-    @PendingFeature(reason = 'Exporter disabled while rebuilding importer')
     void "test export complex"() {
         given:
         setupData()
@@ -517,7 +512,6 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         completeCompareXml(fudgeDates(expected), fudgeDates(exportedXsd))
     }
 
-    @PendingFeature(reason = 'Exporter disabled while rebuilding importer')
     void "test export hepatitis"() {
         given:
         setupData()

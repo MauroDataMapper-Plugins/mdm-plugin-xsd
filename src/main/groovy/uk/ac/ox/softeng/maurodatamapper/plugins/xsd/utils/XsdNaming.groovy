@@ -1,5 +1,23 @@
+/*
+ * Copyright 2020-2021 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils
 
+import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
@@ -7,6 +25,9 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet
 
 import com.google.common.base.CaseFormat
 import org.slf4j.Logger
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.SimpleTypeWrapper
+
+import java.time.OffsetDateTime
 
 /**
  * @since 02/10/2018
@@ -15,9 +36,20 @@ trait XsdNaming {
 
     abstract Logger getLogger()
 
-    String createComplexTypeName(String name) {
+   String createComplexTypeName(String name) {
         standardiseTypeName(name)
     }
+
+    String createComplexTypeName(CatalogueItem catalogueItem) {
+        SimpleTypeWrapper.PRIMITIVE_XML_TYPES.contains(catalogueItem.getLabel()) ? catalogueItem.getLabel() :
+                createValidTypeName(catalogueItem.getLabel() + ' Type', catalogueItem.getLastUpdated())
+    }
+
+    String createSimpleTypeName(CatalogueItem catalogueItem) {
+        SimpleTypeWrapper.PRIMITIVE_XML_TYPES.contains(catalogueItem.getLabel()) ? catalogueItem.getLabel() :
+                createValidTypeName(catalogueItem.getLabel(), catalogueItem.getLastUpdated())
+    }
+
 
     String createSimpleTypeName(String name, boolean addTypeEnding = false) {
         addTypeEnding ? addTypeEndingToName(standardiseTypeName(name)) : standardiseTypeName(name)
@@ -79,6 +111,18 @@ trait XsdNaming {
 
     String normaliseSpace(String str) {
         str.replaceAll('\\s{2,}', ' ').trim()
+    }
+
+
+    String createValidTypeName(String name, OffsetDateTime lastUpdated) {
+        String validXsdName = createValidXsdName(name)
+        "${validXsdName}-${Math.abs(lastUpdated.hashCode())}"
+    }
+
+    String createValidXsdName(String name) {
+        String underscoreName = name.replaceAll('[ -]', '_')
+        String camelName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, underscoreName)
+        camelName.matches('^\\d.*') ? '_' + camelName : camelName
     }
 
     Boolean isAllSameCase(String str) {
