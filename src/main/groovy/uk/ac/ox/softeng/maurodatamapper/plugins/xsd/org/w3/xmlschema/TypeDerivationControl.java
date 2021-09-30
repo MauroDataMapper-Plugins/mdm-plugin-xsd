@@ -35,14 +35,14 @@ import javax.xml.bind.annotation.XmlType;
  *
  * <p>The following schema fragment specifies the expected content contained within this class. <p>
  * <pre>
- * &lt;simpleType name="typeDerivationControl">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}derivationControl">
- *     &lt;enumeration value="extension"/>
- *     &lt;enumeration value="restriction"/>
- *     &lt;enumeration value="list"/>
- *     &lt;enumeration value="union"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="typeDerivationControl"$gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}derivationControl"$gt;
+ *     &lt;enumeration value="extension"/$gt;
+ *     &lt;enumeration value="restriction"/$gt;
+ *     &lt;enumeration value="list"/$gt;
+ *     &lt;enumeration value="union"/$gt;
+ *   &lt;/restriction$gt;
+ * &lt;/simpleType$gt;
  * </pre>
  */
 @XmlType(name = "typeDerivationControl")

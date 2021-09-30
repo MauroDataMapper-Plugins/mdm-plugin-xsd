@@ -37,31 +37,31 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="namedGroup">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}realGroup">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation" minOccurs="0"/>
- *         &lt;choice>
- *           &lt;element name="all">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}all">
- *                   &lt;group ref="{http://www.w3.org/2001/XMLSchema}allModel"/>
- *                   &lt;anyAttribute processContents='lax' namespace='##other'/>
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *           &lt;element name="choice" type="{http://www.w3.org/2001/XMLSchema}simpleExplicitGroup"/>
- *           &lt;element name="sequence" type="{http://www.w3.org/2001/XMLSchema}simpleExplicitGroup"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="namedGroup"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}realGroup"$gt;
+ *       &lt;sequence$gt;
+ *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation" minOccurs="0"/$gt;
+ *         &lt;choice$gt;
+ *           &lt;element name="all"$gt;
+ *             &lt;complexType$gt;
+ *               &lt;complexContent$gt;
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}all"$gt;
+ *                   &lt;group ref="{http://www.w3.org/2001/XMLSchema}allModel"/$gt;
+ *                   &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *                 &lt;/restriction$gt;
+ *               &lt;/complexContent$gt;
+ *             &lt;/complexType$gt;
+ *           &lt;/element$gt;
+ *           &lt;element name="choice" type="{http://www.w3.org/2001/XMLSchema}simpleExplicitGroup"/$gt;
+ *           &lt;element name="sequence" type="{http://www.w3.org/2001/XMLSchema}simpleExplicitGroup"/$gt;
+ *         &lt;/choice$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" /$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/restriction$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

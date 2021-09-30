@@ -36,20 +36,20 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="simpleRestrictionType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}restrictionType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation" minOccurs="0"/>
- *         &lt;choice minOccurs="0">
- *           &lt;group ref="{http://www.w3.org/2001/XMLSchema}simpleRestrictionModel"/>
- *         &lt;/choice>
- *         &lt;group ref="{http://www.w3.org/2001/XMLSchema}attrDecls"/>
- *       &lt;/sequence>
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="simpleRestrictionType"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}restrictionType"$gt;
+ *       &lt;sequence$gt;
+ *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation" minOccurs="0"/$gt;
+ *         &lt;choice minOccurs="0"$gt;
+ *           &lt;group ref="{http://www.w3.org/2001/XMLSchema}simpleRestrictionModel"/$gt;
+ *         &lt;/choice$gt;
+ *         &lt;group ref="{http://www.w3.org/2001/XMLSchema}attrDecls"/$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/restriction$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

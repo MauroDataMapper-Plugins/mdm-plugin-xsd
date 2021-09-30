@@ -46,21 +46,21 @@ import javax.xml.namespace.QName;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="restrictionType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated">
- *       &lt;sequence>
- *         &lt;choice minOccurs="0">
- *           &lt;group ref="{http://www.w3.org/2001/XMLSchema}typeDefParticle"/>
- *           &lt;group ref="{http://www.w3.org/2001/XMLSchema}simpleRestrictionModel"/>
- *         &lt;/choice>
- *         &lt;group ref="{http://www.w3.org/2001/XMLSchema}attrDecls"/>
- *       &lt;/sequence>
- *       &lt;attribute name="base" use="required" type="{http://www.w3.org/2001/XMLSchema}QName" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="restrictionType"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated"$gt;
+ *       &lt;sequence$gt;
+ *         &lt;choice minOccurs="0"$gt;
+ *           &lt;group ref="{http://www.w3.org/2001/XMLSchema}typeDefParticle"/$gt;
+ *           &lt;group ref="{http://www.w3.org/2001/XMLSchema}simpleRestrictionModel"/$gt;
+ *         &lt;/choice$gt;
+ *         &lt;group ref="{http://www.w3.org/2001/XMLSchema}attrDecls"/$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;attribute name="base" use="required" type="{http://www.w3.org/2001/XMLSchema}QName" /$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/extension$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
