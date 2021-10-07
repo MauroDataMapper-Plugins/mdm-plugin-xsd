@@ -127,12 +127,20 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> impl
     Boolean isActuallySimpleType() {
         if (getAllElements()) return false
         List<BaseAttributeWrapper> attributeWrappers = getAttributes()
-        if (!attributeWrappers || attributeWrappers.size() == 1) return true
+        if (!attributeWrappers)return false
+        if(attributeWrappers.size() == 1){
+
+          if(attributeWrappers.first()?.simpleType){
+              return true
+          }
+            return  false
+        }
         false
     }
 
     SimpleTypeWrapper convertToSimpleType() {
         if (getAttributes()) {
+            logger.debug("ISSUE HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", getAttributes())
             BaseAttributeWrapper singleAttribute = getAttributes().first()
             return new SimpleTypeWrapper(xsdSchemaService, singleAttribute.simpleType, createSimpleTypeName(getName(), true))
         }

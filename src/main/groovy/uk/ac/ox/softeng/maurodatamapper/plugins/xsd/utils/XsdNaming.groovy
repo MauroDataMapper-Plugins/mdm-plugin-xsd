@@ -25,9 +25,9 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet
 
 import com.google.common.base.CaseFormat
 import org.slf4j.Logger
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.SimpleTypeWrapper
-
 import java.time.OffsetDateTime
+
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.PRIMITIVE_XML_TYPES
 
 /**
  * @since 02/10/2018
@@ -41,12 +41,12 @@ trait XsdNaming {
     }
 
     String createComplexTypeName(CatalogueItem catalogueItem) {
-        SimpleTypeWrapper.PRIMITIVE_XML_TYPES.contains(catalogueItem.getLabel()) ? catalogueItem.getLabel() :
+        PRIMITIVE_XML_TYPES.contains(catalogueItem.getLabel()) ? catalogueItem.getLabel() :
                 createValidTypeName(catalogueItem.getLabel() + ' Type', catalogueItem.getLastUpdated())
     }
 
     String createSimpleTypeName(CatalogueItem catalogueItem) {
-        SimpleTypeWrapper.PRIMITIVE_XML_TYPES.contains(catalogueItem.getLabel()) ? catalogueItem.getLabel() :
+        PRIMITIVE_XML_TYPES.contains(catalogueItem.getLabel()) ? catalogueItem.getLabel() :
                 createValidTypeName(catalogueItem.getLabel(), catalogueItem.getLastUpdated())
     }
 
@@ -63,7 +63,7 @@ trait XsdNaming {
 
         // Replace all special separators with an underscore
         String[] split = name.split(/[\s\-._]/)
-        //logger.debug('split {}', split.toList())
+        logger.debug('split {}', split.toList())
 
         // Standardise from CamelCase to camel_case and split on the underscore
         List<String> standardised = split.collectMany {s ->
@@ -71,7 +71,7 @@ trait XsdNaming {
             else
                 CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, s).split('_').toList()
         }
-        //logger.debug('standardised {}', standardised)
+        logger.debug('standardised {}', standardised)
 
         // Group all standardised, this is required to collapse single letters into 1, this occurs when you have multiple uppercase letters next to
         // each other.
@@ -92,11 +92,11 @@ trait XsdNaming {
             }
             grouped << sb.toString()
         }
-        //        logger.debug('grouped {}', grouped)
+              logger.debug('grouped {}', grouped)
 
         // Ensure no repeating sequences and join using underscore
         String built = grouped.collect {g -> g.find(/(\w{2,})\1/) {it[1]} ?: g}.join('_')
-        //        logger.debug('Built {}', built)
+        logger.debug('Built {}', built)
 
         // Convert underscore to camelCase
         CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, built)

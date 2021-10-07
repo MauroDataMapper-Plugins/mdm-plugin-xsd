@@ -68,6 +68,7 @@ abstract class XsdPlugin implements MauroDataMapperPlugin
         'QName',
         'NOTATION',
         // Derived Types
+        'ANY',
         'normalizedString',
         'token',
         'language',

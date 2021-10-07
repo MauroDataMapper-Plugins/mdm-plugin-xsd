@@ -56,53 +56,6 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
      */
     public static final Map<String, List<String>> KNOWN_UNNECESSARY_TYPES = [cosd: []]
 
-    public static final List<String> PRIMITIVE_XML_TYPES = Arrays.asList(
-            // Primitive Types
-            "string",
-            "boolean",
-            "decimal",
-            "float",
-            "double",
-            "duration",
-            "dateTime",
-            "time",
-            "date",
-            "gYearMonth",
-            "gYear",
-            "gMonthDay",
-            "gDay",
-            "gMonth",
-            "hexBinary",
-            "base64Binary",
-            "anyURI",
-            "QName",
-            "NOTATION",
-            // Derived Types
-            "normalizedString",
-            "token",
-            "language",
-            "IDREFS",
-            "ENTITIES",
-            "NMTOKEN",
-            "NMTOKENS",
-            "Name",
-            "NCName",
-            "ID",
-            "IDREF",
-            "ENTITY",
-            "integer",
-            "nonPositiveInteger",
-            "negativeInteger",
-            "long",
-            "int",
-            "short",
-            "byte",
-            "nonNegativeInteger",
-            "unsignedLong",
-            "unsignedInt",
-            "unsignedShort",
-            "unsignedByte",
-            "positiveInteger");
 
     SimpleTypeWrapper(XsdSchemaService xsdSchemaService, AbstractSimpleType wrappedElement) {
         super(xsdSchemaService, wrappedElement)
@@ -344,7 +297,7 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
     static SimpleTypeWrapper createSimpleType(XsdSchemaService xsdSchemaService, DataType dataType, String typeName) {
         SimpleTypeWrapper wrapper = new SimpleTypeWrapper(xsdSchemaService, new SimpleType());
 
-        if (PRIMITIVE_XML_TYPES.contains(typeName)) {
+        if (XsdPlugin.PRIMITIVE_XML_TYPES.contains(typeName)) {
             wrapper.wrappedElement.setName(typeName);
             return wrapper;
         }

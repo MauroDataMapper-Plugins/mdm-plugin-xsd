@@ -89,10 +89,10 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
 
         then:
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 44, types.size())
+        assertEquals('Number of datatypes', 45, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, XS_NAMESPACE)
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
     }
 
 
@@ -111,10 +111,10 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         */
         then:
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 44, types.size())
+        assertEquals('Number of datatypes', 45, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, XS_NAMESPACE)
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
     }
 
 
@@ -133,10 +133,10 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         */
 then:
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 44, types.size())
+        assertEquals('Number of datatypes', 45, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, XS_NAMESPACE)
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
 
         /*
         DataClass checking
@@ -161,10 +161,10 @@ then:
 
         then:
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 48, types.size())
+        assertEquals('Number of datatypes', 49, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, XS_NAMESPACE)
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
 
         Set<DataType> specificTypes = findDataTypesWithNamespace(types, null)
         assertEquals('Number of specific datatypes', 4, specificTypes.size())
@@ -231,10 +231,10 @@ then:
          */
         then:
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 50, types.size())
+        assertEquals('Number of datatypes', 51, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, XS_NAMESPACE)
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
 
         Set<DataType> specificTypes = findDataTypesWithNamespace(types, null)
         assertEquals('Number of specific datatypes', 6, specificTypes.size())
@@ -287,6 +287,20 @@ then:
 
     }
 
+    //Comment un comment to test zip imports, please be aware test may take a long time depending on file size
+    void testPerformance()
+    {
+        given:
+        setupData()
+        XsdImporterProviderServiceParameters params = createImportParametersForZip('COSDCOSD_XMLSchema-v6-0.xsd','C:\\mauro\\main_v6-0.zip' , 'XSD Test: Complex model')
+
+        when:
+        DataModel dataModel = importDataModelAndRetrieveFromDatabase(params)
+
+        then:
+        dataModel != null
+    }
+
     void testImportComplex() {
         given:
         setupData()
@@ -303,10 +317,10 @@ then:
         */
 
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 57, types.size())
+        assertEquals('Number of datatypes', 58, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, 'http://www.w3.org/2001/XMLSchema')
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
 
         Set<DataType> specificTypes = findDataTypesWithNamespace(types, null)
         assertEquals('Number of specific datatypes', 13, specificTypes.size())
@@ -446,10 +460,10 @@ then:
         */
         then:
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 54, types.size())
+        assertEquals('Number of datatypes', 55, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, 'http://www.w3.org/2001/XMLSchema')
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
 
         Set<DataType> specificTypes = findDataTypesWithNamespace(types, null)
         assertEquals('Number of specific datatypes', 10, specificTypes.size())
@@ -551,10 +565,10 @@ then:
          */
 
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 89, types.size())
+        assertEquals('Number of datatypes', 90, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, 'http://www.w3.org/2001/XMLSchema')
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
 
         Set<DataType> specificTypes = findDataTypesWithNamespace(types, null)
         assertEquals('Number of specific datatypes', 45, specificTypes.size())
@@ -610,10 +624,10 @@ then:
 
         then:
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 44, types.size())
+        assertEquals('Number of datatypes', 45, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, XS_NAMESPACE)
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
 
         /*
         DataClass checking
@@ -640,10 +654,10 @@ then:
 
         then:
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 50, types.size())
+        assertEquals('Number of datatypes', 51, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, XS_NAMESPACE)
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
 
         Set<DataType> specificTypes = findDataTypesWithNamespace(types, null)
         assertEquals('Number of specific datatypes', 6, specificTypes.size())
@@ -719,10 +733,10 @@ then:
 
         then:
         Set<DataType> types = dataModel.getDataTypes()
-        assertEquals('Number of datatypes', 62, types.size())
+        assertEquals('Number of datatypes', 63, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, XS_NAMESPACE)
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
 
         Set<DataType> specificTypes = findDataTypesWithNamespace(types, null)
         assertEquals('Number of specific datatypes', 18, specificTypes.size())
@@ -830,7 +844,7 @@ then:
         // assertEquals('Number of datatypes', 58, types.size())
 
         Set<DataType> wsTypes = findDataTypesWithNamespace(types, XS_NAMESPACE)
-        assertEquals('Number of xs datatypes', 44, wsTypes.size())
+        assertEquals('Number of xs datatypes', 45, wsTypes.size())
 
         Set<DataType> specificTypes = findDataTypesWithNamespace(types, null)
         //assertEquals('Number of specific datatypes', 14, specificTypes.size())

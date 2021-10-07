@@ -213,6 +213,26 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
         params
     }
 
+    XsdImporterProviderServiceParameters createImportParametersForZip(String filename, String zipLocation, String modelName) throws IOException {
+        XsdImporterProviderServiceParameters params = new XsdImporterProviderServiceParameters()
+        params.setModelName(modelName)
+        params.setFolderId(folder.id)
+        params.importAsNewBranchModelVersion = false
+        params.importAsNewDocumentationVersion = false
+        params.finalised = false
+        params.zipFolderLocation = filename
+
+        Path p = Paths.get(zipLocation)
+        if (!Files.exists(p)) {
+            fail('File ' + zipLocation + ' cannot be found')
+        }
+
+        FileParameter file = new FileParameter(p.toString(), 'application/zip', Files.readAllBytes(p))
+        params.setImportFile(file)
+        params
+    }
+
+
     DataModel importDataModelAndRetrieveFromDatabase(XsdImporterProviderServiceParameters params) {
         DataModel importedModel = importModel(params)
         importedModel.setCreatedBy(admin.emailAddress)

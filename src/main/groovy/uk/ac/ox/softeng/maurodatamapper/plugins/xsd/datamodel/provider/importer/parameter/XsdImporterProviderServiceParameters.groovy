@@ -17,6 +17,7 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter
 
+import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.FileParameter
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelFileImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.config.ImportGroupConfig
@@ -39,4 +40,28 @@ class XsdImporterProviderServiceParameters extends DataModelFileImporterProvider
         )
     )
      String rootElement
+
+    @ImportParameterConfig(
+        displayName = 'File',
+        description = 'The file containing the data to be imported. Please be aware archived imports may take a long period of time',
+        order = -1,
+        group = @ImportGroupConfig(
+            name = 'Source',
+            order = -1
+        )
+    )
+    FileParameter importFile
+
+
+    @ImportParameterConfig(
+        displayName = "Primary File in Zip Folder",
+        description = "Select primary file within archive",
+        optional = true,
+        order = 2,
+        group = @ImportGroupConfig(
+            name = "Source",
+            order = 1
+        )
+    )
+     String zipFolderLocation
 }

@@ -33,6 +33,9 @@ import groovy.util.logging.Slf4j
 
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.Files
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 import javax.xml.bind.JAXBException
 
 /**
@@ -70,21 +73,79 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
     @Override
     DataModel importModel(User currentUser, XsdImporterProviderServiceParameters params) {
         log.info('Loading XSD model from {}', params.getImportFile().getFileName())
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(params.getImportFile().getFileContents())
 
-                Path path = Paths.get(params.getImportFile().getFileName())
-                String parent = path.getParent() == null ? '' : path.getParent().toString()
-                String dataModelLabel = params.getModelName() ?: path.getFileName().toString()
 
-                importDataModel(currentUser, byteArrayInputStream, path.getFileName().toString(), parent, params.getRootElement(),
-                                dataModelLabel, params.description, params.author, params.organisation, folderService.get(params.folderId))
+        String fileType = params.getImportFile().getFileType()
+
+        if(fileType == "application/rar" || fileType == "application/zip"){
+            log.info('Loading Zip File')
+            File tempDir = Files.createTempDirectory("temp").toFile()
+
+            log.info('Temp Folder Location {}', tempDir.getAbsolutePath())
+
+            byte[] buffer = new byte[1024];
+            ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(params.getImportFile().getFileContents()))
+            ZipEntry zipEntry = zis.getNextEntry()
+            while(zipEntry != null)
+            {
+                File newFile = newFile(tempDir, zipEntry);
+                if (zipEntry.isDirectory()) {
+                    if (!newFile.isDirectory() && !newFile.mkdirs()) {
+                        throw new IOException("Failed to create directory " + newFile);
+                    }
+                } else {
+                    // fix for Windows-created archives
+                    File parent = newFile.getParentFile();
+                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                        throw new IOException("Failed to create directory " + parent);
+                    }
+
+                    // write file content
+                    FileOutputStream fos = new FileOutputStream(newFile);
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                    fos.close();
+                }
+                zipEntry = zis.getNextEntry();
+            }
+
+            zis.closeEntry();
+            zis.close();
+
+            Path primaryFile = Paths.get(tempDir.toString(), params.zipFolderLocation)
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Files.readAllBytes(primaryFile))
+
+            String dataModelLabel = params.getModelName() ?: primaryFile.getFileName().toString()
+           DataModel dm =  importDataModel(currentUser, byteArrayInputStream, primaryFile.getFileName().toString(), tempDir.toString(), params.getRootElement(),
+                            dataModelLabel, params.description, params.author, params.organisation, folderService.get(params.folderId))
+
+
+            //Deleting contents of folder after import
+            tempDir.deleteDir()
+
+            dm
+
+        }
+        else{
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(params.getImportFile().getFileContents())
+            Path path = Paths.get(params.getImportFile().getFileName())
+            String parent = path.getParent() == null ? '' : path.getParent().toString()
+            String dataModelLabel = params.getModelName() ?: path.getFileName().toString()
+
+            importDataModel(currentUser, byteArrayInputStream, path.getFileName().toString(), parent, params.getRootElement(),
+                            dataModelLabel, params.description, params.author, params.organisation, folderService.get(params.folderId))
+        }
+
+
     }
 
     DataModel importDataModel(User currentUser, InputStream byteArrayInputStream, String filename, String directory,
                               String rootElement, String label, String description, String author, String organisation, Folder folder) {
         try {
             DataModel dataModel =  new DataModel(author: author, organisation: organisation, type: DataModelType.DATA_STANDARD, folder: folder,
-                                                 authority: authorityService.defaultAuthority, label: label, description: description)
+                                                 authority: authorityService.defaultAuthority, label: label, description: description, createdBy: currentUser.emailAddress)
             SchemaWrapper schema = SchemaWrapper.createSchemaWrapperFromInputStream(xsdSchemaService, byteArrayInputStream, filename, directory)
             log.debug('Creating model')
             dataModel = schema.loadIntoDataModel(dataModel, currentUser, rootElement)
@@ -96,4 +157,19 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
             throw new ApiBadRequestException('XIS01', 'Cannot read schema', e)
         }
     }
+
+    File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+        File destFile = new File(destinationDir, zipEntry.getName());
+
+        String destDirPath = destinationDir.getCanonicalPath();
+        String destFilePath = destFile.getCanonicalPath();
+
+        if (!destFilePath.startsWith(destDirPath + File.separator)) {
+            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+        }
+
+        return destFile;
+    }
+
+
 }

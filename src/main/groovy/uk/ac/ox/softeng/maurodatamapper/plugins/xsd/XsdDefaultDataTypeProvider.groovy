@@ -21,8 +21,6 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.DefaultDataTypeProvider
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.SimpleTypeWrapper.PRIMITIVE_XML_TYPES
-
 import static XsdPlugin.METADATA_NAMESPACE
 import static XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
 import static XsdPlugin.METADATA_XSD_TARGET_NAMESPACE_PREFIX
@@ -34,7 +32,7 @@ class XsdDefaultDataTypeProvider implements DefaultDataTypeProvider {
 
     @Override
     List<DataType> getDefaultListOfDataTypes() {
-        PRIMITIVE_XML_TYPES.collect {t ->
+        XsdPlugin.PRIMITIVE_XML_TYPES.collect {t ->
             new PrimitiveType(label: t, description: "XML primitive type: xs:$t")
                 .addToMetadata(namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE, value: uk.ac.ox.softeng.maurodatamapper.plugins.xsd.
                     wrapper.OpenAttrsWrapper.XS_NAMESPACE)
