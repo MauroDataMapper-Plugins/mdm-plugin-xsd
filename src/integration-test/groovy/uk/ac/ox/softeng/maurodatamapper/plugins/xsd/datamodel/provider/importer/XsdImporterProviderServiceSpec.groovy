@@ -287,20 +287,6 @@ then:
 
     }
 
-    //Comment un comment to test zip imports, please be aware test may take a long time depending on file size
-    void testPerformance()
-    {
-        given:
-        setupData()
-        XsdImporterProviderServiceParameters params = createImportParametersForZip('COSDCOSD_XMLSchema-v6-0.xsd','C:\\mauro\\main_v6-0.zip' , 'XSD Test: Complex model')
-
-        when:
-        DataModel dataModel = importDataModelAndRetrieveFromDatabase(params)
-
-        then:
-        dataModel != null
-    }
-
     void testImportComplex() {
         given:
         setupData()
@@ -941,4 +927,18 @@ then:
         then:
         verifyDataModelValues(dataModel, params, 'XSD Test', 'http://www.datadictionary.nhs.uk/messages/COSD-v8-1')
     }
+
+    //Comment un comment to test zip imports, please be aware test may take a long time depending on file size
+    /*    void testPerformance()
+        {
+            given:
+            setupData()
+            XsdImporterProviderServiceParameters params = createImportParametersForZip('COSDCOSD_XMLSchema-v6-0.xsd','C:\\mauro\\main_v6-0.zip' , 'XSD Test: Complex model')
+
+            when:
+            DataModel dataModel = importDataModelAndRetrieveFromDatabase(params)
+
+            then:
+            dataModel != null
+        }*/
 }
