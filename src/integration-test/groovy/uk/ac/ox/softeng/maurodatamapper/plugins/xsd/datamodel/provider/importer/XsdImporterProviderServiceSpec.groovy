@@ -30,9 +30,6 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.
 import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
 import groovy.util.logging.Slf4j
-import org.junit.Ignore
-import org.junit.Test
-import spock.lang.PendingFeature
 
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_LABEL_PREFIX
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
@@ -131,7 +128,7 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         /*
        DataType checking
         */
-then:
+        then:
         Set<DataType> types = dataModel.getDataTypes()
         assertEquals('Number of datatypes', 45, types.size())
 
@@ -727,11 +724,11 @@ then:
         Set<DataType> specificTypes = findDataTypesWithNamespace(types, null)
         assertEquals('Number of specific datatypes', 18, specificTypes.size())
 
-/*        specificTypes.findAll {it.label.contains('StringType')}.each {
-            Metadata md = it.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_RESTRICTION_BASE)
-            assertNotNull('Restriction metadata exists', md)
-            assertEquals('Overrides string not st', 'string', md.value)
-        }*/
+        /*        specificTypes.findAll {it.label.contains('StringType')}.each {
+                    Metadata md = it.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_RESTRICTION_BASE)
+                    assertNotNull('Restriction metadata exists', md)
+                    assertEquals('Overrides string not st', 'string', md.value)
+                }*/
 
         assertFalse('Override datatypes do not exist', specificTypes.any {it.label in ['st', 'int', 'bin']})
 
