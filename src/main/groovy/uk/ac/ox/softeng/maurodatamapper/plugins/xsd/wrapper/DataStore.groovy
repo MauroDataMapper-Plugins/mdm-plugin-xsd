@@ -27,88 +27,59 @@ import uk.ac.ox.softeng.maurodatamapper.security.User
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import java.util.function.Function
+import java.util.function.BiFunction
 
 /**
  * @since 04/09/2017
  */
 class DataStore {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataStore.class);
-    private final boolean createLinksRatherThanReferences;
-    private final User user;
-    private Map<String, Set<DataClass>> allDataClasses;
-    private Map<String, DataClass> dataClasses;
-    private Map<String, DataType> dataTypes;
-    private SemanticLinkService semanticLinkService;
-    private List<String> underConstruction;
+    private static final Logger logger = LoggerFactory.getLogger(DataStore)
 
-    DataStore(User user, SemanticLinkService semanticLinkService, boolean createLinksRatherThanReferences) {
-        dataClasses = new HashMap<>();
-        allDataClasses = new HashMap<>();
-        dataTypes = new HashMap<>();
-        underConstruction = new ArrayList<>();
-        this.user = user;
-        this.createLinksRatherThanReferences = createLinksRatherThanReferences;
-        this.semanticLinkService = semanticLinkService;
+    private final User user
+    private final Map<String, DataClass> dataClasses
+    private final Map<String, DataType> dataTypes
+    private final List<String> underConstruction = []
+    private final SemanticLinkService semanticLinkService
+    List<Long> dataElementCreations = []
+    List<Long> dataClassCreations = []
+    List<Long> dataTypeCreations = []
+
+    DataStore(User user, SemanticLinkService semanticLinkService, int dataTypeSize, int dataClassSize) {
+        this.user = user
+        this.semanticLinkService = semanticLinkService
+        dataClasses = new HashMap<>(dataTypeSize)
+        dataTypes = new HashMap<>(dataClassSize)
     }
 
     boolean addToConstruction(String s) {
-        return !underConstruction.contains(s) && underConstruction.add(s);
+        !underConstruction.contains(s) && underConstruction.add(s)
     }
 
-    DataType computeIfDataTypeAbsent(String key,
-                                     Function<? super String, ? extends DataType> mappingFunction) {
-        return dataTypes.computeIfAbsent(key, mappingFunction);
+    @Deprecated
+    DataType addDataType(String key, BiFunction<String, DataType, DataType> mappingFunction) {
+        dataTypes.compute(key, mappingFunction)
     }
 
     DataClass getDataClass(String key) {
-        return dataClasses.get(key);
+        dataClasses[key]
     }
 
     DataType getDataType(String key) {
-        return dataTypes.get(key);
-    }
-
-    boolean isCreateLinksRatherThanReferences() {
-        return createLinksRatherThanReferences;
-    }
-
-    void putAllDataTypes(Map<? extends String, ? extends DataType> m) {
-        dataTypes.putAll(m);
+        dataTypes[key]
     }
 
     void putDataClass(String key, DataClass value) {
-        Set<DataClass> existing = allDataClasses[key] ?: [] as Set
-
-
-        if (createLinksRatherThanReferences && !existing.isEmpty()) {
-            logger.debug("Adding links for {} existing data classes with type {}", existing.size(), key);
-            existing.each {dc ->
-
-                SemanticLink linkTarget = semanticLinkService.createSemanticLink(user, value, dc, SemanticLinkType.REFINES);
-                SemanticLink linkSource = semanticLinkService.createSemanticLink(user, dc, value, SemanticLinkType.REFINES);
-
-                dc.addTo("sourceForLinks", linkSource);
-                value.addTo("targetForLinks", linkSource);
-
-                dc.addTo("targetForLinks", linkTarget);
-                value.addTo("sourceForLinks", linkTarget);
-            }
-        }
-
-        existing.add(value);
-        allDataClasses[key] = existing
-        dataClasses[key] = value;
+        dataClasses[key] = value
     }
 
     DataType putDataType(String key, DataType value) {
-        return dataTypes.put(key, value);
+        dataTypes[key] = value
     }
 
     void removeFromConstruction(String s) {
-        String last = underConstruction.get(underConstruction.size() - 1);
-        if (!s.equals(last)) logger.warn("Trying to remove {} from under construction but it isnt the most recent item, that is {}", s, last);
-        underConstruction.remove(s);
+        String last = underConstruction.last()
+        if (s != last) logger.warn('Trying to remove {} from under construction but it isnt the most recent item, that is {}', s, last)
+        underConstruction.remove(s)
     }
 }

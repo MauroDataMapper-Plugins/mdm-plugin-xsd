@@ -43,18 +43,18 @@ import javax.xml.namespace.QName;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="extensionType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated">
- *       &lt;sequence>
- *         &lt;group ref="{http://www.w3.org/2001/XMLSchema}typeDefParticle" minOccurs="0"/>
- *         &lt;group ref="{http://www.w3.org/2001/XMLSchema}attrDecls"/>
- *       &lt;/sequence>
- *       &lt;attribute name="base" use="required" type="{http://www.w3.org/2001/XMLSchema}QName" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="extensionType"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated"$gt;
+ *       &lt;sequence$gt;
+ *         &lt;group ref="{http://www.w3.org/2001/XMLSchema}typeDefParticle" minOccurs="0"/$gt;
+ *         &lt;group ref="{http://www.w3.org/2001/XMLSchema}attrDecls"/$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;attribute name="base" use="required" type="{http://www.w3.org/2001/XMLSchema}QName" /$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/extension$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

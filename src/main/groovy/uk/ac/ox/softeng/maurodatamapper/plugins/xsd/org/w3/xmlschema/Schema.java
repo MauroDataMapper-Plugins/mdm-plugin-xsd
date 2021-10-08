@@ -45,33 +45,33 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}openAttrs">
- *       &lt;sequence>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}include"/>
- *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}import"/>
- *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}redefine"/>
- *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation"/>
- *         &lt;/choice>
- *         &lt;sequence maxOccurs="unbounded" minOccurs="0">
- *           &lt;group ref="{http://www.w3.org/2001/XMLSchema}schemaTop"/>
- *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;/sequence>
- *       &lt;/sequence>
- *       &lt;attribute name="targetNamespace" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
- *       &lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}token" />
- *       &lt;attribute name="finalDefault" type="{http://www.w3.org/2001/XMLSchema}fullDerivationSet" default="" />
- *       &lt;attribute name="blockDefault" type="{http://www.w3.org/2001/XMLSchema}blockSet" default="" />
- *       &lt;attribute name="attributeFormDefault" type="{http://www.w3.org/2001/XMLSchema}formChoice" default="unqualified" />
- *       &lt;attribute name="elementFormDefault" type="{http://www.w3.org/2001/XMLSchema}formChoice" default="unqualified" />
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/>
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}openAttrs"$gt;
+ *       &lt;sequence$gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"$gt;
+ *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}include"/$gt;
+ *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}import"/$gt;
+ *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}redefine"/$gt;
+ *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation"/$gt;
+ *         &lt;/choice$gt;
+ *         &lt;sequence maxOccurs="unbounded" minOccurs="0"$gt;
+ *           &lt;group ref="{http://www.w3.org/2001/XMLSchema}schemaTop"/$gt;
+ *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation" maxOccurs="unbounded" minOccurs="0"/$gt;
+ *         &lt;/sequence$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;attribute name="targetNamespace" type="{http://www.w3.org/2001/XMLSchema}anyURI" /$gt;
+ *       &lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}token" /$gt;
+ *       &lt;attribute name="finalDefault" type="{http://www.w3.org/2001/XMLSchema}fullDerivationSet" default="" /$gt;
+ *       &lt;attribute name="blockDefault" type="{http://www.w3.org/2001/XMLSchema}blockSet" default="" /$gt;
+ *       &lt;attribute name="attributeFormDefault" type="{http://www.w3.org/2001/XMLSchema}formChoice" default="unqualified" /$gt;
+ *       &lt;attribute name="elementFormDefault" type="{http://www.w3.org/2001/XMLSchema}formChoice" default="unqualified" /$gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /$gt;
+ *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/extension$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -233,7 +233,7 @@ public class Schema
      *
      * <p> For example, to add a new item, do as follows:
      * <pre>
-     *    getIncludesAndImportsAndRedefines().add(newItem);
+     *    getContent().add(newItem);
      * </pre>
      *
      *

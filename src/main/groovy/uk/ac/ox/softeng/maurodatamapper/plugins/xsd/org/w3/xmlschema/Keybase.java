@@ -44,18 +44,18 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="keybase">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}selector"/>
- *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}field" maxOccurs="unbounded"/>
- *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="keybase"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated"$gt;
+ *       &lt;sequence$gt;
+ *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}selector"/$gt;
+ *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}field" maxOccurs="unbounded"/$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" /$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/extension$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

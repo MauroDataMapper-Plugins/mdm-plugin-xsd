@@ -17,6 +17,8 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter
 
+import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.FileParameter
+import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelFileImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.config.ImportGroupConfig
 import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.config.ImportParameterConfig
@@ -24,7 +26,7 @@ import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.config.
 /**
  * Created by james on 31/05/2017.
  */
-class XsdImporterProviderServiceParameters extends DataModelImporterProviderServiceParameters {
+class XsdImporterProviderServiceParameters extends DataModelFileImporterProviderServiceParameters {
 
     //TODO scrap the public private, what are these roots
     @ImportParameterConfig(
@@ -37,13 +39,29 @@ class XsdImporterProviderServiceParameters extends DataModelImporterProviderServ
             order = 1
         )
     )
-    private String rootElement;
+     String rootElement
 
-    public String getRootElement() {
-        return rootElement;
-    }
+    @ImportParameterConfig(
+        displayName = 'File',
+        description = 'The file containing the data to be imported. Please be aware archived imports may take a long period of time',
+        order = -1,
+        group = @ImportGroupConfig(
+            name = 'Source',
+            order = -1
+        )
+    )
+    FileParameter importFile
 
-    public void setRootElement(String rootElement) {
-        this.rootElement = rootElement;
-    }
+
+    @ImportParameterConfig(
+        displayName = "Primary File in Zip Folder",
+        description = "Select primary file within archive",
+        optional = true,
+        order = 2,
+        group = @ImportGroupConfig(
+            name = "Source",
+            order = 1
+        )
+    )
+     String zipFolderLocation
 }

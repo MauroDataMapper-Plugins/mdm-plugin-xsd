@@ -20,7 +20,6 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
@@ -32,103 +31,82 @@ import com.google.common.base.Strings
 
 import javax.xml.namespace.QName
 
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_LABEL_PREFIX
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_ATTRIBUTE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_DEFAULT
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_FIXED
+
 /**
  * @since 05/09/2017
  */
-public class BaseAttributeWrapper extends ElementBasedWrapper<BaseAttribute> {
+class BaseAttributeWrapper extends ElementBasedWrapper<BaseAttribute> {
 
     BaseAttributeWrapper(XsdSchemaService xsdSchemaService, BaseAttribute wrappedElement) {
-        super(xsdSchemaService, wrappedElement);
+        super(xsdSchemaService, wrappedElement)
     }
 
     @Override
-    public DataElement createDataTypeElement(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema) {
-        if ("prohibited".equals(wrappedElement.getUse())) {
-            debug("Is prohibited therefore not creating");
-            return null;
+    String getName() {
+        givenName ?: wrappedElement.getName()
+    }
+
+    @Override
+    QName getRef() {
+        wrappedElement.getRef()
+    }
+
+    @Override
+    AbstractSimpleType getSimpleType() {
+        wrappedElement.getSimpleType()
+    }
+
+    @Override
+    QName getType() {
+        wrappedElement.getType()
+    }
+
+    @Override
+    Integer getMaxOccurs() {
+        1
+    }
+
+    @Override
+    Integer getMinOccurs() {
+        wrappedElement.getUse() == 'required' ? 1 : 0
+    }
+
+    Boolean isProhibited() {
+        wrappedElement.getUse() == 'prohibited'
+    }
+
+    @Override
+    DataElement createDataTypeElement(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema,
+                                      SimpleTypeWrapper simpleTypeWrapper) {
+        if (isProhibited()) {
+            warn('Is prohibited therefore not creating')
+            return null
         }
 
-        DataElement element = super.createDataTypeElement(user, parentDataModel, parentDataClass, schema);
-        if (element == null) return null;
+        additionalMetadata[METADATA_XSD_ATTRIBUTE] = 'true'
+        if (wrappedElement.getDefault()) additionalMetadata[METADATA_XSD_DEFAULT] = wrappedElement.getDefault()
+        if (wrappedElement.getForm()) additionalMetadata[METADATA_LABEL_PREFIX + 'Form'] = wrappedElement.getForm().value()
+        if (wrappedElement.getFixed()) additionalMetadata[METADATA_XSD_FIXED] = wrappedElement.getFixed()
 
-        debug("Adding extra base attribute values as metadata");
-
-        if (!Strings.isNullOrEmpty(wrappedElement.getDefault())) {
-            addMetadataToComponent(element, XsdPlugin.METADATA_XSD_DEFAULT, wrappedElement.getDefault(), user);
-        }
-        if (wrappedElement.getForm() != null) {
-            addMetadataToComponent(element, XsdPlugin.METADATA_LABEL_PREFIX + "Form", wrappedElement.getForm().value(), user);
-        }
-        if (!Strings.isNullOrEmpty(wrappedElement.getFixed())) {
-            addMetadataToComponent(element, XsdPlugin.METADATA_XSD_FIXED, wrappedElement.getFixed(), user);
-        }
-        return element;
-
+        super.createDataTypeElement(user, parentDataModel, parentDataClass, schema, simpleTypeWrapper)
     }
 
     @Override
-    public SimpleExtensionType getComplexSimpleContentExtension() {
-        return null;
+    RestrictionWrapper getRestriction() {
+        null
     }
 
     @Override
-    public AbstractComplexType getComplexType() {
-        return null;
+    SimpleExtensionType getComplexSimpleContentExtension() {
+        null
     }
 
     @Override
-    public Integer getMaxOccurs() {
-        switch (wrappedElement.getUse()) {
-            case "prohibited":
-                return 0;
-            default:
-                return 1;
-        }
+    AbstractComplexType getComplexType() {
+        null
     }
-
-    @Override
-    public Integer getMinOccurs() {
-        switch (wrappedElement.getUse()) {
-            case "required":
-                return 1;
-            default:
-                return 0;
-        }
-    }
-
-    @Override
-    public QName getRef() {
-        return wrappedElement.getRef();
-    }
-
-    @Override
-    public AbstractSimpleType getSimpleType() {
-        return wrappedElement.getSimpleType();
-    }
-
-    @Override
-    public QName getType() {
-        return wrappedElement.getType();
-    }
-
-    @Override
-    public boolean isLocalComplexType() {
-        return false;
-    }
-
-    @Override
-    public boolean isLocalSimpleType() {
-        return wrappedElement.getSimpleType() != null;
-    }
-
-    @Override
-    public String getName() {
-        return Strings.isNullOrEmpty(givenName) ? wrappedElement.getName() : givenName;
-    }
-
-    @Override
-    public RestrictionWrapper getRestriction() {
-        return null;
-    }
-
 }

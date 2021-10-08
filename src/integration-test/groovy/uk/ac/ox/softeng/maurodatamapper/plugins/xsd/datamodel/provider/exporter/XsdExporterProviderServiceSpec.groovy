@@ -20,15 +20,18 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter
 import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
 import groovy.util.logging.Slf4j
+import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
 import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.BaseXsdImportorExporterProviderServiceSpec
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.BaseXsdImporterExporterProviderServiceSpec
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.XsdImporterProviderService
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -39,20 +42,25 @@ import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
 @Integration
 @Rollback
 @Slf4j
-class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServiceSpec {
+class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServiceSpec {
 
     DataModelService dataModelService
     XsdExporterProviderService xsdExporterProviderService
-
-    @Override
-    XsdExporterProviderService getXsdExporterProviderService() {
-        xsdExporterProviderService
-    }
-
+    XsdImporterProviderService xsdImporterProviderService
 
     void "test export simple"() {
         given:
         setupData()
+
+        String testUser = reader1.emailAddress
+
+        def testAuthority = new Authority(label: 'XsdTestAuthority', url: 'http://localhost', createdBy: testUser)
+        checkAndSave(testAuthority)
+
+        dataModel = new DataModel(createdByUser: reader1, label: 'XSD Test: Simple model', author: 'Test Author', organisation: 'Test Org',
+                                  description: 'Test description', type: DataModelType.DATA_STANDARD,
+                                  folder: folder, authority: testAuthority)
+        dataModel.save()
 
         //Create Simple Data Model : TODO Replace with import once importer is completed
         Metadata targetNamespace = new Metadata(createdByUser: reader1, namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE, value: ' https://metadatacatalogue.com/xsd/test/simple/1.0', multiFacetAwareItemId: UUID.randomUUID())
@@ -171,6 +179,16 @@ class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServ
     void "test export complex"() {
         given:
         setupData()
+
+        String testUser = reader1.emailAddress
+
+        def testAuthority = new Authority(label: 'XsdTestAuthority', url: 'http://localhost', createdBy: testUser)
+        checkAndSave(testAuthority)
+
+        dataModel = new DataModel(createdByUser: reader1, label: 'XSD Test: Simple model', author: 'Test Author', organisation: 'Test Org',
+                                  description: 'Test description', type: DataModelType.DATA_STANDARD,
+                                  folder: folder, authority: testAuthority)
+        dataModel.save()
 
         //Create Complex Data Model : TODO Replace with import once importer is completed
         Metadata targetNamespace = new Metadata(createdByUser: reader1, namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE, value: 'https://metadatacatalogue.com/xsd/test/complex/1.0', multiFacetAwareItemId: UUID.randomUUID())
@@ -499,7 +517,7 @@ class XsdExporterProviderServiceSpec extends BaseXsdImportorExporterProviderServ
         setupData()
 
         byte[] file = loadTestFile('hic__hepatitis_v2.0.0', 'json')
-        DataModel dm = importModel(file)
+        DataModel dm = importJsonModel(file)
         dataModelService.validate(dm)
         dataModelService.saveModelWithContent(dm)
 

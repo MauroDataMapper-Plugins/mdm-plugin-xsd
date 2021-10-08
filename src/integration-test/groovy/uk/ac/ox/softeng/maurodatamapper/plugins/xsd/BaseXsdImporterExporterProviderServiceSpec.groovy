@@ -17,7 +17,12 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
 
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.XsdImporterProviderService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImporterProviderServiceParameters
+
 import grails.gorm.transactions.Rollback
+import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
 import grails.testing.spock.OnceBefore
 import grails.util.BuildSettings
@@ -47,17 +52,23 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.fail
+
 @Slf4j
-@Integration
-@Rollback
-abstract class BaseXsdImportorExporterProviderServiceSpec extends BaseIntegrationSpec {
+@Transactional
+abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegrationSpec {
 
 
     DataModel dataModel
     Folder folder
     DataModelJsonImporterService dataModelJsonImporterService
+    DataModelService dataModelService
+
 
     abstract XsdExporterProviderService getXsdExporterProviderService()
+    abstract XsdImporterProviderService getXsdImporterProviderService()
+
 
     @Shared
     Path resourcesPath
@@ -76,18 +87,7 @@ abstract class BaseXsdImportorExporterProviderServiceSpec extends BaseIntegratio
     void setupDomainData() {
         folder = new Folder(label: 'xsdTestFolder', createdBy: reader1.emailAddress)
         checkAndSave(folder)
-
-        String testUser = reader1.emailAddress
-
-        def testAuthority = new Authority(label: 'XsdTestAuthority', url: 'http://localhost', createdBy: testUser)
-        checkAndSave(testAuthority)
-
-        dataModel = new DataModel(createdByUser: reader1, label: 'XSD Test: Simple model', author: 'Test Author', organisation: 'Test Org',
-                description: 'Test description', type: DataModelType.DATA_STANDARD,
-                folder: folder, authority: testAuthority)
-        dataModel.save()
-
-    }
+   }
 
 
     def testExport(UUID dataModelId, String filename, String outFileName) throws IOException, ApiException {
@@ -134,6 +134,24 @@ abstract class BaseXsdImportorExporterProviderServiceSpec extends BaseIntegratio
     }
 
     DataModel importModel(byte[] bytes) {
+        basicParameters = new XsdImporterProviderServiceParameters().tap {
+            importAsNewBranchModelVersion = false
+            importAsNewDocumentationVersion = false
+            finalised = false
+        }
+
+        log.trace('Importing:\n {}', new String(bytes))
+        basicParameters.importFile = new FileParameter(fileContents: bytes)
+        importModel(basicParameters)
+    }
+
+    DataModel importModel(XsdImporterProviderServiceParameters params){
+        DataModel imported = getXsdImporterProviderService().importDomain(admin, params) as DataModel
+        imported.folder = folder
+        imported
+    }
+
+    DataModel importJsonModel(byte[] bytes) {
         basicParameters = new DataModelFileImporterProviderServiceParameters().tap {
             importAsNewBranchModelVersion = false
             importAsNewDocumentationVersion = false
@@ -142,12 +160,12 @@ abstract class BaseXsdImportorExporterProviderServiceSpec extends BaseIntegratio
 
         log.trace('Importing:\n {}', new String(bytes))
         basicParameters.importFile = new FileParameter(fileContents: bytes)
+        importJsonModel(basicParameters)
+    }
 
-        Folder importFolder = new Folder(createdByUser: admin, label: 'import')
-        checkAndSave(importFolder)
-
-        DataModel imported = dataModelJsonImporterService.importDomain(admin, basicParameters) as DataModel
-        imported.folder = importFolder
+    DataModel importJsonModel(DataModelFileImporterProviderServiceParameters params){
+        DataModel imported = dataModelJsonImporterService.importDomain(admin, params) as DataModel
+        imported.folder = folder
         imported
     }
 
@@ -177,5 +195,55 @@ abstract class BaseXsdImportorExporterProviderServiceSpec extends BaseIntegratio
         return s.replaceAll('Last Updated:.+?<br\\s*/>', 'Last Updated:<br/>')
     }
 
+    XsdImporterProviderServiceParameters createImportParameters(String filename, String modelName) throws IOException {
+        XsdImporterProviderServiceParameters params = new XsdImporterProviderServiceParameters()
+        params.setModelName(modelName)
+        params.setFolderId(folder.id)
+        params.importAsNewBranchModelVersion = false
+        params.importAsNewDocumentationVersion = false
+        params.finalised = false
 
+        Path p = Paths.get('src/integration-test/resources/' + filename)
+        if (!Files.exists(p)) {
+            fail('File ' + filename + ' cannot be found')
+        }
+
+        FileParameter file = new FileParameter(p.toString(), 'application/xml', Files.readAllBytes(p))
+        params.setImportFile(file)
+        params
+    }
+
+    XsdImporterProviderServiceParameters createImportParametersForZip(String filename, String zipLocation, String modelName) throws IOException {
+        XsdImporterProviderServiceParameters params = new XsdImporterProviderServiceParameters()
+        params.setModelName(modelName)
+        params.setFolderId(folder.id)
+        params.importAsNewBranchModelVersion = false
+        params.importAsNewDocumentationVersion = false
+        params.finalised = false
+        params.zipFolderLocation = filename
+
+        Path p = Paths.get(zipLocation)
+        if (!Files.exists(p)) {
+            fail('File ' + zipLocation + ' cannot be found')
+        }
+
+        FileParameter file = new FileParameter(p.toString(), 'application/zip', Files.readAllBytes(p))
+        params.setImportFile(file)
+        params
+    }
+
+
+    DataModel importDataModelAndRetrieveFromDatabase(XsdImporterProviderServiceParameters params) {
+        DataModel importedModel = importModel(params)
+        importedModel.setCreatedBy(admin.emailAddress)
+        dataModelService.validate(importedModel)
+        dataModelService.saveModelWithContent(importedModel)
+
+        log.debug('Getting datamodel {} from database to verify', importedModel.getId())
+        // Rather than use the one returned from the import, we want to check whats actually been saved into the DB
+        DataModel dataModel = DataModel.get(importedModel.getId())
+
+        assertNotNull('DataModel should exist in Database', dataModel)
+        dataModel
+    }
 }

@@ -37,18 +37,18 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="topLevelAttribute">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}attribute">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation" minOccurs="0"/>
- *         &lt;element name="simpleType" type="{http://www.w3.org/2001/XMLSchema}localSimpleType" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="topLevelAttribute"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}attribute"$gt;
+ *       &lt;sequence$gt;
+ *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation" minOccurs="0"/$gt;
+ *         &lt;element name="simpleType" type="{http://www.w3.org/2001/XMLSchema}localSimpleType" minOccurs="0"/$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" /$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/restriction$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

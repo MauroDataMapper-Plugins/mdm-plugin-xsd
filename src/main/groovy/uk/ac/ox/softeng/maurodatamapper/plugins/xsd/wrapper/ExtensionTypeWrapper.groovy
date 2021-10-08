@@ -21,6 +21,7 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExtensionType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.ExtensionCapable
 
 import com.google.common.base.Strings
 
@@ -29,42 +30,38 @@ import javax.xml.namespace.QName
 /**
  * @since 05/09/2017
  */
-public class ExtensionTypeWrapper extends ComplexContentWrapper<ExtensionType> {
+class ExtensionTypeWrapper extends ComplexContentWrapper<ExtensionType> implements ExtensionCapable {
+
     ExtensionTypeWrapper(XsdSchemaService xsdSchemaService, ExtensionType wrappedElement) {
-        super(xsdSchemaService, wrappedElement);
+        super(xsdSchemaService, wrappedElement)
     }
 
     @Override
-    public ExplicitGroup getAll() {
-        return wrappedElement.getAll();
+    String getName() {
+        givenName ?: "Extension[${getBase().getLocalPart()}]"
+    }
+
+    QName getBase() {
+        wrappedElement.getBase()
     }
 
     @Override
-    public List<Annotated> getAttributesAndAttributeGroups() {
-        return wrappedElement.getAttributesAndAttributeGroups();
+    List<Annotated> getAttributesAndAttributeGroups() {
+        wrappedElement.getAttributesAndAttributeGroups()
     }
 
     @Override
-    public ExplicitGroup getChoice() {
-        return wrappedElement.getChoice();
+    ExplicitGroup getAll() {
+        wrappedElement.getAll()
     }
 
     @Override
-    public ExplicitGroup getSequence() {
-        return wrappedElement.getSequence();
-    }
-
-    public QName getBase() {
-        return wrappedElement.getBase();
+    ExplicitGroup getChoice() {
+        wrappedElement.getChoice()
     }
 
     @Override
-    public String getName() {
-        return Strings.isNullOrEmpty(givenName) ? "Extension[" + getBase().getLocalPart() + "]" : givenName;
-    }
-
-    @Override
-    public RestrictionWrapper getRestriction() {
-        return null;
+    ExplicitGroup getSequence() {
+        wrappedElement.getSequence()
     }
 }

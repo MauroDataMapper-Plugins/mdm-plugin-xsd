@@ -25,140 +25,124 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Element
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.LocalElement
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleExtensionType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
 import uk.ac.ox.softeng.maurodatamapper.security.User
-
-import com.google.common.base.Strings
 
 import javax.xml.namespace.QName
 
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
 /**
  * @since 24/08/2017
  */
-public class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
+class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
 
-    private boolean allElement;
-    private boolean choiceElement;
-    private String choiceGroup;
-    private Integer maxOccurs;
-    private Integer minOccurs;
+    private boolean allElement
+    private boolean choiceElement
+    private String choiceGroup
+    private Integer maxOccurs
+    private Integer minOccurs
 
     ElementWrapper(XsdSchemaService xsdSchemaService, AbstractElement element) {
-        this(xsdSchemaService, element, null);
+        super(xsdSchemaService, element)
     }
 
-    private ElementWrapper(XsdSchemaService xsdSchemaService, AbstractElement wrappedElement, String name) {
-        super(xsdSchemaService, wrappedElement, name);
+    //    private ElementWrapper(XsdSchemaService xsdSchemaService, AbstractElement wrappedElement, String name) {
+    //        super(xsdSchemaService, wrappedElement, name)
+    //    }
+
+    @Override
+    String getName() {
+        givenName ?: wrappedElement.getName()
     }
 
     @Override
-    public SimpleExtensionType getComplexSimpleContentExtension() {
-        return wrappedElement.getComplexType() != null && wrappedElement.getComplexType().getSimpleContent() != null ?
-               wrappedElement.getComplexType().getSimpleContent().getExtension() : null;
+    SimpleExtensionType getComplexSimpleContentExtension() {
+        wrappedElement.getComplexType() && wrappedElement.getComplexType().getSimpleContent() ?
+        wrappedElement.getComplexType().getSimpleContent().getExtension() : null
     }
 
     @Override
-    public AbstractComplexType getComplexType() {
-        return wrappedElement.getComplexType();
+    AbstractComplexType getComplexType() {
+        wrappedElement.getComplexType()
     }
 
     @Override
-    public Integer getMaxOccurs() {
-        if (maxOccurs == null) setMaxOccurs(wrappedElement.getMaxOccurs());
-        return maxOccurs;
+    Integer getMaxOccurs() {
+        if (maxOccurs == null) setMaxOccurs(wrappedElement.getMaxOccurs())
+        maxOccurs
     }
 
     @Override
-    public Integer getMinOccurs() {
-        if (minOccurs == null) setMinOccurs(wrappedElement.getMinOccurs());
-        return minOccurs;
-    }
-
-    public void setMinOccurs(BigInteger minOccurs) {
-        this.minOccurs = minOccurs.intValueExact();
+    Integer getMinOccurs() {
+        if (minOccurs == null) setMinOccurs(wrappedElement.getMinOccurs())
+        minOccurs
     }
 
     @Override
-    public QName getRef() {
-        return wrappedElement.getRef();
+    RestrictionWrapper getRestriction() {
+        getComplexType()?.getComplexContent()?.getRestriction() ?
+        new RestrictionWrapper(xsdSchemaService, getComplexType().getComplexContent().getRestriction()) : null
     }
 
     @Override
-    public AbstractSimpleType getSimpleType() {
-        return wrappedElement.getSimpleType();
+    QName getRef() {
+        wrappedElement.getRef()
     }
 
     @Override
-    public QName getType() {
-        return wrappedElement.getType();
+    AbstractSimpleType getSimpleType() {
+        wrappedElement.getSimpleType()
     }
 
     @Override
-    public boolean isLocalComplexType() {
-        return wrappedElement.getComplexType() != null;
-    }
-
-    @Override
-    public boolean isLocalSimpleType() {
-        return wrappedElement.getSimpleType() != null;
+    QName getType() {
+        wrappedElement.getType()
     }
 
     @Override
     DataElement createDataModelElement(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema) {
-        DataElement element = super.createDataModelElement(user, parentDataModel, parentDataClass, schema);
+        DataElement element = super.createDataModelElement(user, parentDataModel, parentDataClass, schema)
 
-        if (element == null) return null;
+        if (element == null) return null
 
-        trace("Adding extra attribute values as metadata");
+        trace('Adding extra attribute values as metadata')
 
-        if (!Strings.isNullOrEmpty(wrappedElement.getDefault())) {
-            addMetadataToComponent(element, XsdPlugin.METADATA_XSD_DEFAULT, wrappedElement.getDefault(), user);
+        if (wrappedElement.getDefault()) {
+            addMetadataToComponent(element, METADATA_XSD_DEFAULT, wrappedElement.getDefault(), user)
         }
-        if (!Strings.isNullOrEmpty(wrappedElement.getFixed())) {
-            addMetadataToComponent(element, XsdPlugin.METADATA_XSD_FIXED, wrappedElement.getFixed(), user);
+        if (wrappedElement.getFixed()) {
+            addMetadataToComponent(element, METADATA_XSD_FIXED, wrappedElement.getFixed(), user)
         }
         if (choiceElement) {
-            addMetadataToComponent(element, XsdPlugin.METADATA_XSD_CHOICE, choiceGroup, user);
+            addMetadataToComponent(element, METADATA_XSD_CHOICE, choiceGroup, user)
         } else if (allElement) {
-            addMetadataToComponent(element, XsdPlugin.METADATA_XSD_ALL, "true", user);
+            addMetadataToComponent(element, METADATA_XSD_ALL, 'true', user)
         }
-        return element;
+        element
     }
 
-    public void setMaxOccurs(String max) {
-        if (max.equals("unbounded")) this.maxOccurs = -1;
+    void setMinOccurs(BigInteger minOccurs) {
+        this.@minOccurs = minOccurs.intValueExact()
+    }
+
+    void setMaxOccurs(String max) {
+        if (max == 'unbounded') this.@maxOccurs = -1
         else {
             try {
-                this.maxOccurs = Integer.parseInt(max);
+                this.@maxOccurs = max.toInteger()
             } catch (NumberFormatException ignored) {
-                this.maxOccurs = null;
+                this.@maxOccurs = null
             }
         }
     }
 
-    @Override
-    public String getName() {
-        return wrappedElement.getName();
-    }
-
-    @Override
-    public RestrictionWrapper getRestriction() {
-        return isLocalComplexType() && getComplexType().getComplexContent() != null && getComplexType().getComplexContent().getRestriction() != null ?
-               new RestrictionWrapper(xsdSchemaService, getComplexType().getComplexContent().getRestriction()) : null;
-    }
-
     void setAllElement() {
-        allElement = true;
+        allElement = true
     }
 
     void setChoiceGroup(String group) {
-        choiceElement = true;
-        choiceGroup = group;
+        choiceElement = true
+        choiceGroup = group
     }
 
     private void populateFromDataClass(SchemaWrapper schema, DataClass dataClass) {
@@ -200,17 +184,17 @@ public class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
         }
     }
 
-    static ElementWrapper createElement(SchemaWrapper schema, DataElement dataElement) {
+   static ElementWrapper createElement(SchemaWrapper schema, DataElement dataElement) {
 
-        ElementWrapper wrapper = new ElementWrapper(schema.xsdSchemaService, new LocalElement());
-        wrapper.populateFromDataElement(schema, dataElement);
-        return wrapper;
-    }
+       ElementWrapper wrapper = new ElementWrapper(schema.xsdSchemaService, new LocalElement())
+       wrapper.populateFromDataElement(schema, dataElement)
+       wrapper
+   }
 
-    static ElementWrapper createElement(SchemaWrapper schema, DataClass dataClass) {
+   static ElementWrapper createElement(SchemaWrapper schema, DataClass dataClass) {
 
-        ElementWrapper wrapper = new ElementWrapper(schema.xsdSchemaService, new Element());
-        wrapper.populateFromDataClass(schema, dataClass);
-        return wrapper;
-    }
+       ElementWrapper wrapper = new ElementWrapper(schema.xsdSchemaService, new Element())
+       wrapper.populateFromDataClass(schema, dataClass)
+       wrapper
+   }
 }

@@ -37,21 +37,21 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="realGroup">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}group">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation" minOccurs="0"/>
- *         &lt;choice minOccurs="0">
- *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}all"/>
- *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}choice"/>
- *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}sequence"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="realGroup"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}group"$gt;
+ *       &lt;sequence$gt;
+ *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}annotation" minOccurs="0"/$gt;
+ *         &lt;choice minOccurs="0"$gt;
+ *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}all"/$gt;
+ *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}choice"/$gt;
+ *           &lt;element ref="{http://www.w3.org/2001/XMLSchema}sequence"/$gt;
+ *         &lt;/choice$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/restriction$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

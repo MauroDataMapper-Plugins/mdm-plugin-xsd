@@ -29,34 +29,35 @@ import javax.xml.bind.JAXBElement
  */
 enum RestrictionKind {
 
-    maxExclusive("Max Exclusive"),
-    minInclusive("Min Inclusive"),
-    minLength("Min Length"),
-    enumeration("Enumeration"),
-    length("Length"),
-    pattern("Pattern/Regex"),
-    fractionDigits("Number of Fraction Digits"),
-    whiteSpace("Whitespace Handling"),
-    totalDigits("Total Digits"),
-    maxLength("Max Length"),
-    minExclusive("Min Exclusive"),
-    maxInclusive("Max Exclusive");
+    maxExclusive('Max Exclusive'),
+    minInclusive('Min Inclusive'),
+    minLength('Min Length'),
+    enumeration('Enumeration'),
+    length('Length'),
+    pattern('Pattern/Regex'),
+    fractionDigits('Number of Fraction Digits'),
+    whiteSpace('Whitespace Handling'),
+    totalDigits('Total Digits'),
+    maxLength('Max Length'),
+    minExclusive('Min Exclusive'),
+    maxInclusive('Max Exclusive');
 
-    public final String displayText
+    final String displayText
 
     RestrictionKind(String displayText) {
         this.displayText = XsdPlugin.METADATA_LABEL_RESTRICTION_PREFIX + displayText
     }
+
 
     static RestrictionKind findFromDisplayText(String displayText) {
         values().find {v -> v.displayText.equalsIgnoreCase(displayText)}
     }
 
     static RestrictionKind findFromElement(JAXBElement element) {
-        return RestrictionKind.valueOf(element.getName().getLocalPart())
+        valueOf(element.getName().getLocalPart())
     }
 
     static RestrictionKind findFromFacet(Facet facet) {
-        return RestrictionKind.valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, facet.getClass().getSimpleName()))
+        valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, facet.getClass().getSimpleName()))
     }
 }

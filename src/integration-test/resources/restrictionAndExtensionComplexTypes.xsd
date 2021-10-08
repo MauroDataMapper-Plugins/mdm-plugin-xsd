@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2020-2021 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+    SPDX-License-Identifier: Apache-2.0
+
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="https://metadatacatalogue.com/xsd/test/raect/1.0"
+           targetNamespace="https://metadatacatalogue.com/xsd/test/raect/1.0" elementFormDefault="qualified">
+  <xs:element name="topElement" type="complexA"> </xs:element>
+  <xs:complexType name="complexA">
+    <xs:sequence>
+      <xs:element name="elementA" type="extendedChoiceB" />
+      <xs:element name="elementB" type="II.GB-en-NHS.IdentifierType6" />
+      <xs:element name="elementC" type="II.GB-en-NHS.IdentifierType6_ALTERNATIVE" />
+      <xs:element name="elementD" type="II_ALTERNATIVE" />
+      <xs:element name="elementE" type="II" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="choice-B">
+    <xs:choice>
+      <xs:element name="elementE" type="xs:date"> </xs:element>
+      <xs:element name="elementF" type="xs:dateTime"> </xs:element>
+    </xs:choice>
+    <xs:attribute name="mappingId" type="GUID" />
+  </xs:complexType>
+  <xs:complexType name="extendedChoiceB">
+    <xs:complexContent>
+      <xs:extension base="choice-B">
+        <xs:sequence>
+          <xs:element name="elementN" type="xs:string" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:simpleType name="GUID">
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+  <xs:complexType name="II.GB-en-NHS.IdentifierType6">
+    <xs:complexContent>
+      <xs:restriction base="II">
+        <xs:attribute name="root" type="uid" use="prohibited" />
+        <xs:attribute name="extension" use="required">
+          <xs:simpleType>
+            <xs:restriction base="st">
+              <xs:minLength value="1" />
+              <xs:maxLength value="20" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="assigningAuthorityName" type="st" use="prohibited" />
+        <xs:attribute name="displayable" type="bl" use="prohibited" />
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="II">
+    <xs:complexContent>
+      <xs:extension base="ANY">
+        <xs:attribute name="root" type="uid" use="optional" />
+        <xs:attribute name="extension" type="st" use="optional" />
+        <xs:attribute name="assigningAuthorityName" type="st" use="optional" />
+        <xs:attribute name="displayable" type="bl" use="optional" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType abstract="true" name="ANY">
+    <xs:attribute name="nullFlavor" type="cs_NullFlavor" use="optional" />
+    <xs:attribute name="updateMode" type="cs_UpdateMode" use="optional" />
+  </xs:complexType>
+  <xs:complexType abstract="true" name="ANY_ALTERNATIVE">
+    <xs:sequence>
+      <xs:element name="nullFlavor" type="cs_NullFlavor" minOccurs="0" />
+      <xs:element name="updateMode" type="cs_UpdateMode" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="II_ALTERNATIVE">
+    <xs:complexContent>
+      <xs:extension base="ANY_ALTERNATIVE">
+        <xs:sequence>
+          <xs:element name="root" type="uid" minOccurs="0" />
+          <xs:element name="extension" type="st" minOccurs="0" />
+          <xs:element name="assigningAuthorityName" type="st" minOccurs="0" />
+          <xs:element name="displayable" type="bl" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="II.GB-en-NHS.IdentifierType6_ALTERNATIVE">
+    <xs:complexContent>
+      <xs:restriction base="II_ALTERNATIVE">
+        <xs:sequence>
+          <xs:element name="extension" minOccurs="1">
+            <xs:simpleType>
+              <xs:restriction base="st">
+                <xs:minLength value="1" />
+                <xs:maxLength value="20" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
+        </xs:sequence>
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:simpleType name="uid">
+    <xs:union memberTypes="oid uuid ruid" />
+  </xs:simpleType>
+  <xs:simpleType name="oid">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([0-9][0-9]*)(\.[0-9][0-9]*)*" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="uuid">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ruid">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Za-z][A-Za-z0-9\-]*" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="st">
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+  <xs:simpleType name="cs_NullFlavor">
+    <xs:restriction base="cs">
+      <xs:enumeration value="NI" />
+      <xs:enumeration value="NA" />
+      <xs:enumeration value="UNK" />
+      <xs:enumeration value="NASK" />
+      <xs:enumeration value="ASKU" />
+      <xs:enumeration value="NAV" />
+      <xs:enumeration value="OTH" />
+      <xs:enumeration value="PINF" />
+      <xs:enumeration value="NINF" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="cs_UpdateMode">
+    <xs:restriction base="cs">
+      <xs:enumeration value="added" />
+      <xs:enumeration value="altered" />
+      <xs:enumeration value="removed" />
+      <xs:enumeration value="unchanged" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="cs">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[^\s]*" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="bl">
+    <xs:restriction base="xs:boolean">
+      <xs:pattern value="true|false" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

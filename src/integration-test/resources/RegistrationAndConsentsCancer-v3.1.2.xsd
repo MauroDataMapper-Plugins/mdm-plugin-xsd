@@ -22,7 +22,7 @@
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns="https://genomicsengland.co.uk/xsd/cancer/3.1.2" targetNamespace="https://genomicsengland.co.uk/xsd/cancer/3.1.2" vc:minVersion="1.1"
            elementFormDefault="qualified">
-   <xs:include schemaLocation="DataTypesCancer-v3.1.2.xsd" />
+   <xs:include schemaLocation="./mixedDataTypesOnly.xsd" />
    <xs:element name="registration-and-consents">
       <xs:complexType>
          <xs:sequence>
@@ -181,9 +181,9 @@
                   to enable high-level grouping and analysis of the tumour type. It is understood that this may not be available at Registration or
                   may change between Registration and submission of Core data. Note that the enumeration 'not_available', although available at
                   Registration, should not be submitted for Core Disease Information Updates. If the diagnosis is not listed as a subtype it can be
-                  entered under “other”. A tumour comprised of more than one subtype should be entered as follows. The predominant tumour subtype in
+                  entered under “other�?. A tumour comprised of more than one subtype should be entered as follows. The predominant tumour subtype in
                   the sample sent for whole genome sequencing should be entered first. The remaining subtypes should be entered in descending order
-                  with the most prevalant subtype in the whole tumour listed second. It is helpful to include “mixed tumour type” as a subtype but
+                  with the most prevalant subtype in the whole tumour listed second. It is helpful to include “mixed tumour type�? as a subtype but
                   this should not be entered alone. </xs:documentation>
             </xs:annotation>
             <xs:simpleType>

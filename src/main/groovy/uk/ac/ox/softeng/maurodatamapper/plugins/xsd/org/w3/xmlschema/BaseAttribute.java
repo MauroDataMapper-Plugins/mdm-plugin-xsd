@@ -42,30 +42,30 @@ import javax.xml.namespace.QName;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="attribute">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated">
- *       &lt;sequence>
- *         &lt;element name="simpleType" type="{http://www.w3.org/2001/XMLSchema}localSimpleType" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attGroup ref="{http://www.w3.org/2001/XMLSchema}defRef"/>
- *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}QName" />
- *       &lt;attribute name="use" default="optional">
- *         &lt;simpleType>
- *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NMTOKEN">
- *             &lt;enumeration value="prohibited"/>
- *             &lt;enumeration value="optional"/>
- *             &lt;enumeration value="required"/>
- *           &lt;/restriction>
- *         &lt;/simpleType>
- *       &lt;/attribute>
- *       &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="fixed" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="form" type="{http://www.w3.org/2001/XMLSchema}formChoice" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="attribute"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated"$gt;
+ *       &lt;sequence$gt;
+ *         &lt;element name="simpleType" type="{http://www.w3.org/2001/XMLSchema}localSimpleType" minOccurs="0"/$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;attGroup ref="{http://www.w3.org/2001/XMLSchema}defRef"/$gt;
+ *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}QName" /$gt;
+ *       &lt;attribute name="use" default="optional"$gt;
+ *         &lt;simpleType$gt;
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NMTOKEN"$gt;
+ *             &lt;enumeration value="prohibited"/$gt;
+ *             &lt;enumeration value="optional"/$gt;
+ *             &lt;enumeration value="required"/$gt;
+ *           &lt;/restriction$gt;
+ *         &lt;/simpleType$gt;
+ *       &lt;/attribute$gt;
+ *       &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" /$gt;
+ *       &lt;attribute name="fixed" type="{http://www.w3.org/2001/XMLSchema}string" /$gt;
+ *       &lt;attribute name="form" type="{http://www.w3.org/2001/XMLSchema}formChoice" /$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/extension$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

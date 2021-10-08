@@ -17,117 +17,102 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NoFixedFacet
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NumFacet
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Pattern
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Restriction
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.RestrictionType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.TotalDigits
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.WhiteSpace
-
-import com.google.common.base.Strings
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.ExtensionCapable
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.JaxbHandler
 
 import javax.xml.bind.JAXBElement
 import javax.xml.namespace.QName
+import java.util.List
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.enumeration
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.fractionDigits
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.length
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxExclusive
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxInclusive
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxLength
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minExclusive
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minInclusive
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minLength
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.pattern
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.totalDigits
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.whiteSpace;
-
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.*
 /**
+ * Can be
+ * ox.softeng.metadatacatalogue.plugins.xsd.org.w3.xmlschema.Restriction or
+ * ox.softeng.metadatacatalogue.plugins.xsd.org.w3.xmlschema.RestrictionType
+ *
+ * both extend Annotated and both are used interchangeably
  * @since 25/08/2017
  */
-public class RestrictionWrapper extends ComplexContentWrapper<Annotated> {
+class RestrictionWrapper extends ComplexContentWrapper<Annotated> implements JaxbHandler, ExtensionCapable {
 
     RestrictionWrapper(XsdSchemaService xsdSchemaService, Annotated wrappedElement) {
-        super(xsdSchemaService, wrappedElement);
+        super(xsdSchemaService, wrappedElement)
     }
 
-    public JAXBElement findRestrictionWithKind(RestrictionKind kind) {
-        for (Object e : getMinExclusivesAndMinInclusivesAndMaxExclusives()) {
-            if (e instanceof JAXBElement && isElementWithName(kind.name(), (JAXBElement) e)) return (JAXBElement) e;
-        }
-        return null;
+    @Override
+    String getName() {
+        "Restriction[${getExtensionName()}]"
     }
 
-    public ExplicitGroup getAll() {
-        if (wrappedElement instanceof RestrictionType) {
-            return ((RestrictionType) wrappedElement).getAll();
-        }
-        warn("Unknown restriction type inside wrapper {}", wrappedElement.getClass().getCanonicalName());
-        return null;
-    }
-
-    public List<Annotated> getAttributesAndAttributeGroups() {
-        if (wrappedElement instanceof RestrictionType) {
-            return ((RestrictionType) wrappedElement).getAttributesAndAttributeGroups();
-        }
-        warn("Unknown restriction type inside wrapper {}", wrappedElement.getClass().getCanonicalName());
-        return Collections.emptyList();
-    }
-
-    public ExplicitGroup getChoice() {
-        if (wrappedElement instanceof RestrictionType) {
-            return ((RestrictionType) wrappedElement).getChoice();
-        }
-        warn("Unknown restriction type inside wrapper {}", wrappedElement.getClass());
-        return null;
-    }
-
-    public ExplicitGroup getSequence() {
-        if (wrappedElement instanceof RestrictionType) {
-            return ((RestrictionType) wrappedElement).getSequence();
-        }
-        warn("Unknown restriction type inside wrapper {}", wrappedElement.getClass().getCanonicalName());
-        return null;
-    }
-
-    public QName getBase() {
+    @Override
+    QName getBase() {
         if (wrappedElement instanceof Restriction) {
-            return ((Restriction) wrappedElement).getBase();
+            return wrappedElement.getBase()
         }
         if (wrappedElement instanceof RestrictionType) {
-            return ((RestrictionType) wrappedElement).getBase();
+            return wrappedElement.getBase()
         }
-        warn("Unknown restriction type inside wrapper {}", wrappedElement.getClass().getCanonicalName());
-        return null;
+        warn('Unknown restriction type inside wrapper {}', wrappedElement.getClass().getCanonicalName())
+        null
     }
 
     @Override
-    public String getName() {
-        return Strings.isNullOrEmpty(givenName) ? "Restriction[" + getBase().getLocalPart() + "]" : givenName;
+    List<Annotated> getAttributesAndAttributeGroups() {
+        if (wrappedElement instanceof RestrictionType) {
+            return wrappedElement.getAttributesAndAttributeGroups()
+        }
+        warn('Unknown restriction type inside wrapper {}', wrappedElement.getClass().getCanonicalName())
+        Collections.emptyList()
     }
 
     @Override
-    public RestrictionWrapper getRestriction() {
-        return null;
+    ExplicitGroup getAll() {
+        if (wrappedElement instanceof RestrictionType) {
+            return wrappedElement.getAll()
+        }
+        warn('Unknown restriction type inside wrapper {}', wrappedElement.getClass().getCanonicalName())
+        null
     }
 
-    List<Object> findAllRestrictionsWithoutKind(RestrictionKind kind) {
-        return getMinExclusivesAndMinInclusivesAndMaxExclusives().findAll {
-            e -> !(e instanceof JAXBElement) || (!isElementWithName(kind.name(), (JAXBElement) e))
+    @Override
+    ExplicitGroup getChoice() {
+        if (wrappedElement instanceof RestrictionType) {
+            return wrappedElement.getChoice()
         }
+        warn('Unknown restriction type inside wrapper {}', wrappedElement.getClass())
+        null
+    }
+
+    @Override
+    ExplicitGroup getSequence() {
+        if (wrappedElement instanceof RestrictionType) {
+            return wrappedElement.getSequence()
+        }
+        warn('Unknown restriction type inside wrapper {}', wrappedElement.getClass().getCanonicalName())
+        null
+    }
+
+    List<JAXBElement> findRestrictionsOfKind(RestrictionKind kind) {
+        getRestrictions().findAll {e -> isJaxbElementWithName(e, kind.name())} as List<JAXBElement>
+    }
+
+    List<Object> findAllRestrictionsNotOfKind(RestrictionKind kind) {
+        getRestrictions().findAll {e -> !isJaxbElementWithName(e, kind.name())}
     }
 
     List<JAXBElement> findRestrictionsWithKind(RestrictionKind kind) {
         return getMinExclusivesAndMinInclusivesAndMaxExclusives()
-            .findAll {e -> e instanceof JAXBElement && isElementWithName(kind.name(), (JAXBElement) e)}
+                .findAll {e -> e instanceof JAXBElement && isJaxbElementWithName( (JAXBElement) e, kind.name())}
+    }
+
+    List<Object> findAllRestrictionsWithoutKind(RestrictionKind kind) {
+        return getMinExclusivesAndMinInclusivesAndMaxExclusives().findAll {
+            e -> !(e instanceof JAXBElement) || (!isJaxbElementWithName( (JAXBElement) e, kind.name()))
+        }
     }
 
     private List<Object> getMinExclusivesAndMinInclusivesAndMaxExclusives() {
@@ -143,50 +128,71 @@ public class RestrictionWrapper extends ComplexContentWrapper<Annotated> {
         return Collections.emptyList();
     }
 
-    static Object createRestrictionElement(RestrictionKind restrictionKind, String value) {
-        return createRestrictionElement(restrictionKind, value, null);
-    }
 
-    static Object createRestrictionElement(RestrictionKind restrictionKind, String value, Annotation annotation) {
-        switch (restrictionKind) {
-            case minLength:
-            case length:
-            case maxLength:
-            case fractionDigits:
-                return createJaxbElement(NumFacet.class, restrictionKind, value, annotation);
-            case enumeration:
-                return createJaxbElement(NoFixedFacet.class, restrictionKind, value, annotation);
-            case maxExclusive:
-            case maxInclusive:
-            case minExclusive:
-            case minInclusive:
-                return createJaxbElement(Facet.class, restrictionKind, value, annotation);
-            case pattern:
-                return createFacet(Pattern.class, value, annotation);
-            case whiteSpace:
-                return createFacet(WhiteSpace.class, value, annotation);
-            case totalDigits:
-                return createFacet(TotalDigits.class, value, annotation);
+
+    List<Object> getRestrictions() {
+        if (wrappedElement instanceof Restriction) {
+            return wrappedElement.getMinExclusivesAndMinInclusivesAndMaxExclusives()
+        }
+        if (wrappedElement instanceof RestrictionType) {
+            return wrappedElement.getMinExclusivesAndMinInclusivesAndMaxExclusives()
         }
 
-        return null;
+        if (wrappedElement == null) warn('No restriction type inside wrapper')
+        else warn('Unknown restriction type inside wrapper {}', wrappedElement.getClass().getCanonicalName())
+
+        Collections.emptyList()
     }
 
-    private static <T extends Facet> T createFacet(Class<T> declaredType, String value, Annotation annotation) {
-        try {
-            T facet = declaredType.newInstance();
-            facet.setValue(value);
-            facet.setAnnotation(annotation);
-            return facet;
-        } catch (InstantiationException | IllegalAccessException e) {
-            Logger logger = LoggerFactory.getLogger(RestrictionWrapper.class);
-            logger.error("Something went very wrong trying to create a facet of type " + declaredType, e);
-        }
-        return null;
-    }
+   JAXBElement findRestrictionOfKind(RestrictionKind kind) {
+       getRestrictions().find {e -> isJaxbElementWithName(e, kind.name())} as JAXBElement
+   }
 
-    private static <T extends Facet> JAXBElement<T> createJaxbElement(Class<T> declaredType, RestrictionKind restrictionKind, String value,
-                                                                      Annotation annotation) {
-        return new JAXBElement<>(new QName(XS_NAMESPACE, restrictionKind.name()), declaredType, createFacet(declaredType, value, annotation));
-    }
+
+   static Object createRestrictionElement(RestrictionKind restrictionKind, String value) {
+       createRestrictionElement(restrictionKind, value, null)
+   }
+
+   static Object createRestrictionElement(RestrictionKind restrictionKind, String value, Annotation annotation) {
+       switch (restrictionKind) {
+           case minLength:
+           case length:
+           case maxLength:
+           case fractionDigits:
+               return createJaxbElement(NumFacet, restrictionKind, value, annotation)
+           case enumeration:
+               return createJaxbElement(NoFixedFacet, restrictionKind, value, annotation)
+           case maxExclusive:
+           case maxInclusive:
+           case minExclusive:
+           case minInclusive:
+               return createJaxbElement(Facet, restrictionKind, value, annotation)
+           case pattern:
+               return createFacet(Pattern, value, annotation)
+           case whiteSpace:
+               return createFacet(WhiteSpace, value, annotation)
+           case totalDigits:
+               return createFacet(TotalDigits, value, annotation)
+       }
+
+       null
+   }
+
+   private static <T extends Facet> T createFacet(Class<T> declaredType, String value, Annotation annotation) {
+       try {
+           T facet = declaredType.newInstance()
+           facet.setValue(value)
+           facet.setAnnotation(annotation)
+           return facet
+       } catch (InstantiationException | IllegalAccessException e) {
+           Logger logger = LoggerFactory.getLogger(RestrictionWrapper)
+           logger.error('Something went very wrong trying to create a facet of type ' + declaredType, e)
+       }
+       null
+   }
+
+   private static <T extends Facet> JAXBElement<T> createJaxbElement(Class<T> declaredType, RestrictionKind restrictionKind, String value,
+                                                                     Annotation annotation) {
+       new JAXBElement<>(new QName(XS_NAMESPACE, restrictionKind.name()), declaredType, createFacet(declaredType, value, annotation))
+   }
 }

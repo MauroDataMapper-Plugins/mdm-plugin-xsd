@@ -110,8 +110,8 @@ dependencies {
 bootRun {
     ignoreExitValue true
     jvmArgs(
-        '-Dspring.output.ansi.enabled=always', 
-        '-noverify', 
+        '-Dspring.output.ansi.enabled=always',
+        '-noverify',
         '-XX:TieredStopAtLevel=1')
     sourceResources sourceSets.main
 
@@ -147,3 +147,7 @@ grails {
 apply from: 'dependencies.gradle'
 apply from: "${projectDir}/gradle/additions/mdm.gradle"
 apply from: "${projectDir}/gradle/additions/staticCodeAnalysis.gradle"
+
+license {
+    exclude('**/src/integration-test/resources/*.xsd')
+}

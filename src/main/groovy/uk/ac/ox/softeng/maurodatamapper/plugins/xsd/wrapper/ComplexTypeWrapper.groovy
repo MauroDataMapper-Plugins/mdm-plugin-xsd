@@ -25,160 +25,252 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.All
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexContent
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleContent
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.RestrictionCapable
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.XsdNaming
 import uk.ac.ox.softeng.maurodatamapper.security.User
-
-import com.google.common.base.Strings
 
 import javax.xml.bind.JAXBElement
 import javax.xml.namespace.QName
+import java.util.List
 
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
 /**
  * @since 24/08/2017
  */
-class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> {
+class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> implements XsdNaming, RestrictionCapable {
+
+    boolean local
 
     ComplexTypeWrapper(XsdSchemaService xsdSchemaService, AbstractComplexType wrappedElement) {
         super(xsdSchemaService, wrappedElement)
+        local = false
     }
 
-    ExplicitGroup getAll() {
-        return wrappedElement.getAll()
-    }
-
-    @Override
-    List<Annotated> getAttributesAndAttributeGroups() {
-        return wrappedElement.getAttributesAndAttributeGroups()
-    }
-
-    ExplicitGroup getChoice() {
-        return wrappedElement.getChoice()
-    }
-
-    ExplicitGroup getSequence() {
-        return wrappedElement.getSequence()
-    }
-
-    ComplexContent getComplexContent() {
-        return wrappedElement.getComplexContent()
-    }
-
-    ExtensionTypeWrapper getExtension() {
-        return getComplexContent() != null && getComplexContent().getExtension() != null ?
-               new ExtensionTypeWrapper(xsdSchemaService, getComplexContent().getExtension()) :
-               getSimpleContent() != null && getSimpleContent().getExtension() != null ?
-               new ExtensionTypeWrapper(xsdSchemaService, getSimpleContent().getExtension()) : null
+    ComplexTypeWrapper(XsdSchemaService xsdSchemaService, AbstractComplexType wrappedElement, String name) {
+        this(xsdSchemaService, wrappedElement)
+        givenName = name
+        local = true
     }
 
     @Override
     String getName() {
-        return Strings.isNullOrEmpty(givenName) ? createComplexTypeName(wrappedElement.getName()) : givenName
+        if (!givenName) givenName = createComplexTypeName(wrappedElement.getName())
+        givenName
     }
 
-    void setName(String name) {
-        givenName = name
-        wrappedElement.setName(name)
-    }
 
     @Override
     RestrictionWrapper getRestriction() {
-        return getComplexContent() != null && getComplexContent().getRestriction() != null ?
-               new RestrictionWrapper(xsdSchemaService, getComplexContent().getRestriction()) :
-               getSimpleContent() != null && getSimpleContent().getRestriction() != null ?
-               new RestrictionWrapper(xsdSchemaService, getSimpleContent().getRestriction()) : null
+        if (getComplexContent()?.getRestriction())
+            return new RestrictionWrapper(xsdSchemaService, getComplexContent().getRestriction())
+        if (getSimpleContent()?.getRestriction())
+            return new RestrictionWrapper(xsdSchemaService, getSimpleContent().getRestriction())
+        null
+    }
 
+    @Override
+    ExplicitGroup getAll() {
+        wrappedElement.getAll()
+    }
+
+    @Override
+    ExplicitGroup getChoice() {
+        wrappedElement.getChoice()
+    }
+
+    @Override
+    ExplicitGroup getSequence() {
+        wrappedElement.getSequence()
+    }
+
+    @Override
+    List<Annotated> getAttributesAndAttributeGroups() {
+        wrappedElement.getAttributesAndAttributeGroups()
+    }
+
+    ComplexContent getComplexContent() {
+        wrappedElement.getComplexContent()
+    }
+
+    SimpleContent getSimpleContent() {
+        wrappedElement.getSimpleContent()
+    }
+
+    boolean matchesName(String name) {
+        name && (name == getName() || name == wrappedElement.getName())
+    }
+
+    ExtensionTypeWrapper getExtension() {
+        if (getComplexContent()?.getExtension())
+            return new ExtensionTypeWrapper(xsdSchemaService, getComplexContent().getExtension())
+        if (getSimpleContent()?.getExtension())
+            return new ExtensionTypeWrapper(xsdSchemaService, getSimpleContent().getExtension())
+        null
+    }
+
+    List<BaseAttributeWrapper> getAttributes() {
+        List<BaseAttribute> attributes = new ArrayList<>(getBaseAttributes())
+        if (getRestriction()) attributes.addAll(getRestriction().getBaseAttributes())
+        if (getExtension()) attributes.addAll(getExtension().getBaseAttributes())
+        trace('Found {} attributes to be added as elements', attributes.size())
+        attributes.collect {new BaseAttributeWrapper(xsdSchemaService, it)}
+    }
+
+    List<ElementWrapper> getAllElements() {
+        List<ElementWrapper> subElements = new ArrayList<>(getElements())
+        if (getRestriction()) subElements.addAll(getRestriction().getElements())
+        if (getExtension()) subElements.addAll(getExtension().getElements())
+        subElements
+    }
+
+    Boolean isActuallySimpleType() {
+        if (getAllElements()) return false
+        List<BaseAttributeWrapper> attributeWrappers = getAttributes()
+        if (!attributeWrappers)return false
+        if(attributeWrappers.size() == 1){
+
+          if(attributeWrappers.first()?.simpleType){
+              return true
+          }
+            return  false
+        }
+        false
+    }
+
+    SimpleTypeWrapper convertToSimpleType() {
+        if (getAttributes()) {
+            logger.debug("ISSUE HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", getAttributes())
+            BaseAttributeWrapper singleAttribute = getAttributes().first()
+            return new SimpleTypeWrapper(xsdSchemaService, singleAttribute.simpleType, createSimpleTypeName(getName(), true))
+        }
+        null
+    }
+
+    Boolean isSameAsDataClass(DataClass dataClass) {
+
+        if (!local && standardiseTypeName(wrappedElement.name, false) == dataClass.label) return true
+
+        Set<String> elements = getAllElements().collect {it.getName()}.toSet() + getAttributes().collect {it.name}
+        Set<String> dcElements = dataClass.dataElements.collect {it.label}.toSet()
+
+        if (dcElements == elements) return true
+        else if (elements.every {it in dcElements}) {
+            String dcBase = null
+            String base = null
+            if (getRestriction()) {
+                dcBase = dataClass.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_RESTRICTION_BASE)?.value
+                base = createComplexTypeName(getRestriction().extensionName)
+            } else if (getExtension()) {
+                dcBase = dataClass.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_EXTENSION_BASE)?.value
+                base = createComplexTypeName(getExtension().extensionName)
+            }
+            return dcBase && base && dcBase == base
+        }
+        false
+    }
+
+    void incrementName() {
+        givenName = name.find(/(\w+)(\.(\d+))?/) {
+            int i = it[3]?.toInteger() ?: 0
+            "${it[1]}.${i + 1}"
+        }
     }
 
     DataClass createDataClass(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema,
                               QName type, Integer minOccurs, Integer maxOccurs) {
-
+        long start = System.currentTimeMillis()
         DataClass dataClass = initialiseDataClass(user, parentDataModel, parentDataClass, type, minOccurs, maxOccurs)
-        return populateDataClass(user, parentDataModel, parentDataClass, schema, dataClass)
+        populateDataClass(user, parentDataModel, parentDataClass, schema, dataClass)
+        schema.dataStore.dataClassCreations << System.currentTimeMillis() - start
+        dataClass
     }
 
     DataClass initialiseDataClass(User user, DataModel parentDataModel, DataClass parentDataClass, QName type,
                                   Integer minOccurs, Integer maxOccurs) {
-        CatalogueItem parent = parentDataClass == null ? parentDataModel : parentDataClass
+        CatalogueItem parent = parentDataClass ?: parentDataModel
         // Only allow min and max occurs when dataclass is top level class
-        Integer min = parentDataClass == null ? minOccurs : null
-        Integer max = parentDataClass == null ? maxOccurs : null
-        debug("Creating new DataClass with parent '{}'", parent.getLabel())
-        DataClass dataClass = xsdSchemaService.createDataClass(parent, getName(), extractDescriptionFromAnnotations(), user, min, max)
-
-        if (Strings.isNullOrEmpty(dataClass.getDescription()) && type != null) {
-            dataClass.setDescription(type.getLocalPart())
+        Integer min = parentDataClass ? null : minOccurs
+        Integer max = parentDataClass ? null : maxOccurs
+        debug('Creating new DataClass with parent "{}"', parent.getLabel())
+        DataClass dataClass
+        if(parentDataClass)  {
+            dataClass = xsdSchemaService.createDataClass(parentDataClass, getName(), extractDescriptionFromAnnotations(), user, min, max)
+        }
+        else{
+            dataClass = xsdSchemaService.createDataClass(parentDataModel, getName(), extractDescriptionFromAnnotations(), user, min, max)
         }
 
-        if (type != null) {
-            addMetadataToComponent(dataClass, XsdPlugin.METADATA_LABEL_PREFIX + "Complex Type Name", type.getLocalPart(), user)
+        if (!dataClass.getDescription() && type) dataClass.setDescription(type.getLocalPart())
+
+        if (type) {
+            addMetadataToComponent(dataClass, METADATA_LABEL_PREFIX + 'Complex Type Name', type.getLocalPart(), user)
         }
 
         if (wrappedElement.isAbstract()) {
-            addMetadataToComponent(dataClass, XsdPlugin.METADATA_LABEL_PREFIX + "Abstract", "true", user)
+            addMetadataToComponent(dataClass, METADATA_LABEL_PREFIX + 'Abstract', 'true', user)
         }
         if (wrappedElement.isMixed()) {
-            addMetadataToComponent(dataClass, XsdPlugin.METADATA_LABEL_PREFIX + "Mixed", "true", user)
+            addMetadataToComponent(dataClass, METADATA_LABEL_PREFIX + 'Mixed', 'true', user)
         }
-        return dataClass
+        dataClass
     }
 
-    boolean matchesName(String name) {
-        return !Strings.isNullOrEmpty(name) && (name == getName() || name == wrappedElement.getName())
-    }
-
-    DataClass populateDataClass(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema, DataClass dataClass) {
-        if (getRestriction() != null) {
-            addRestrictionsToMetadata(dataClass, user, getRestriction())
-            if (getRestriction().getBase() != null) {
-                findOrCreateBaseTypeDataClass(user, parentDataModel, parentDataClass, schema, getRestriction().getBase())
+    DataClass populateDataClass(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema,
+                                DataClass dataClass) {
+        if (getRestriction()) {
+            DataClass baseClass = null
+            if (getRestriction().isExtension()) {
+                baseClass = findOrCreateBaseTypeDataClass(user, parentDataModel, parentDataClass, schema, getRestriction().getBase())
             }
+            addRestrictionsToMetadata(dataClass, user, baseClass)
         }
 
-        debug("Adding sub-elements to DataClass")
+        debug('Adding sub-elements to DataClass')
 
-        List<ElementWrapper> subElements = getSubElements()
+        List<ElementWrapper> subElements = getAllElements()
         List<BaseAttributeWrapper> attributes = getAttributes()
 
         if (subElements.isEmpty() && attributes.isEmpty()) {
-            warn("complexType has no content")
+
+            if (getExtension()) {
+                ComplexTypeWrapper extensionComplexType = schema.getComplexTypeByName(getExtension().base.localPart)
+                warn('complexType has no content, replacing with {}', extensionComplexType.name)
+                return schema.findOrCreateDataClass(user, parentDataModel, parentDataClass, extensionComplexType)
+            } else {
+                warn('complexType has no content, you need to remove it')
+            }
         }
 
         subElements.each {subElement -> subElement.createDataModelElement(user, parentDataModel, dataClass, schema)}
         attributes.each {attribute -> attribute.createDataModelElement(user, parentDataModel, dataClass, schema)}
 
-        if (getExtension() != null) {
+        if (getExtension()) {
             return extendDataClass(user, parentDataModel, schema, dataClass)
         }
 
-        return dataClass
+        dataClass
     }
 
-    private static ExplicitGroup buildChildGroup(SchemaWrapper schema, String type, List<DataElement> elements) {
-        ExplicitGroup children
-        if (type.equalsIgnoreCase("all")) children = new All()
-        else children = new ExplicitGroup()
-        elements.each {de -> children.getElementsAndGroupsAndAlls().add(ElementWrapper.createElement(schema, de).wrappedElement)}
-        return children
+    DataClass findOrCreateBaseTypeDataClass(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema,
+                                            QName baseType) {
+        debug('Type has base type {} loading class into model', baseType.getLocalPart())
+        ComplexTypeWrapper base = schema.getComplexTypeByName(baseType.getLocalPart())
+        schema.findOrCreateDataClass(user, parentDataModel, parentDataClass, base)
     }
 
-    private DataClass extendDataClass(User user, DataModel parentDataModel, SchemaWrapper schema, DataClass dataClass) {
-        debug("Extends type {} collapsing elements", getExtension().getBase().getLocalPart())
 
-        addMetadataToComponent(dataClass, XsdPlugin.METADATA_XSD_EXTENSION_BASE,
+    DataClass extendDataClass(User user, DataModel parentDataModel, SchemaWrapper schema, DataClass dataClass) {
+        debug('Extends type {} collapsing elements', getExtension().getBase().getLocalPart())
+
+        addMetadataToComponent(dataClass, METADATA_XSD_EXTENSION_BASE,
                                createComplexTypeName(getExtension().getBase().getLocalPart()), user)
 
-        if (getSimpleContent() != null) {
-            debug("Simple content extension, adding 'value' element")
-            // Extending a datatype, so we add a new element "value" to hold the content
+        if (getSimpleContent()) {
+            debug('Simple content extension, adding "value" element')
+            // Extending a datatype, so we add a new element 'value' to hold the content
             DataType dataType = findBaseTypeDataType(schema, getExtension().getBase())
-            xsdSchemaService.createDataElementForDataClass(dataClass, "value", extractDescriptionFromAnnotations(), user, dataType,
+            xsdSchemaService.createDataElementForDataClass(dataClass, 'value', extractDescriptionFromAnnotations(), user, dataType,
                                                            1, 1)
 
         } else {
@@ -186,20 +278,20 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> {
             DataClass extension = findOrCreateBaseTypeDataClass(user, parentDataModel, dataClass, schema, getExtension().getBase())
 
             if (extension == null) {
-                warn("Extends type {} but data class has not been found or created", getExtension().getBase().getLocalPart())
+                warn('Extends type {} but data class has not been found or created', getExtension().getBase().getLocalPart())
                 return dataClass
             }
 
-            if (extension.getDataElements() != null) {
+            if (extension.getDataElements()) {
                 extension.getDataElements().each {el -> xsdSchemaService.createDuplicateElementForDataClass(user, dataClass, el)}
             }
 
         }
-        return dataClass
+        dataClass
     }
 
-    private DataType findBaseTypeDataType(SchemaWrapper schema, QName baseType) {
-        String typeName = SimpleTypeWrapper.createSimpleTypeName(baseType.getLocalPart())
+    DataType findBaseTypeDataType(SchemaWrapper schema, QName baseType) {
+        String typeName = createSimpleTypeName(baseType.getLocalPart(),false)
         debug("Type has base type {} loading DataType into model", typeName)
 
         DataType dataType = schema.getDataType(typeName)
@@ -210,62 +302,23 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> {
         return dataType
     }
 
-    private DataClass findOrCreateBaseTypeDataClass(User user, DataModel parentDataModel, DataClass parentDataClass, SchemaWrapper schema,
-                                                    QName baseType) {
-        debug("Type has base type {} loading class into model", baseType.getLocalPart())
-        ComplexTypeWrapper base = schema.getComplexTypeByName(baseType.getLocalPart())
-        return schema.findOrCreateDataClass(user, parentDataModel, parentDataClass, base)
-    }
 
-    private List<BaseAttributeWrapper> getAttributes() {
-        List<BaseAttribute> attributes = new ArrayList<>()
-        attributes.addAll(getBaseAttributes())
-
-        if (getRestriction() != null) {
-            attributes.addAll(getRestriction().getBaseAttributes())
-        }
-        if (getExtension() != null) {
-            attributes.addAll(getExtension().getBaseAttributes())
-        }
-        debug("Found {} attributes to be added as elements", attributes.size())
-        return attributes.collect {baseAttribute -> new BaseAttributeWrapper(xsdSchemaService, baseAttribute)}
-    }
-
-    private SimpleContent getSimpleContent() {
-        return getWrappedElement().getSimpleContent()
-    }
-
-    private List<ElementWrapper> getSubElements() {
-
-        List<ElementWrapper> subElements = new ArrayList<>(getElements())
-
-        if (getRestriction() != null) {
-            subElements.addAll(getRestriction().getElements())
-        }
-
-        if (getExtension() != null) {
-            subElements.addAll(getExtension().getElements())
-        }
-
-        return subElements
-    }
-
-    private void populateFromDataClass(SchemaWrapper schema, DataClass dataClass) {
-        setName(createComplexTypeName(dataClass))
+    void populateFromDataClass(SchemaWrapper schema, DataClass dataClass) {
+        setName(createComplexTypeName(dataClass), true)
         debug("Populating from {}", dataClass)
         wrappedElement.setAnnotation(createAnnotation(dataClass.getDescription()))
 
         if (dataClass.getDataElements() != null) {
-            Set<DataElement> childDataElements = xsdSchemaService.getChildDataElements(dataClass)
+            Set<DataElement> childDataElements = xsdSchemaService.getDataElements(dataClass)
             Map<String, List<DataElement>> grouped = childDataElements
-                .sort {it.getLabel()}
-                .groupBy {dataElement ->
-                    Metadata md = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_CHOICE)
-                    if (md != null) return md.getValue()
-                    md = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_ALL)
-                    if (md != null) return "all"
-                    return "sequence"
-                }
+                    .sort {it.getLabel()}
+                    .groupBy {dataElement ->
+                        Metadata md = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_CHOICE)
+                        if (md != null) return md.getValue()
+                        md = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_ALL)
+                        if (md != null) return "all"
+                        return "sequence"
+                    }
 
             if (grouped.isEmpty()) return
 
@@ -297,14 +350,21 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> {
         }
     }
 
-    static String createComplexTypeName(String name) {
-        return standardiseTypeName(name)
-    }
 
-    static ComplexTypeWrapper createComplexType(SchemaWrapper schema, DataClass dataClass) {
+   static ComplexTypeWrapper createComplexType(SchemaWrapper schema, DataClass dataClass) {
         ComplexTypeWrapper wrapper = new ComplexTypeWrapper(schema.xsdSchemaService, new ComplexType())
         wrapper.populateFromDataClass(schema, dataClass)
         return wrapper
     }
+
+   static private ExplicitGroup buildChildGroup(SchemaWrapper schema, String type, List<DataElement> elements) {
+       ExplicitGroup children
+       if (type.equalsIgnoreCase('all')) children = new All()
+       else children = new ExplicitGroup()
+       elements.each {de -> children.getElementsAndGroupsAndAlls().add(ElementWrapper.createElement(schema, de).wrappedElement)}
+       children
+   }
+
+
 
 }

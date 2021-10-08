@@ -22,7 +22,7 @@
    <xs:annotation>
       <xs:documentation>
          <p>Name: HIC: Hepatitis v2.0.0<br/>Author: David Smith<br/>Organisation: Oxford University NHS Foundation Trust<br/>Description: ### Background
-The National Institute for Health Research (NIHR) Health Informatics Collaborative (HIC) Viral Hepatitis theme aims to leverage pseudo anonymised routinely collected electronic patient data to answer important research questions about Hepatitis C B and E virus infection.  
+The National Institute for Health Research (NIHR) Health Informatics Collaborative (HIC) Viral Hepatitis theme aims to leverage pseudo anonymised routinely collected electronic patient data to answer important research questions about Hepatitis C B and E virus infection.
 
 This data model describes version 2 of the NIHIR HIC viral hepatitis theme dataset. This dataset was designed with the following principles in mind:
 
@@ -32,10 +32,10 @@ This data model describes version 2 of the NIHIR HIC viral hepatitis theme datas
 * Use pre-existing data standards where possible.
 * Design and mange using Metadata Catalogue.
 
-### Inclusion Criteria 
+### Inclusion Criteria
 For a patient to be included they must have a diagnosis of HCV, HBV or HEV which have been defined below:
 
-**HBV** - Two positive HBsAg tests and/or positive HBV DNA, at least 6 months apart. Possible combinations shown in table below. 
+**HBV** - Two positive HBsAg tests and/or positive HBV DNA, at least 6 months apart. Possible combinations shown in table below.
 
 | First Test       | Second Test&lt;br>(Minimum of 6 months after first) |
 |------------------|--------------------------------------------------|
@@ -48,31 +48,31 @@ For a patient to be included they must have a diagnosis of HCV, HBV or HEV which
 **HCV** - Two positive HCV RNA tests / viral loads.
 **HEV** - Positive anti-HEV IgM and/or anti-HEV IgG and/or Positive HEV RNA.
 
-### Minimum Dataset and Data Priority 
+### Minimum Dataset and Data Priority
 
 Each high-level data element has a priority of:
 **1 - Mandatory** - Required for a valid submission any submission not containing this will be rejected.
-**2 - Desirable** - If this data is available it should be included. 
-**3 - Optional** - Is off interest if available but should not delay submission of data. 
+**2 - Desirable** - If this data is available it should be included.
+**3 - Optional** - Is off interest if available but should not delay submission of data.
 
 Mandatory elements are defined in the XSD, desirable and optional elements have the appropriate descriptions and properties.
 
 The minimum dataset required is:
 
-* **For each data submission** 
-    * Site Identifier (Enumeration) 
-    * Submission Date (Date) 
+* **For each data submission**
+    * Site Identifier (Enumeration)
+    * Submission Date (Date)
 * **For each study subject within submission**
-    * Subject Identifier (String) 
+    * Subject Identifier (String)
     * *Demographics*
-        * Country of Birth (Enumeration - NHS Data Dictionary COUNTRY CODE (BIRTH)) 
-        * Ethnic Code (Enumeration - NHS Data Dictionary ETHNIC CATEGORY CODE) 
-        * Gender (Enumeration - NHS Data Dictionary Code PERSON STATED GENDER CODE) 
-        * Year of Birth (Integer) 
+        * Country of Birth (Enumeration - NHS Data Dictionary COUNTRY CODE (BIRTH))
+        * Ethnic Code (Enumeration - NHS Data Dictionary ETHNIC CATEGORY CODE)
+        * Gender (Enumeration - NHS Data Dictionary Code PERSON STATED GENDER CODE)
+        * Year of Birth (Integer)
     * *Laboratory Tests*
-       * Test Name (Enumeration) 
-       * Date Time (Date Time) 
-       * Result (String) 
+       * Test Name (Enumeration)
+       * Date Time (Date Time)
+       * Result (String)
 
 ### Inferred Data
 One of the main aims of V2 of the schema is to collect available electronic source data and then infer data which is not available in a structured format at sites. For example, collecting free text imaging reports then use these to infer if a patient has cirrhosis. This means that as the ability to infer data points<br/>Last Updated: 2020-11-02T16:45:04.974Z<br/>
@@ -400,7 +400,7 @@ This value is inferred from Lab Test Lower Reference Value. If the value is nume
          </xs:element>
          <xs:element maxOccurs="1" minOccurs="0" name="resultNumerical" type="xs:decimal">
             <xs:annotation>
-               <xs:documentation>*Inferred* 
+               <xs:documentation>*Inferred*
 This field is inferred from Lab Test Result. If the value is a number it will be placed here if not it will be blank.</xs:documentation>
             </xs:annotation>
          </xs:element>
@@ -580,14 +580,14 @@ Data items will be extracted from these reports and will be used to infer other 
          </xs:element>
          <xs:element maxOccurs="1" minOccurs="0" name="death" type="deathType-32436707">
             <xs:annotation>
-               <xs:documentation>Record of subjects death. 
+               <xs:documentation>Record of subjects death.
 
 Priority - *Desirable*</xs:documentation>
             </xs:annotation>
          </xs:element>
          <xs:element maxOccurs="1" minOccurs="1" name="demographics" type="demographicsType-1144720320">
             <xs:annotation>
-               <xs:documentation>Subjects demographics. 
+               <xs:documentation>Subjects demographics.
 
 Priority - **Mandatory**</xs:documentation>
             </xs:annotation>
@@ -647,7 +647,7 @@ Data items such as HIV status will be infered from laboratory data if apropriate
          </xs:element>
          <xs:element maxOccurs="1" minOccurs="0" name="treatments" type="treatmentsType-277418284">
             <xs:annotation>
-               <xs:documentation>Record of subjects treatments for viral hepatitis. 
+               <xs:documentation>Record of subjects treatments for viral hepatitis.
 
 Priority - *Desirable*</xs:documentation>
             </xs:annotation>

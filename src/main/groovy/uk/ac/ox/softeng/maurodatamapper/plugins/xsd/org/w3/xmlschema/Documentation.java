@@ -49,18 +49,18 @@ import javax.xml.namespace.QName;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
- *         &lt;any processContents='lax'/>
- *       &lt;/sequence>
- *       &lt;attribute name="source" type="{http://www.w3.org/2001/XMLSchema}anyURI" />
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/>
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"$gt;
+ *       &lt;sequence maxOccurs="unbounded" minOccurs="0"$gt;
+ *         &lt;any processContents='lax'/$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;attribute name="source" type="{http://www.w3.org/2001/XMLSchema}anyURI" /$gt;
+ *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/restriction$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

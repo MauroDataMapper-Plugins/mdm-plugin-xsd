@@ -45,16 +45,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="simpleType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated">
- *       &lt;group ref="{http://www.w3.org/2001/XMLSchema}simpleDerivation"/>
- *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}simpleDerivationSet" />
- *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}NCName" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="simpleType"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated"$gt;
+ *       &lt;group ref="{http://www.w3.org/2001/XMLSchema}simpleDerivation"/$gt;
+ *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}simpleDerivationSet" /$gt;
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}NCName" /$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/extension$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

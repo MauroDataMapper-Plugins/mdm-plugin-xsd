@@ -46,18 +46,18 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}openAttrs">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}appinfo"/>
- *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}documentation"/>
- *       &lt;/choice>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}openAttrs"$gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"$gt;
+ *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}appinfo"/$gt;
+ *         &lt;element ref="{http://www.w3.org/2001/XMLSchema}documentation"/$gt;
+ *       &lt;/choice$gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/extension$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

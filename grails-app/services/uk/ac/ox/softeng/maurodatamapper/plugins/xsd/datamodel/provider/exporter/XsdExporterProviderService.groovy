@@ -77,8 +77,8 @@ class XsdExporterProviderService extends DataModelExporterProviderService {
 
     ByteArrayOutputStream exportModel(DataModel dataModel, String format) {
         log.info('Exporting DataModel {}', dataModel.getLabel())
-        //TODO replace this with StringWriter??
         SchemaWrapper sw = new SchemaWrapper(xsdSchemaService, dataModel.getLabel())
+
         sw.populateSchemaFromDataModel(dataModel, getDefaultTargetNamespace())
 
         log.debug('DataModel exported to schema wrapper')
@@ -105,7 +105,6 @@ class XsdExporterProviderService extends DataModelExporterProviderService {
         }
     }
 
-    //TODO is this function necessary
     private String getDefaultTargetNamespace() {
         'https://metadatacatalogue.com/' +
         getNamespace().replaceAll('\\.', '/') +

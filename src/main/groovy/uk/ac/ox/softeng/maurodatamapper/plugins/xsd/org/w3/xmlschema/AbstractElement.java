@@ -50,31 +50,31 @@ import javax.xml.namespace.QName;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="element">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated">
- *       &lt;sequence>
- *         &lt;choice minOccurs="0">
- *           &lt;element name="simpleType" type="{http://www.w3.org/2001/XMLSchema}localSimpleType"/>
- *           &lt;element name="complexType" type="{http://www.w3.org/2001/XMLSchema}localComplexType"/>
- *         &lt;/choice>
- *         &lt;group ref="{http://www.w3.org/2001/XMLSchema}identityConstraint" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attGroup ref="{http://www.w3.org/2001/XMLSchema}occurs"/>
- *       &lt;attGroup ref="{http://www.w3.org/2001/XMLSchema}defRef"/>
- *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}QName" />
- *       &lt;attribute name="substitutionGroup" type="{http://www.w3.org/2001/XMLSchema}QName" />
- *       &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="fixed" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="nillable" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}derivationSet" />
- *       &lt;attribute name="block" type="{http://www.w3.org/2001/XMLSchema}blockSet" />
- *       &lt;attribute name="form" type="{http://www.w3.org/2001/XMLSchema}formChoice" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="element"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated"$gt;
+ *       &lt;sequence$gt;
+ *         &lt;choice minOccurs="0"$gt;
+ *           &lt;element name="simpleType" type="{http://www.w3.org/2001/XMLSchema}localSimpleType"/$gt;
+ *           &lt;element name="complexType" type="{http://www.w3.org/2001/XMLSchema}localComplexType"/$gt;
+ *         &lt;/choice$gt;
+ *         &lt;group ref="{http://www.w3.org/2001/XMLSchema}identityConstraint" maxOccurs="unbounded" minOccurs="0"/$gt;
+ *       &lt;/sequence$gt;
+ *       &lt;attGroup ref="{http://www.w3.org/2001/XMLSchema}occurs"/$gt;
+ *       &lt;attGroup ref="{http://www.w3.org/2001/XMLSchema}defRef"/$gt;
+ *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}QName" /$gt;
+ *       &lt;attribute name="substitutionGroup" type="{http://www.w3.org/2001/XMLSchema}QName" /$gt;
+ *       &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" /$gt;
+ *       &lt;attribute name="fixed" type="{http://www.w3.org/2001/XMLSchema}string" /$gt;
+ *       &lt;attribute name="nillable" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /$gt;
+ *       &lt;attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /$gt;
+ *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}derivationSet" /$gt;
+ *       &lt;attribute name="block" type="{http://www.w3.org/2001/XMLSchema}blockSet" /$gt;
+ *       &lt;attribute name="form" type="{http://www.w3.org/2001/XMLSchema}formChoice" /$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/extension$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

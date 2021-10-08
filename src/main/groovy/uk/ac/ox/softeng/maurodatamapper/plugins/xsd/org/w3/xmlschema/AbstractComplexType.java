@@ -45,19 +45,19 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="complexType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated">
- *       &lt;group ref="{http://www.w3.org/2001/XMLSchema}complexTypeModel"/>
- *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}NCName" />
- *       &lt;attribute name="mixed" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}derivationSet" />
- *       &lt;attribute name="block" type="{http://www.w3.org/2001/XMLSchema}derivationSet" />
- *       &lt;anyAttribute processContents='lax' namespace='##other'/>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="complexType"$gt;
+ *   &lt;complexContent$gt;
+ *     &lt;extension base="{http://www.w3.org/2001/XMLSchema}annotated"$gt;
+ *       &lt;group ref="{http://www.w3.org/2001/XMLSchema}complexTypeModel"/$gt;
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}NCName" /$gt;
+ *       &lt;attribute name="mixed" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /$gt;
+ *       &lt;attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /$gt;
+ *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}derivationSet" /$gt;
+ *       &lt;attribute name="block" type="{http://www.w3.org/2001/XMLSchema}derivationSet" /$gt;
+ *       &lt;anyAttribute processContents='lax' namespace='##other'/$gt;
+ *     &lt;/extension$gt;
+ *   &lt;/complexContent$gt;
+ * &lt;/complexType$gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
