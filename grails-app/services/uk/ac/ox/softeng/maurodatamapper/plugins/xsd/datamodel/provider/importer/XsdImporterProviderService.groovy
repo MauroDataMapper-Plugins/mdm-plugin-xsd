@@ -76,8 +76,10 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
 
 
         String fileType = params.getImportFile().getFileType()
+        log.info('Loading XSD model filetype {}',fileType)
 
-        if(fileType == "application/rar" || fileType == "application/zip"){
+
+        if(fileType == "application/rar" || fileType == "application/zip" || fileType == "application/x-zip-compressed"){
             log.info('Loading Zip File')
             File tempDir = Files.createTempDirectory("temp").toFile()
 
@@ -144,7 +146,7 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
     DataModel importDataModel(User currentUser, InputStream byteArrayInputStream, String filename, String directory,
                               String rootElement, String label, String description, String author, String organisation, Folder folder) {
         try {
-            DataModel dataModel =  new DataModel(author: author, organisation: organisation, type: DataModelType.DATA_STANDARD, folder: folder,
+                DataModel dataModel =  new DataModel(author: author, organisation: organisation, type: DataModelType.DATA_STANDARD, folder: folder,
                                                  authority: authorityService.defaultAuthority, label: label, description: description, createdBy: currentUser.emailAddress)
             SchemaWrapper schema = SchemaWrapper.createSchemaWrapperFromInputStream(xsdSchemaService, byteArrayInputStream, filename, directory)
             log.debug('Creating model')

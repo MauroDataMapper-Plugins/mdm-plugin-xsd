@@ -85,6 +85,10 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
         getContent().findAll { it instanceof Include } as List<Include>
     }
 
+    List<Import> getImports(){
+        getContent().findAll{it instanceof  Import} as List<Import>
+    }
+
     Set<SimpleTypeWrapper> getSimpleTypes() {
         List<SimpleTypeWrapper> wrappers = getContent().findAll { it instanceof SimpleType }.collect {
             new SimpleTypeWrapper(xsdSchemaService, it as SimpleType)
@@ -467,12 +471,32 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     void loadIncludedSchemas(XsdSchemaService xsdSchemaService, String directory, Map<String, SchemaWrapper> loadedSchemas)
             throws FileNotFoundException, JAXBException {
 
+        List<Import> imports = getImports()
         List<Include> includes = getIncludes()
-        if (includes.isEmpty()) return
+        if (includes.isEmpty() && imports.isEmpty()) return
 
         trace('Loading {} included schemas', includes.size())
         for (Include inc : includes) {
             String schemaLocation = inc.getSchemaLocation()
+            SchemaWrapper included = loadedSchemas[schemaLocation]
+            if (included == null) {
+                debug('Including schema at location {}', directory + '/' + schemaLocation)
+                InputStream is = getClass().getClassLoader().getResourceAsStream(directory + '/' + schemaLocation)
+
+                if (is == null) is = new FileInputStream(directory + '/' + schemaLocation)
+
+                included = createSchemaWrapperFromInputStream(xsdSchemaService, is, schemaLocation, directory, loadedSchemas)
+                loadedSchemas[schemaLocation] = included
+            }
+
+            importedSchemas << included
+        }
+
+
+        trace('Loading {} imported schema', imports.size())
+
+        for (Import imp : imports) {
+            String schemaLocation = imp.getSchemaLocation()
             SchemaWrapper included = loadedSchemas[schemaLocation]
             if (included == null) {
                 debug('Including schema at location {}', directory + '/' + schemaLocation)
