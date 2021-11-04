@@ -482,11 +482,13 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
             String schemaLocation = inc.getSchemaLocation()
             SchemaWrapper included = loadedSchemas[schemaLocation]
 
-            if(schemaLocation in inProgressSchema){
-                throw new NotSupportedException("Circular Includes is not currently supported")
-            }
-
             if (included == null) {
+
+                // This would indicate that we have a circular include which is not currently supported throw error
+                if(schemaLocation in inProgressSchema){
+                    throw new NotSupportedException("Circular Includes is not currently supported")
+                }
+
                 debug('Including schema at location {}', directory + '/' + schemaLocation)
                 InputStream is = getClass().getClassLoader().getResourceAsStream(directory + '/' + schemaLocation)
 
