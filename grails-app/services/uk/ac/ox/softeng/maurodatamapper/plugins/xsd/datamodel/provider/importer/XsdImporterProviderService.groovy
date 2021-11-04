@@ -76,10 +76,10 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
 
 
         String fileType = params.getImportFile().getFileType()
-        log.info('Loading XSD model filetype {}',fileType)
+        log.info('Loading XSD model filetype {}', fileType)
 
 
-        if(fileType == "application/rar" || fileType == "application/zip" || fileType == "application/x-zip-compressed"){
+        if (fileType == "application/rar" || fileType == "application/zip" || fileType == "application/x-zip-compressed") {
             log.info('Loading Zip File')
             File tempDir = Files.createTempDirectory("temp").toFile()
 
@@ -88,8 +88,7 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
             byte[] buffer = new byte[1024];
             ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(params.getImportFile().getFileContents()))
             ZipEntry zipEntry = zis.getNextEntry()
-            while(zipEntry != null)
-            {
+            while (zipEntry != null) {
                 File newFile = newFile(tempDir, zipEntry);
                 if (zipEntry.isDirectory()) {
                     if (!newFile.isDirectory() && !newFile.mkdirs()) {
@@ -120,8 +119,8 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Files.readAllBytes(primaryFile))
 
             String dataModelLabel = params.getModelName() ?: primaryFile.getFileName().toString()
-           DataModel dm =  importDataModel(currentUser, byteArrayInputStream, primaryFile.getFileName().toString(), tempDir.toString(), params.getRootElement(),
-                            dataModelLabel, params.description, params.author, params.organisation, folderService.get(params.folderId))
+            DataModel dm = importDataModel(currentUser, byteArrayInputStream, primaryFile.getFileName().toString(), tempDir.toString(), params.getRootElement(),
+                                           dataModelLabel, params.description, params.author, params.organisation, folderService.get(params.folderId))
 
 
             //Deleting contents of folder after import
@@ -129,8 +128,7 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
 
             dm
 
-        }
-        else{
+        } else {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(params.getImportFile().getFileContents())
             Path path = Paths.get(params.getImportFile().getFileName())
             String parent = path.getParent() == null ? '' : path.getParent().toString()
@@ -146,8 +144,8 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
     DataModel importDataModel(User currentUser, InputStream byteArrayInputStream, String filename, String directory,
                               String rootElement, String label, String description, String author, String organisation, Folder folder) {
         try {
-                DataModel dataModel =  new DataModel(author: author, organisation: organisation, type: DataModelType.DATA_STANDARD, folder: folder,
-                                                 authority: authorityService.defaultAuthority, label: label, description: description, createdBy: currentUser.emailAddress)
+            DataModel dataModel = new DataModel(author: author, organisation: organisation, type: DataModelType.DATA_STANDARD, folder: folder,
+                                                authority: authorityService.defaultAuthority, label: label, description: description, createdBy: currentUser.emailAddress)
             SchemaWrapper schema = SchemaWrapper.createSchemaWrapperFromInputStream(xsdSchemaService, byteArrayInputStream, filename, directory)
             log.debug('Creating model')
             dataModel = schema.loadIntoDataModel(dataModel, currentUser, rootElement)

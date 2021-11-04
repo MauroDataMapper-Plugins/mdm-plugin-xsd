@@ -33,6 +33,7 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
 import uk.ac.ox.softeng.maurodatamapper.security.User
 import uk.ac.ox.softeng.maurodatamapper.util.Utils
 
+import javax.transaction.NotSupportedException
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
 import javax.xml.bind.Unmarshaller
@@ -43,6 +44,7 @@ import java.util.List
 
 import static java.util.stream.Collectors.toSet
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
+
 /**
  * @since 24/08/2017
  */
@@ -82,44 +84,44 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     }
 
     List<Include> getIncludes() {
-        getContent().findAll { it instanceof Include } as List<Include>
+        getContent().findAll {it instanceof Include} as List<Include>
     }
 
-    List<Import> getImports(){
-        getContent().findAll{it instanceof  Import} as List<Import>
+    List<Import> getImports() {
+        getContent().findAll {it instanceof Import} as List<Import>
     }
 
     Set<SimpleTypeWrapper> getSimpleTypes() {
-        List<SimpleTypeWrapper> wrappers = getContent().findAll { it instanceof SimpleType }.collect {
+        List<SimpleTypeWrapper> wrappers = getContent().findAll {it instanceof SimpleType}.collect {
             new SimpleTypeWrapper(xsdSchemaService, it as SimpleType)
         }
-        importedSchemas.each { wrappers.addAll(it.getSimpleTypes()) }
+        importedSchemas.each {wrappers.addAll(it.getSimpleTypes())}
         wrappers
     }
 
     SimpleTypeWrapper getSimpleTypeByName(String name) {
         if (!name) return null
-        simpleTypes.find { it.matchesName(name) }
+        simpleTypes.find {it.matchesName(name)}
     }
 
     List<ElementWrapper> getElements() {
-        List<ElementWrapper> wrappers = getContent().findAll { it instanceof Element }.collect {
+        List<ElementWrapper> wrappers = getContent().findAll {it instanceof Element}.collect {
             new ElementWrapper(xsdSchemaService, it as Element)
         }
-        importedSchemas.each { wrappers.addAll(it.getElements()) }
+        importedSchemas.each {wrappers.addAll(it.getElements())}
         wrappers
     }
 
     ElementWrapper getElementByName(String name) {
         if (!name) return null
-        elements.find { name == it.getName() }
+        elements.find {name == it.getName()}
     }
 
     List<ComplexTypeWrapper> getComplexTypes() {
-        List<ComplexTypeWrapper> wrappers = getContent().findAll { it instanceof ComplexType }.collect {
+        List<ComplexTypeWrapper> wrappers = getContent().findAll {it instanceof ComplexType}.collect {
             new ComplexTypeWrapper(xsdSchemaService, it as ComplexType)
         }
-        importedSchemas.each { wrappers.addAll(it.getComplexTypes()) }
+        importedSchemas.each {wrappers.addAll(it.getComplexTypes())}
         wrappers
     }
 
@@ -129,7 +131,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
 
     ComplexTypeWrapper getComplexTypeByName(String name) {
         if (!name) return null
-        complexTypes.find { it.matchesName(name) }
+        complexTypes.find {it.matchesName(name)}
     }
 
     DataType getDataType(String key) {
@@ -160,19 +162,22 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
         cleanUnusedNonXsdBasePrimitiveTypes(dataModel)
 
         debug('Created DataModel')
-        float dta = dataStore.dataTypeCreations.sum() == null ? 0 : dataStore.dataTypeCreations.sum() / dataStore.dataTypeCreations.size() == 0 ? 1 : dataStore.dataTypeCreations.size()
-        float dca = dataStore.dataClassCreations.sum() == null ? 0 : dataStore.dataClassCreations.sum() / dataStore.dataClassCreations.size() == 0 ? 1 : dataStore.dataClassCreations.size()
-        float dea = dataStore.dataElementCreations.sum() == null ? 0 : dataStore.dataElementCreations.sum() / dataStore.dataElementCreations.size() == 0 ? 1 : dataStore.dataElementCreations.size()
+        float dta = dataStore.dataTypeCreations.sum() == null ? 0 :
+                    dataStore.dataTypeCreations.sum() / dataStore.dataTypeCreations.size() == 0 ? 1 : dataStore.dataTypeCreations.size()
+        float dca = dataStore.dataClassCreations.sum() == null ? 0 :
+                    dataStore.dataClassCreations.sum() / dataStore.dataClassCreations.size() == 0 ? 1 : dataStore.dataClassCreations.size()
+        float dea = dataStore.dataElementCreations.sum() == null ? 0 :
+                    dataStore.dataElementCreations.sum() / dataStore.dataElementCreations.size() == 0 ? 1 : dataStore.dataElementCreations.size()
         debug('AVG Times: \n  DataTypes: {}\n  DataClasses: {}\n  DataElements: {}', Utils.getTimeString(dta.toLong()),
-                Utils.getTimeString(dca.toLong()),
-                Utils.getTimeString(dea.toLong()))
+              Utils.getTimeString(dca.toLong()),
+              Utils.getTimeString(dea.toLong()))
         dataModel
     }
 
     void createXsdBasePrimitiveTypes(User user, DataModel dataModel) {
         info('Adding {} primitive base types', PRIMITIVE_XML_TYPES.size())
 
-        PRIMITIVE_XML_TYPES.each { t ->
+        PRIMITIVE_XML_TYPES.each {t ->
             PrimitiveType pt = xsdSchemaService.createPrimitiveTypeForDataModel(dataModel, t, 'XML primitive type: xs:' + t, user)
             pt.addToMetadata(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE, XS_NAMESPACE, user)
             pt.addToMetadata(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE_PREFIX, XS_PREFIX, user)
@@ -183,7 +188,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     void createSimpleTypes(User user, DataModel dataModel) {
         if (simpleTypes.isEmpty()) return
         info('Adding {} simple types', simpleTypes.size())
-        simpleTypes.each { st -> findOrCreateDataType(st, user, dataModel) }
+        simpleTypes.each {st -> findOrCreateDataType(st, user, dataModel)}
     }
 
     void createElements(User user, DataModel dataModel, String rootElement, DataStore dataStore) {
@@ -197,7 +202,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
 
             // Root element defined so want to import that only
             if (rootElement) {
-                ElementWrapper element = elements.find { e -> rootElement.equalsIgnoreCase(e.getName()) }
+                ElementWrapper element = elements.find {e -> rootElement.equalsIgnoreCase(e.getName())}
                 if (element) {
                     info('Adding root element {}', rootElement)
                     element.createDataModelElement(user, dataModel, this)
@@ -209,17 +214,17 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
             else {
                 info('Adding {} elements', elements.size())
                 // Assuming at this point that every element defined is a data class / complex data element
-                elements.each { e -> e.createDataModelElement(user, dataModel, this) }
+                elements.each {e -> e.createDataModelElement(user, dataModel, this)}
             }
         }
 
-        importedSchemas.each { schema -> schema.createElements(user, dataModel, rootElement, this.dataStore) }
+        importedSchemas.each {schema -> schema.createElements(user, dataModel, rootElement, this.dataStore)}
     }
 
     DataType findOrCreateDataType(SimpleTypeWrapper simpleTypeWrapper, User user, DataModel dataModel) {
         long start = System.currentTimeMillis()
         try {
-            DataType dataType = findOrCreateDataTypes(simpleTypeWrapper, user,dataModel)
+            DataType dataType = findOrCreateDataTypes(simpleTypeWrapper, user, dataModel)
             dataStore.dataTypeCreations << System.currentTimeMillis() - start
             return dataType
         } catch (Exception ex) {
@@ -227,10 +232,10 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
         }
     }
 
-    DataType findOrCreateDataTypes(SimpleTypeWrapper simpleTypeWrapper, User user, DataModel dataModel){
+    DataType findOrCreateDataTypes(SimpleTypeWrapper simpleTypeWrapper, User user, DataModel dataModel) {
         DataType existing = dataStore.getDataType(simpleTypeWrapper.name)
         if (!existing) {
-            return dataStore.putDataType(simpleTypeWrapper.name,  simpleTypeWrapper.createDataType(user, dataModel, this))
+            return dataStore.putDataType(simpleTypeWrapper.name, simpleTypeWrapper.createDataType(user, dataModel, this))
         }
         //Non-local simple types are always unique
         if (!simpleTypeWrapper.isLocalSimpleType()) return existing
@@ -248,7 +253,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     DataType findOrCreateReferenceDataType(User user, DataModel dataModel, DataClass referencedDataClass, String description) {
         long start = System.currentTimeMillis()
         String dataTypeName = createSimpleTypeName(referencedDataClass.getLabel())
-        DataType dataType = dataStore.addDataType(dataTypeName)  { key, existing ->
+        DataType dataType = dataStore.addDataType(dataTypeName) {key, existing ->
             if (existing) return existing
             xsdSchemaService.createReferenceTypeForDataModel(dataModel, dataTypeName, description, user, referencedDataClass)
         }
@@ -257,7 +262,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     }
 
     DataClass findOrCreateDataClass(User user, DataModel parentDataModel, DataClass parentDataClass, ComplexTypeWrapper complexTypeWrapper)
-            throws ApiInternalException {
+        throws ApiInternalException {
         debug('Find or create DataClass for {}', complexTypeWrapper)
         try {
             complexTypeWrapper.setName(complexTypeWrapper.getName())
@@ -313,7 +318,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     static void cleanUnusedNonXsdBasePrimitiveTypes(DataModel dataModel) {
         dataModel.dataTypes.findAll {
             !it.dataElements &&
-                    it.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE)?.value != XS_NAMESPACE
+            it.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE)?.value != XS_NAMESPACE
         }.each {
             dataModel.removeFromDataTypes(it)
         }
@@ -334,12 +339,12 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
 
         debug("Adding schema annotation")
         Annotation annotationDocumentation = createAnnotationDocumentation(
-                Pair.of("Name", dataModel.getLabel()),
-                Pair.of("Author", dataModel.getAuthor()),
-                Pair.of("Organisation", dataModel.getOrganisation()),
-                Pair.of("Description", dataModel.getDescription()),
-                Pair.of("Last Updated", dataModel.getLastUpdated()
-                        .withOffsetSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
+            Pair.of("Name", dataModel.getLabel()),
+            Pair.of("Author", dataModel.getAuthor()),
+            Pair.of("Organisation", dataModel.getOrganisation()),
+            Pair.of("Description", dataModel.getDescription()),
+            Pair.of("Last Updated", dataModel.getLastUpdated()
+                .withOffsetSameInstant(ZoneOffset.UTC).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
 
         if (annotationDocumentation != null) {
             getIncludesAndImportsAndRedefines().add(annotationDocumentation)
@@ -347,13 +352,12 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
 
         debug("Adding in XSD elements")
         addXsdElements(dataModel.getChildDataClasses().stream()
-                .filter({ dc ->
-                    dc.getMaxMultiplicity() != null &&
-                            dc.getMinMultiplicity() != null
-                }
-                ).collect(toSet()))
+                           .filter({dc ->
+                               dc.getMaxMultiplicity() != null &&
+                               dc.getMinMultiplicity() != null
+                           }
+                           ).collect(toSet()))
     }
-
 
 
     ComplexTypeWrapper findOrCreateComplexType(DataClass dataClass) {
@@ -394,7 +398,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
         // These are all DataClasses which directly belong to the DataModel and have a multiplicity
         // We need to create a complex type for each and an element,
         // This method will recurse through the model creating only the elements into the XSD which are used to create the top level elements
-        rootDataClasses.forEach({ dc -> getIncludesAndImportsAndRedefines().add(ElementWrapper.createElement(this, dc).wrappedElement) })
+        rootDataClasses.forEach({dc -> getIncludesAndImportsAndRedefines().add(ElementWrapper.createElement(this, dc).wrappedElement)})
 
         getIncludesAndImportsAndRedefines().sort({o1, o2 ->
             // Elements at top
@@ -414,7 +418,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
             // Simple types last
             if (o1 instanceof AbstractSimpleType) {
                 if (o2 instanceof AbstractElement ||
-                        o2 instanceof AbstractComplexType) return 1
+                    o2 instanceof AbstractComplexType) return 1
                 if (
                 o2 instanceof AbstractSimpleType) return ((AbstractSimpleType) o1).getName() <=> ((AbstractSimpleType) o2).getName()
             }
@@ -455,7 +459,6 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     }
 
 
-
     String getDataModelName() {
 
         Strings.isNullOrEmpty(dataModelName) ? getName() : dataModelName
@@ -463,68 +466,55 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
     }
 
 
-
     /*
     Load schemas
      */
 
-    void loadIncludedSchemas(XsdSchemaService xsdSchemaService, String directory, Map<String, SchemaWrapper> loadedSchemas)
-            throws FileNotFoundException, JAXBException {
 
-        List<Import> imports = getImports()
+    void loadIncludedSchemas(XsdSchemaService xsdSchemaService, String directory, Map<String, SchemaWrapper> loadedSchemas, List<String> inProgressSchema )
+        throws FileNotFoundException, JAXBException {
+
         List<Include> includes = getIncludes()
-        if (includes.isEmpty() && imports.isEmpty()) return
+        if (includes.isEmpty()) return
 
         trace('Loading {} included schemas', includes.size())
         for (Include inc : includes) {
             String schemaLocation = inc.getSchemaLocation()
             SchemaWrapper included = loadedSchemas[schemaLocation]
+
+            if(schemaLocation in inProgressSchema){
+                throw new NotSupportedException("Circular Includes is not currently supported")
+            }
+
             if (included == null) {
                 debug('Including schema at location {}', directory + '/' + schemaLocation)
                 InputStream is = getClass().getClassLoader().getResourceAsStream(directory + '/' + schemaLocation)
 
                 if (is == null) is = new FileInputStream(directory + '/' + schemaLocation)
 
-                included = createSchemaWrapperFromInputStream(xsdSchemaService, is, schemaLocation, directory, loadedSchemas)
+                inProgressSchema.add(schemaLocation)
+                included = createSchemaWrapperFromInputStream(xsdSchemaService, is, schemaLocation, directory, loadedSchemas, inProgressSchema)
                 loadedSchemas[schemaLocation] = included
+
             }
 
             importedSchemas << included
         }
-
 
         trace('Loading {} imported schema', imports.size())
-
-        for (Import imp : imports) {
-            String schemaLocation = imp.getSchemaLocation()
-            SchemaWrapper included = loadedSchemas[schemaLocation]
-            if (included == null) {
-                debug('Including schema at location {}', directory + '/' + schemaLocation)
-                InputStream is = getClass().getClassLoader().getResourceAsStream(directory + '/' + schemaLocation)
-
-                if (is == null) is = new FileInputStream(directory + '/' + schemaLocation)
-
-                included = createSchemaWrapperFromInputStream(xsdSchemaService, is, schemaLocation, directory, loadedSchemas)
-                loadedSchemas[schemaLocation] = included
-            }
-
-            importedSchemas << included
-        }
-
-        trace('{} included schemas loaded', importedSchemas.size())
     }
 
     static SchemaWrapper createSchemaWrapperFromInputStream(XsdSchemaService xsdSchemaService, InputStream is, String filename, String directory)
-            throws JAXBException, FileNotFoundException {
-        createSchemaWrapperFromInputStream(xsdSchemaService, is, filename, directory, [:])
+        throws JAXBException, FileNotFoundException {
+        createSchemaWrapperFromInputStream(xsdSchemaService, is, filename, directory, [:], [])
     }
 
     static SchemaWrapper createSchemaWrapperFromInputStream(XsdSchemaService xsdSchemaService, InputStream inputStream, String filename,
-                                                            String directory, Map<String, SchemaWrapper> loadedSchemas)
-            throws JAXBException, FileNotFoundException {
+                                                            String directory, Map<String, SchemaWrapper> loadedSchemas,  List<String> inProgressSchema )
+        throws JAXBException, FileNotFoundException {
 
         SchemaWrapper schemaWrapper = new SchemaWrapper(xsdSchemaService, inputStream, filename.replaceFirst('\\.xsd', ''))
-        schemaWrapper.loadIncludedSchemas(xsdSchemaService, directory, loadedSchemas)
+        schemaWrapper.loadIncludedSchemas(xsdSchemaService, directory, loadedSchemas,  inProgressSchema )
         schemaWrapper
     }
 
