@@ -243,7 +243,10 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> impl
         }
 
         subElements.each {subElement -> subElement.createDataModelElement(user, parentDataModel, dataClass, schema)}
-        attributes.each {attribute -> attribute.createDataModelElement(user, parentDataModel, dataClass, schema)}
+        attributes.each
+            {
+                attribute -> attribute.createDataModelElement(user, parentDataModel, dataClass, schema)
+            }
 
         if (getExtension()) {
             return extendDataClass(user, parentDataModel, schema, dataClass)

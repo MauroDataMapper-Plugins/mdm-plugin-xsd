@@ -926,16 +926,15 @@ class XsdImporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
     }
 
     //Comment un comment to test zip imports, please be aware test may take a long time depending on file size
-    /*    void testPerformance()
-        {
-            given:
-            setupData()
-            XsdImporterProviderServiceParameters params = createImportParametersForZip('COSDCOSD_XMLSchema-v6-0.xsd','C:\\mauro\\main_v6-0.zip' , 'XSD Test: Complex model')
+/*    void testPerformance() {
+        given:
+        setupData()
+        XsdImporterProviderServiceParameters params = createImportParametersForZip('fhir-single.xsd', 'C:\\mauro\\fhir-all-xsd.zip', 'XSD Test: Complex model')
 
-            when:
-            DataModel dataModel = importDataModelAndRetrieveFromDatabase(params)
+        when:
+        DataModel dataModel = importDataModelAndRetrieveFromDatabase(params)
 
-            then:
-            dataModel != null
-        }*/
+        then:
+        dataModel != null
+    }*/
 }

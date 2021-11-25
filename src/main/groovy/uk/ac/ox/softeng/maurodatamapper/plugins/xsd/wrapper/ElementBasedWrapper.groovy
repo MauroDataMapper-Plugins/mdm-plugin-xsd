@@ -102,7 +102,11 @@ abstract class ElementBasedWrapper<K extends Annotated> extends AnnotatedWrapper
         if (isReferenceElement()) {
             debug('Creating element "{}" from reference', getRef().getLocalPart())
             ElementBasedWrapper refElement = schema.getElementByName(getRef().getLocalPart())
-            dataElement = refElement.createDataModelElement(user, parentDataModel, parentDataClass, schema)
+            if(refElement){
+            dataElement = refElement.createDataModelElement(user, parentDataModel, parentDataClass, schema)}
+            else{
+                warn("Unable to create Data Model Element as Ref Element doesn't exist")
+            }
         } else {
             ComplexTypeWrapper complexTypeWrapper = getComplexTypeWrapper(schema)
 

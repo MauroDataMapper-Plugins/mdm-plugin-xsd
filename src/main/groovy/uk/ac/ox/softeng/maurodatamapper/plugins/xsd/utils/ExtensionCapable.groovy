@@ -26,6 +26,12 @@ trait ExtensionCapable {
 
     abstract QName getBase()
 
+    Boolean hasBase(){
+        getBase() != null
+    }
+
+
+
     Boolean isExtension() {
         getBase()
     }

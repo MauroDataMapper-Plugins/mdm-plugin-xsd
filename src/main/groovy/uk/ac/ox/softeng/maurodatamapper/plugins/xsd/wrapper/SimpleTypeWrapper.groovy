@@ -131,7 +131,13 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
     }
 
     DataType findOrCreateRestrictionBase(User user, DataModel dataModel, SchemaWrapper schema) {
-        if (restriction.extensionNamespace != XS_NAMESPACE) {
+        if (!restriction.hasBase()){
+           SimpleTypeWrapper base = new SimpleTypeWrapper(xsdSchemaService, restriction.wrappedElement.simpleType, "baseSimpleType${getName()}")
+            if (base) return schema.findOrCreateDataType(base, user, dataModel)
+            warn('Unknown extension type [{}]', restriction.extensionFqdn)
+            return null
+        }
+        else if (restriction.extensionNamespace != XS_NAMESPACE) {
             SimpleTypeWrapper base = schema.getSimpleTypeByName(restriction.extensionName)
             if (base) return schema.findOrCreateDataType(base, user, dataModel)
             warn('Unknown extension type [{}]', restriction.extensionFqdn)
@@ -146,12 +152,13 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
 
         if (isRestricted()) {
             DataType restrictionBase
-            debug('Restriction base type "{}"', restriction.extensionFqdn)
+          //  debug('Restriction base type "{}"', restriction.extensionFqdn)
             restrictionBase = findOrCreateRestrictionBase(user, dm, schema)
 
             List<FacetWrapper> enums = getEnumerations(schema)
 
             if (enums.isEmpty()) {
+
                 // Primitive type
                 trace('Is a restriction primitive type')
                 if (hasRestrictions() || isKnownUnnecessaryType()) {
