@@ -25,6 +25,7 @@ import grails.gorm.transactions.Rollback
 import grails.gorm.transactions.Transactional
 import grails.testing.mixin.integration.Integration
 import grails.testing.spock.OnceBefore
+import grails.testing.spock.RunOnce
 import grails.util.BuildSettings
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlUtil
@@ -77,8 +78,8 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
     DataModelFileImporterProviderServiceParameters basicParameters
 
 
-    @OnceBefore
-    void setupResourcesPath() {
+    @RunOnce
+    def setup() {
         resourcesPath = Paths.get(BuildSettings.BASE_DIR.absolutePath, 'src', 'integration-test', 'resources')
     }
 
