@@ -96,7 +96,7 @@ class XsdSchemaService {
         DataElement duplicate = createDataElementForDataClass(parent, original.label, original.description, user, original.dataType,
                 original.minMultiplicity, original.maxMultiplicity)
         original.getMetadata()?.each { md ->
-            duplicate.addToMetadata(md.namespace, md.key, md.value, user)
+            duplicate.addToMetadata(md.namespace, md.key, md.value, user.emailAddress)
         }
 
         duplicate

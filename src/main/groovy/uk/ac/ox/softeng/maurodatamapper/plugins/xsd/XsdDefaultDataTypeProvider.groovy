@@ -20,6 +20,7 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.DefaultDataTypeProvider
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.OpenAttrsWrapper
 
 import static XsdPlugin.METADATA_NAMESPACE
 import static XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
@@ -34,10 +35,8 @@ class XsdDefaultDataTypeProvider implements DefaultDataTypeProvider {
     List<DataType> getDefaultListOfDataTypes() {
         XsdPlugin.PRIMITIVE_XML_TYPES.collect {t ->
             new PrimitiveType(label: t, description: "XML primitive type: xs:$t")
-                .addToMetadata(namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE, value: uk.ac.ox.softeng.maurodatamapper.plugins.xsd.
-                    wrapper.OpenAttrsWrapper.XS_NAMESPACE)
-                .addToMetadata(namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE_PREFIX, value: uk.ac.ox.softeng.maurodatamapper.
-                    plugins.xsd.wrapper.OpenAttrsWrapper.XS_PREFIX)
+                .addToMetadata(namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE, value: OpenAttrsWrapper.XS_NAMESPACE)
+                .addToMetadata(namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE_PREFIX, value: OpenAttrsWrapper.XS_PREFIX)
         }
     }
 

@@ -179,8 +179,8 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
 
         PRIMITIVE_XML_TYPES.each {t ->
             PrimitiveType pt = xsdSchemaService.createPrimitiveTypeForDataModel(dataModel, t, 'XML primitive type: xs:' + t, user)
-            pt.addToMetadata(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE, XS_NAMESPACE, user)
-            pt.addToMetadata(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE_PREFIX, XS_PREFIX, user)
+            pt.addToMetadata(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE, XS_NAMESPACE, user.emailAddress)
+            pt.addToMetadata(METADATA_NAMESPACE, METADATA_XSD_TARGET_NAMESPACE_PREFIX, XS_PREFIX, user.emailAddress)
             dataStore.putDataType(t, pt)
         }
     }
