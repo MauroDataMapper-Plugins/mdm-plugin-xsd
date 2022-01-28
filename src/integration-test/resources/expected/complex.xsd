@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2020-2022 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+    SPDX-License-Identifier: Apache-2.0
+
+-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
            targetNamespace="https://metadatacatalogue.com/xsd/test/complex/1.0" xmlns="https://metadatacatalogue.com/xsd/test/complex/1.0">
   <xs:annotation>
@@ -12,13 +31,13 @@
       <xs:documentation>The top element complex type</xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="allLType-133044847">
+  <xs:complexType name="allType-133044847">
     <xs:annotation>
       <xs:documentation>An all complex type</xs:documentation>
     </xs:annotation>
     <xs:all>
-      <xs:element maxOccurs="1" minOccurs="1" name="Element_J_Decimal" type="anotherNumberWithRestrictions-113550831" />
-      <xs:element maxOccurs="1" minOccurs="1" name="element-J-number" type="numberWithRestrictions-113134575" />
+      <xs:element maxOccurs="1" minOccurs="1" name="elementJDecimal" type="anotherNumberWithRestrictions-113550831" />
+      <xs:element maxOccurs="1" minOccurs="1" name="elementJNumber" type="numberWithRestrictions-113134575" />
     </xs:all>
   </xs:complexType>
   <xs:complexType name="choiceBType-134142127">
@@ -26,9 +45,6 @@
       <xs:documentation>A choice complex type</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:sequence>
-        <xs:element maxOccurs="1" minOccurs="0" name="mappingId" type="gUID-101320495" />
-      </xs:sequence>
       <xs:choice>
         <xs:element maxOccurs="1" minOccurs="1" name="elementE" type="xs:date">
           <xs:annotation>
@@ -41,6 +57,9 @@
           </xs:annotation>
         </xs:element>
       </xs:choice>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="0" name="mappingId" type="guid-101320495" />
+      </xs:sequence>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="complexMType-133044847">
@@ -48,10 +67,6 @@
       <xs:documentation>A complex element which extends another</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:sequence>
-        <xs:element maxOccurs="1" minOccurs="1" name="elementN" type="mandatoryString-108740847" />
-        <xs:element maxOccurs="1" minOccurs="0" name="mappingId" type="gUID-101320495" />
-      </xs:sequence>
       <xs:choice>
         <xs:element maxOccurs="1" minOccurs="1" name="elementE" type="xs:date">
           <xs:annotation>
@@ -64,6 +79,10 @@
           </xs:annotation>
         </xs:element>
       </xs:choice>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="1" name="elementN" type="mandatoryString-108740847" />
+        <xs:element maxOccurs="1" minOccurs="0" name="mappingId" type="guid-101320495" />
+      </xs:sequence>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="complexTypeQType-134142127">
@@ -117,14 +136,9 @@
       <xs:documentation>The top element complex type</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element maxOccurs="1" minOccurs="1" name="ElementK" type="allLType-133044847">
+      <xs:element maxOccurs="1" minOccurs="1" name="elementK" type="allType-133044847">
         <xs:annotation>
           <xs:documentation>An element with an all complex element</xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element maxOccurs="1" minOccurs="1" name="element-i" type="stringWithRestrictions-116587695">
-        <xs:annotation>
-          <xs:documentation>remaining restrictions applied to a string</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element maxOccurs="1" minOccurs="1" name="elementO" type="complexMType-133044847" />
@@ -134,7 +148,12 @@
         </xs:annotation>
       </xs:element>
       <xs:element maxOccurs="1" minOccurs="1" name="elementV" type="complexTypeQType-134142127" />
-      <xs:element maxOccurs="1" minOccurs="1" name="element_H" type="patternedString-115490415">
+      <xs:element maxOccurs="1" minOccurs="1" name="elementI" type="stringWithRestrictions-116587695">
+        <xs:annotation>
+          <xs:documentation>remaining restrictions applied to a string</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element maxOccurs="1" minOccurs="1" name="elementH" type="patternedString-115490415">
         <xs:annotation>
           <xs:documentation>regex string</xs:documentation>
         </xs:annotation>
@@ -190,7 +209,7 @@
       </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="gUID-101320495">
+  <xs:simpleType name="guid-101320495">
     <xs:restriction base="xs:string">
       <xs:pattern
         value="([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})|(\{[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\})" />

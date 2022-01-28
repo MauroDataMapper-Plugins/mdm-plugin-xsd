@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2020-2022 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+    SPDX-License-Identifier: Apache-2.0
+
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:UML="omg.org/UML1.3"
+           xmlns:fn="http://www.w3.org/2005/xpath-functions"
+           xmlns:xdt="http://www.w3.org/2005/xpath-datatypes"
+           xmlns="http://www.datadictionary.nhs.uk/messages/COSD-v8-1"
+           xmlns:COSD="http://www.datadictionary.nhs.uk/messages/COSD-v8-1"
+           elementFormDefault="unqualified"
+           attributeFormDefault="unqualified"
+           blockDefault="#all"
+           finalDefault="extension"
+           version="8-1"
+           id="COSDCoreLinkageDiagnosticDetails_XMLSchema-v8-1"
+           targetNamespace="http://www.datadictionary.nhs.uk/messages/COSD-v8-1">
+   <xs:include schemaLocation="COSD_XMLDataTypes-v8-1.xsd"/>
+   <xs:element name="CoreLinkageDiagnosticDetails" type="CoreCoreLinkageDiagnosticDetailsType"/>
+   <xs:complexType name="CoreCoreLinkageDiagnosticDetailsType">
+      <xs:sequence>
+         <xs:element name="PrimaryDiagnosis" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:appinfo>PRIMARY DIAGNOSIS (ICD)</xs:appinfo>
+            </xs:annotation>
+            <xs:complexType>
+               <xs:complexContent>
+                  <xs:restriction base="CV">
+                     <xs:attribute name="code" use="required">
+                        <xs:simpleType>
+                           <xs:restriction base="cs">
+                              <xs:maxLength value="6"/>
+                              <xs:minLength value="4"/>
+                           </xs:restriction>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:restriction>
+               </xs:complexContent>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="TumourLaterality" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:appinfo>TUMOUR LATERALITY</xs:appinfo>
+            </xs:annotation>
+            <xs:complexType>
+               <xs:complexContent>
+                  <xs:restriction base="CV.GB-en-NHS.CodedValueType1">
+                     <xs:attribute name="code" use="required">
+                        <xs:simpleType>
+                           <xs:restriction base="cs">
+                              <xs:enumeration value="L"/>
+                              <xs:enumeration value="R"/>
+                              <xs:enumeration value="M"/>
+                              <xs:enumeration value="B"/>
+                              <xs:enumeration value="8"/>
+                              <xs:enumeration value="9"/>
+                           </xs:restriction>
+                        </xs:simpleType>
+                     </xs:attribute>
+                  </xs:restriction>
+               </xs:complexContent>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="ClinicalDateCancerDiagnosis" type="ST.GB-en-NHS.StringType1"
+                     minOccurs="0"
+                     maxOccurs="1">
+            <xs:annotation>
+               <xs:appinfo>DATE OF PRIMARY CANCER DIAGNOSIS (CLINICALLY AGREED)</xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="DateOfNonPrimaryCancerDiagnosisClinicallyAgreed"
+                     type="ST.GB-en-NHS.StringType1"
+                     minOccurs="0"
+                     maxOccurs="1">
+            <xs:annotation>
+               <xs:appinfo>DATE OF NON PRIMARY CANCER DIAGNOSIS (CLINICALLY AGREED)</xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+</xs:schema>
