@@ -18,7 +18,7 @@
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils
 
 import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionWrapper
@@ -63,7 +63,7 @@ trait RestrictionCapable {
 
     void addRestrictionsToMetadata(CatalogueItem component, User user, CatalogueItem restrictionComponent) {
         if (restriction) {
-            addMetadataToComponent(component, XsdPlugin.METADATA_XSD_RESTRICTION_BASE, restrictionComponent.label ?: restriction.extensionName, user)
+            addMetadataToComponent(component, XsdMetadata.METADATA_XSD_RESTRICTION_BASE, restrictionComponent.label ?: restriction.extensionName, user)
 
             restrictions.each {k, v ->
                 addMetadataToComponent(component, k, v, user)

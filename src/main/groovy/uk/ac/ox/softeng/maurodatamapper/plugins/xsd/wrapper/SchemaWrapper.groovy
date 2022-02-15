@@ -27,7 +27,7 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
 import uk.ac.ox.softeng.maurodatamapper.security.User
@@ -43,7 +43,7 @@ import java.time.format.DateTimeFormatter
 import java.util.List
 
 import static java.util.stream.Collectors.toSet
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.*
 
 /**
  * @since 24/08/2017
@@ -330,7 +330,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
 
     void populateSchemaFromDataModel(DataModel dataModel, String defaultTargetNamespace) {
         info("Populating from {}", dataModel)
-        Metadata tn = dataModel.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_TARGET_NAMESPACE)
+        Metadata tn = dataModel.findMetadataByNamespaceAndKey(XsdMetadata.METADATA_NAMESPACE, XsdMetadata.METADATA_XSD_TARGET_NAMESPACE)
         if (tn != null) wrappedElement.setTargetNamespace(tn.getValue())
         else wrappedElement.setTargetNamespace(defaultTargetNamespace)
 

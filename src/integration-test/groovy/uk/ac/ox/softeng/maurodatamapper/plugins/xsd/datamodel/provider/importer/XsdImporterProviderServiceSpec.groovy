@@ -31,16 +31,16 @@ import grails.gorm.transactions.Rollback
 import grails.testing.mixin.integration.Integration
 import groovy.util.logging.Slf4j
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_LABEL_PREFIX
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_ALL
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_ATTRIBUTE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_ATTRIBUTE_NAME
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_CHOICE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_DEFAULT
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_EXTENSION_BASE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_FIXED
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_LABEL_PREFIX
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_ALL
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_ATTRIBUTE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_ATTRIBUTE_NAME
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_CHOICE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_DEFAULT
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_EXTENSION_BASE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_FIXED
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_RESTRICTION_BASE
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.OpenAttrsWrapper.XS_NAMESPACE
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.fractionDigits
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.length

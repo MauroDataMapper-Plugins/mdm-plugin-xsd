@@ -24,6 +24,7 @@ import uk.ac.ox.softeng.maurodatamapper.core.container.FolderService
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.DataModelImporterProviderService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.SchemaWrapper
@@ -68,6 +69,16 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
     @Override
     List<DataModel> importModels(User currentUser, XsdImporterProviderServiceParameters params) {
         throw new ApiBadRequestException('XIS02', "${getName()} cannot import multiple DataModels")
+    }
+
+    @Override
+    Boolean allowsExtraMetadataKeys() {
+        XsdMetadata.allowsExtraMetadataKeys()
+    }
+
+    @Override
+    Set<String> getKnownMetadataKeys() {
+        XsdMetadata.getKnownMetadataKeys()
     }
 
     @Override

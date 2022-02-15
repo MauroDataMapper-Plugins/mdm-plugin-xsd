@@ -37,7 +37,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.*
 
 @Integration
 @Rollback

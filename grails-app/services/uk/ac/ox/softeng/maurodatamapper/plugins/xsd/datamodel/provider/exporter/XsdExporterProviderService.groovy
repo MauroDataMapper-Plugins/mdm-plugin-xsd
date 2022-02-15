@@ -27,6 +27,7 @@ import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiException
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.exporter.DataModelExporterProviderService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.SchemaWrapper
@@ -68,6 +69,16 @@ class XsdExporterProviderService extends DataModelExporterProviderService {
     @Override
     String getVersion() {
         getClass().getPackage().getSpecificationVersion() ?: 'SNAPSHOT'
+    }
+
+    @Override
+    Boolean allowsExtraMetadataKeys() {
+        XsdMetadata.allowsExtraMetadataKeys()
+    }
+
+    @Override
+    Set<String> getKnownMetadataKeys() {
+        XsdMetadata.getKnownMetadataKeys()
     }
 
     @Override

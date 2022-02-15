@@ -22,7 +22,7 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.LocalSimpleType
@@ -37,11 +37,10 @@ import com.google.common.base.Strings
 
 import javax.xml.namespace.QName
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_LIST
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_UNION
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.AnnotationContentWrapper.APPINFO_CONTENT
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_LIST
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_RESTRICTION_BASE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_UNION
 
 /**
  * @since 24/08/2017
@@ -245,14 +244,14 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
         debug("Populating from {}", dataType);
         wrappedElement.setAnnotation(createAnnotation(dataType.getDescription()));
 
-        Set<Metadata> xsdMetadata = dataType.findMetadataByNamespace(XsdPlugin.METADATA_NAMESPACE);
+        Set<Metadata> xsdMetadata = dataType.findMetadataByNamespace(XsdMetadata.METADATA_NAMESPACE);
 
         if (xsdMetadata.isEmpty()) {
             warn("SimpleType cannot be reliably created as no defined XSD data in {}", dataType.getLabel());
             return;
         }
 
-        String restrictionType = findMetadata(xsdMetadata, XsdPlugin.METADATA_XSD_RESTRICTION_BASE);
+        String restrictionType = findMetadata(xsdMetadata, XsdMetadata.METADATA_XSD_RESTRICTION_BASE);
         if (Strings.isNullOrEmpty(restrictionType)) {
             warn("SimpleType cannot be reliably created as no XSD restriction base defined in {}", dataType.getLabel());
             return;
@@ -275,7 +274,7 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
         Restriction restriction = new Restriction();
         restriction.setBase(getTypeForName(restrictionType));
 
-        xsdMetadata.findAll {md -> !md.getKey().equalsIgnoreCase(XsdPlugin.METADATA_XSD_RESTRICTION_BASE)}.each {md ->
+        xsdMetadata.findAll {md -> !md.getKey().equalsIgnoreCase(XsdMetadata.METADATA_XSD_RESTRICTION_BASE)}.each {md ->
             RestrictionKind rk = RestrictionKind.findFromDisplayText(md.getKey());
 
             if (rk != null) {
@@ -304,7 +303,7 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
     static SimpleTypeWrapper createSimpleType(XsdSchemaService xsdSchemaService, DataType dataType, String typeName) {
         SimpleTypeWrapper wrapper = new SimpleTypeWrapper(xsdSchemaService, new SimpleType());
 
-        if (XsdPlugin.PRIMITIVE_XML_TYPES.contains(typeName)) {
+        if (XsdMetadata.PRIMITIVE_XML_TYPES.contains(typeName)) {
             wrapper.wrappedElement.setName(typeName);
             return wrapper;
         }

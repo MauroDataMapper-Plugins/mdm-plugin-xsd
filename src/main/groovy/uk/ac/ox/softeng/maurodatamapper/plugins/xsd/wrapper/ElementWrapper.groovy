@@ -23,14 +23,14 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
 import uk.ac.ox.softeng.maurodatamapper.security.User
 
 import javax.xml.namespace.QName
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.*
 /**
  * @since 24/08/2017
  */
@@ -172,12 +172,12 @@ class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
             wrappedElement.setType(simpleTypeWrapper.getType());
         }
 
-        Metadata defaultValue = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_DEFAULT);
+        Metadata defaultValue = dataElement.findMetadataByNamespaceAndKey(XsdMetadata.METADATA_NAMESPACE, XsdMetadata.METADATA_XSD_DEFAULT);
         if (defaultValue != null) {
             trace("Adding default value to element");
             wrappedElement.setDefault(defaultValue.getValue());
         }
-        Metadata fixedValue = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_FIXED);
+        Metadata fixedValue = dataElement.findMetadataByNamespaceAndKey(XsdMetadata.METADATA_NAMESPACE, XsdMetadata.METADATA_XSD_FIXED);
         if (fixedValue != null) {
             trace("Adding fixed value to element");
             wrappedElement.setDefault(fixedValue.getValue());

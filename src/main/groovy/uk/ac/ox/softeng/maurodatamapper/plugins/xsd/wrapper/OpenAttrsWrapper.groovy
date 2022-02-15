@@ -17,7 +17,7 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 
 import com.google.common.base.Strings
 import org.apache.commons.lang3.tuple.Pair
@@ -143,6 +143,6 @@ abstract class OpenAttrsWrapper<K extends OpenAttrs> implements Comparable<OpenA
       }
 
       static QName getTypeForName(String name) {
-          XsdPlugin.PRIMITIVE_XML_TYPES.contains(name) ? new QName(XS_NAMESPACE, name) : new QName(name)
+          XsdMetadata.PRIMITIVE_XML_TYPES.contains(name) ? new QName(XS_NAMESPACE, name) : new QName(name)
       }
 }

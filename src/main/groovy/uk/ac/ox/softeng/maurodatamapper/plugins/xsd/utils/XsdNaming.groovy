@@ -27,7 +27,7 @@ import com.google.common.base.CaseFormat
 import org.slf4j.Logger
 import java.time.OffsetDateTime
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.PRIMITIVE_XML_TYPES
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.PRIMITIVE_XML_TYPES
 
 /**
  * @since 02/10/2018

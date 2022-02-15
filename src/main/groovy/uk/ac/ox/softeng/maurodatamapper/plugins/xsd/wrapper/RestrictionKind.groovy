@@ -17,7 +17,7 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet
 
 import com.google.common.base.CaseFormat
@@ -45,7 +45,7 @@ enum RestrictionKind {
     final String displayText
 
     RestrictionKind(String displayText) {
-        this.displayText = XsdPlugin.METADATA_LABEL_RESTRICTION_PREFIX + displayText
+        this.displayText = XsdMetadata.METADATA_LABEL_RESTRICTION_PREFIX + displayText
     }
 
 

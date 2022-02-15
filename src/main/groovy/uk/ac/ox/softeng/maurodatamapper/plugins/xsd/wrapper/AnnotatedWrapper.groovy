@@ -18,7 +18,7 @@
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
 import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
@@ -111,7 +111,7 @@ abstract class AnnotatedWrapper<K extends Annotated> extends OpenAttrsWrapper<K>
     }
 
     void addMetadataToComponent(CatalogueItem component, String key, String value, User user) {
-        component.addToMetadata(XsdPlugin.METADATA_NAMESPACE, key, value, user.emailAddress)
+        component.addToMetadata(XsdMetadata.METADATA_NAMESPACE, key, value, user.emailAddress)
     }
 
 }
