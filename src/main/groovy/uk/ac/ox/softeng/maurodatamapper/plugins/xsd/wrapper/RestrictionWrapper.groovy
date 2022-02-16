@@ -117,15 +117,15 @@ class RestrictionWrapper extends ComplexContentWrapper<Annotated> implements Jax
 
     private List<Object> getMinExclusivesAndMinInclusivesAndMaxExclusives() {
         if (wrappedElement instanceof Restriction) {
-            return ((Restriction) wrappedElement).getMinExclusivesAndMinInclusivesAndMaxExclusives();
+            return ((Restriction) wrappedElement).getMinExclusivesAndMinInclusivesAndMaxExclusives()
         }
         if (wrappedElement instanceof RestrictionType) {
-            return ((RestrictionType) wrappedElement).getMinExclusivesAndMinInclusivesAndMaxExclusives();
+            return ((RestrictionType) wrappedElement).getMinExclusivesAndMinInclusivesAndMaxExclusives()
         }
         if (wrappedElement == null) {
-            warn("No restriction type inside wrapper");
-        } else warn("Unknown restriction type inside wrapper {}", wrappedElement.getClass().getCanonicalName());
-        return Collections.emptyList();
+            warn("No restriction type inside wrapper")
+        } else warn("Unknown restriction type inside wrapper {}", wrappedElement.getClass().getCanonicalName())
+        return Collections.emptyList()
     }
 
 

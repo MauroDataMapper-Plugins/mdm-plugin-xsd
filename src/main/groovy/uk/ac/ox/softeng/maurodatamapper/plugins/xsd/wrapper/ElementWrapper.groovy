@@ -146,41 +146,41 @@ class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
     }
 
     private void populateFromDataClass(SchemaWrapper schema, DataClass dataClass) {
-        wrappedElement.setName(createValidXsdName(dataClass.getLabel()));
-        debug("Populate element from {}", dataClass);
-        wrappedElement.setAnnotation(createAnnotation(dataClass.getDescription()));
-        ComplexTypeWrapper complexTypeWrapper = schema.findOrCreateComplexType(dataClass);
-        wrappedElement.setType(new QName(complexTypeWrapper.getName()));
+        wrappedElement.setName(createValidXsdName(dataClass.getLabel()))
+        debug("Populate element from {}", dataClass)
+        wrappedElement.setAnnotation(createAnnotation(dataClass.getDescription()))
+        ComplexTypeWrapper complexTypeWrapper = schema.findOrCreateComplexType(dataClass)
+        wrappedElement.setType(new QName(complexTypeWrapper.getName()))
     }
 
     private void populateFromDataElement(SchemaWrapper schema, DataElement dataElement) {
-        wrappedElement.setName(createValidXsdName(dataElement.getLabel()));
-        debug("Populating from {}", dataElement);
-        wrappedElement.setAnnotation(createAnnotation(dataElement.getDescription()));
-        wrappedElement.setMinOccurs(BigInteger.valueOf(dataElement.getMinMultiplicity()));
-        wrappedElement.setMaxOccurs(dataElement.getMaxMultiplicity() == -1 ? "unbounded" : dataElement.getMaxMultiplicity().toString());
+        wrappedElement.setName(createValidXsdName(dataElement.getLabel()))
+        debug("Populating from {}", dataElement)
+        wrappedElement.setAnnotation(createAnnotation(dataElement.getDescription()))
+        wrappedElement.setMinOccurs(BigInteger.valueOf(dataElement.getMinMultiplicity()))
+        wrappedElement.setMaxOccurs(dataElement.getMaxMultiplicity() == -1 ? "unbounded" : dataElement.getMaxMultiplicity().toString())
 
-        DataType dataType = dataElement.getDataType();
+        DataType dataType = dataElement.getDataType()
         if (dataType.instanceOf(ReferenceType.class)) {
-            trace("Is a complexType element");
-            ComplexTypeWrapper complexTypeWrapper = schema.findOrCreateComplexType(((ReferenceType) dataType).getReferenceClass());
-            wrappedElement.setType(new QName(complexTypeWrapper.getName()));
+            trace("Is a complexType element")
+            ComplexTypeWrapper complexTypeWrapper = schema.findOrCreateComplexType(((ReferenceType) dataType).getReferenceClass())
+            wrappedElement.setType(new QName(complexTypeWrapper.getName()))
         } else {
-            trace("Is a simpleType element");
-            SimpleTypeWrapper simpleTypeWrapper = schema.findOrCreateSimpleType(dataElement.getDataType());
-            debug("Setting {} type to {}", dataElement.getDataType(), simpleTypeWrapper.getType());
-            wrappedElement.setType(simpleTypeWrapper.getType());
+            trace("Is a simpleType element")
+            SimpleTypeWrapper simpleTypeWrapper = schema.findOrCreateSimpleType(dataElement.getDataType())
+            debug("Setting {} type to {}", dataElement.getDataType(), simpleTypeWrapper.getType())
+            wrappedElement.setType(simpleTypeWrapper.getType())
         }
 
-        Metadata defaultValue = dataElement.findMetadataByNamespaceAndKey(XsdMetadata.METADATA_NAMESPACE, XsdMetadata.METADATA_XSD_DEFAULT);
+        Metadata defaultValue = dataElement.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_DEFAULT)
         if (defaultValue != null) {
-            trace("Adding default value to element");
-            wrappedElement.setDefault(defaultValue.getValue());
+            trace("Adding default value to element")
+            wrappedElement.setDefault(defaultValue.getValue())
         }
-        Metadata fixedValue = dataElement.findMetadataByNamespaceAndKey(XsdMetadata.METADATA_NAMESPACE, XsdMetadata.METADATA_XSD_FIXED);
+        Metadata fixedValue = dataElement.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_FIXED)
         if (fixedValue != null) {
-            trace("Adding fixed value to element");
-            wrappedElement.setDefault(fixedValue.getValue());
+            trace("Adding fixed value to element")
+            wrappedElement.setDefault(fixedValue.getValue())
         }
     }
 

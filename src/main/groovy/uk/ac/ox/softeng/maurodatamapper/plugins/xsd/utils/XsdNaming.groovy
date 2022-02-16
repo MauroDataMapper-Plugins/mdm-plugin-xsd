@@ -120,7 +120,7 @@ trait XsdNaming {
     }
 
     String createValidXsdName(String name) {
-        String underscoreName = name.replaceAll('[ -]', '_')
+        String underscoreName = name.replaceAll('[^A-Za-z0-9]', '_')
         String camelName = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, underscoreName)
         camelName.matches('^\\d.*') ? '_' + camelName : camelName
     }

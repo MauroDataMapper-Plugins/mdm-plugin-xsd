@@ -96,35 +96,35 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
 
             log.info('Temp Folder Location {}', tempDir.getAbsolutePath())
 
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1024]
             ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(params.getImportFile().getFileContents()))
             ZipEntry zipEntry = zis.getNextEntry()
             while (zipEntry != null) {
-                File newFile = newFile(tempDir, zipEntry);
+                File newFile = newFile(tempDir, zipEntry)
                 if (zipEntry.isDirectory()) {
                     if (!newFile.isDirectory() && !newFile.mkdirs()) {
-                        throw new IOException("Failed to create directory " + newFile);
+                        throw new IOException("Failed to create directory " + newFile)
                     }
                 } else {
                     // fix for Windows-created archives
-                    File parent = newFile.getParentFile();
+                    File parent = newFile.getParentFile()
                     if (!parent.isDirectory() && !parent.mkdirs()) {
-                        throw new IOException("Failed to create directory " + parent);
+                        throw new IOException("Failed to create directory " + parent)
                     }
 
                     // write file content
-                    FileOutputStream fos = new FileOutputStream(newFile);
-                    int len;
+                    FileOutputStream fos = new FileOutputStream(newFile)
+                    int len
                     while ((len = zis.read(buffer)) > 0) {
-                        fos.write(buffer, 0, len);
+                        fos.write(buffer, 0, len)
                     }
-                    fos.close();
+                    fos.close()
                 }
-                zipEntry = zis.getNextEntry();
+                zipEntry = zis.getNextEntry()
             }
 
-            zis.closeEntry();
-            zis.close();
+            zis.closeEntry()
+            zis.close()
 
             Path primaryFile = Paths.get(tempDir.toString(), params.zipFolderLocation)
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(Files.readAllBytes(primaryFile))
@@ -170,16 +170,16 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
     }
 
     File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
-        File destFile = new File(destinationDir, zipEntry.getName());
+        File destFile = new File(destinationDir, zipEntry.getName())
 
-        String destDirPath = destinationDir.getCanonicalPath();
-        String destFilePath = destFile.getCanonicalPath();
+        String destDirPath = destinationDir.getCanonicalPath()
+        String destFilePath = destFile.getCanonicalPath()
 
         if (!destFilePath.startsWith(destDirPath + File.separator)) {
-            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName())
         }
 
-        return destFile;
+        return destFile
     }
 
 
