@@ -40,7 +40,7 @@ enum RestrictionKind {
     totalDigits('Total Digits'),
     maxLength('Max Length'),
     minExclusive('Min Exclusive'),
-    maxInclusive('Max Exclusive');
+    maxInclusive('Max Inclusive');
 
     final String displayText
 

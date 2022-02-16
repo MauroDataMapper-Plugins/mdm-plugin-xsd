@@ -1,0 +1,153 @@
+[
+  {
+    "sectionName": "Base Simple Type Properties",
+    "sectionDescription": "Properties which define the XSD Simple Type. One of these options MUST be completed.",
+    "fields": [
+      {
+        "fieldName": "XS Base type",
+        "metadataPropertyName": "XSD Restriction Restriction Base",
+        "description": "Which standard 'xs' simple type does this Simple Type extend.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String",
+        "defaultValue": "string"
+      },
+      {
+        "fieldName": "Union",
+        "metadataPropertyName": "XSD Union",
+        "description": "Defines a simple type as a collection (union) of values from specified simple data types. Space separated list of other DataTypes.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      }
+    ]
+  },
+  {
+    "sectionName": "String Type Restrictions",
+    "sectionDescription": "Restrictions which are usually applied to xs:string types.",
+    "fields": [
+      {
+        "fieldName": "Length",
+        "metadataPropertyName": "XSD Restriction Length",
+        "description": "Content must be of exactly the defined length.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Int"
+      },
+      {
+        "fieldName": "Max Length",
+        "metadataPropertyName": "XSD Restriction Max Length",
+        "description": "Content must be no more than the defined length.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Int"
+      },
+      {
+        "fieldName": "Min Length",
+        "metadataPropertyName": "XSD Restriction Min Length",
+        "description": "Content must be at least the defined length",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Int"
+      },
+      {
+        "fieldName": "Regular Expression Pattern restriction",
+        "metadataPropertyName": "XSD Restriction Pattern",
+        "description": "Regular expression pattern defining allowed values.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      },
+      {
+        "fieldName": "Whitespace Handling",
+        "metadataPropertyName": "XSD Restriction Whitespace Handling",
+        "description": "How to handle whitespace",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "enumeration",
+        "allowedValues": [
+          "preserve",
+          "replace",
+          "collapse"
+        ],
+        "defaultValue": "preserve"
+      }
+    ]
+  },
+  {
+    "sectionName": "Numeric Type Restrictions",
+    "sectionDescription": "Restrictions which are usually applied to numeric xs types.",
+    "fields": [
+      {
+        "fieldName": "Maximum Exclusive value",
+        "metadataPropertyName": "XSD Restriction Max Exclusive",
+        "description": "The maximum value allowed (exclusive)",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Decimal"
+      },
+      {
+        "fieldName": "Minimum Exclusive value",
+        "metadataPropertyName": "XSD Restriction Min Exclusive",
+        "description": "The minimum value allowed (exclusive)",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Decimal"
+      },
+      {
+        "fieldName": "Maximum Inclusive value",
+        "metadataPropertyName": "XSD Restriction Max Inclusive",
+        "description": "The maximum value allowed (inclusive)",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Decimal"
+      },
+      {
+        "fieldName": "Minimum Inclusive value",
+        "metadataPropertyName": "XSD Restriction Min Inclusive",
+        "description": "The minimum value allowed (inclusive)",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Decimal"
+      },
+      {
+        "fieldName": "Number of Fraction Digits allowed",
+        "metadataPropertyName": "XSD Restriction Number of Fraction Digits",
+        "description": "The number of fraction digits allowed",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Int"
+      },
+      {
+        "fieldName": "Total Digits allowed",
+        "metadataPropertyName": "XSD Restriction Total Digits",
+        "description": "The total number of digits allowed.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Int"
+      }
+    ]
+  },
+  {
+    "sectionName": "Schema Properties",
+    "sectionDescription": "Properties which are applied defining the schema for the element",
+    "fields": [
+      {
+        "fieldName": "XML Target Namespace",
+        "metadataPropertyName": "XSD XML Target Namespace",
+        "description": "The target namespace for the Element in the XSD if different from the namespace defined at the schema level.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      },
+      {
+        "fieldName": "XML Target Namespace Prefix",
+        "metadataPropertyName": "XSD XML Target Namespace Prefix",
+        "description": "The optional prefix used to define the target namespace.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      }
+    ]
+  }
+]
