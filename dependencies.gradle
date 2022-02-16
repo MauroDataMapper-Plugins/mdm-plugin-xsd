@@ -3,7 +3,7 @@ import java.util.concurrent.TimeUnit
 
 dependencies {
 
-    implementation group: 'com.google.guava', name: 'guava', version: guavaVersion
+    implementation group: 'com.google.guava', name: 'guava'
     // JAXB Support
     implementation group: 'org.eclipse.persistence', name: 'org.eclipse.persistence.moxy', version: moxyVersion
 

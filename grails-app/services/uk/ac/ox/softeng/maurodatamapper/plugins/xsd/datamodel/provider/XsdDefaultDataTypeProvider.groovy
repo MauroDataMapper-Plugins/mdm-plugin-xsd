@@ -15,16 +15,13 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
+package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider
 
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.DefaultDataTypeProvider
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.OpenAttrsWrapper
-
-import static XsdPlugin.METADATA_NAMESPACE
-import static XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
-import static XsdPlugin.METADATA_XSD_TARGET_NAMESPACE_PREFIX
 
 /**
  * @since 19/04/2018
@@ -33,10 +30,10 @@ class XsdDefaultDataTypeProvider implements DefaultDataTypeProvider {
 
     @Override
     List<DataType> getDefaultListOfDataTypes() {
-        XsdPlugin.PRIMITIVE_XML_TYPES.collect {t ->
+        XsdMetadata.PRIMITIVE_XML_TYPES.collect {t ->
             new PrimitiveType(label: t, description: "XML primitive type: xs:$t")
-                .addToMetadata(namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE, value: OpenAttrsWrapper.XS_NAMESPACE)
-                .addToMetadata(namespace: METADATA_NAMESPACE, key: METADATA_XSD_TARGET_NAMESPACE_PREFIX, value: OpenAttrsWrapper.XS_PREFIX)
+                .addToMetadata(namespace: XsdMetadata.METADATA_NAMESPACE, key: XsdMetadata.METADATA_XSD_TARGET_NAMESPACE, value: OpenAttrsWrapper.XS_NAMESPACE)
+                .addToMetadata(namespace: XsdMetadata.METADATA_NAMESPACE, key: XsdMetadata.METADATA_XSD_TARGET_NAMESPACE_PREFIX, value: OpenAttrsWrapper.XS_PREFIX)
         }
     }
 
@@ -47,7 +44,7 @@ class XsdDefaultDataTypeProvider implements DefaultDataTypeProvider {
 
     @Override
     String getVersion() {
-        return null
+        getClass().getPackage().getSpecificationVersion() ?: 'SNAPSHOT'
     }
 
     @Override

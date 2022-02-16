@@ -18,12 +18,14 @@
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
 import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Appinfo
 import uk.ac.ox.softeng.maurodatamapper.security.User
 
+import org.slf4j.helpers.MessageFormatter
 import org.w3c.dom.Node
 
 /**
@@ -35,9 +37,26 @@ abstract class AnnotatedWrapper<K extends Annotated> extends OpenAttrsWrapper<K>
         super(xsdSchemaService, wrappedElement)
     }
 
-    //    AnnotatedWrapper(XsdSchemaService xsdSchemaService, K wrappedElement, String name) {
-    //        super(xsdSchemaService, wrappedElement, name)
-    //    }
+    Annotation getAnnotation() {
+        wrappedElement.annotation ?: new Annotation()
+    }
+
+    List<Appinfo> getAllAppInfo() {
+        if (!wrappedElement.annotation) return []
+        wrappedElement.annotation.appinfosAndDocumentations.findAll {it instanceof Appinfo} as List<Appinfo>
+    }
+
+    void error(String msg, Object... args) {
+        super.error(msg, args)
+        String fullMsg = MessageFormatter.arrayFormat(msg, buildLoggingArgs(args)).getMessage()
+        wrappedElement.setAnnotation(createAppInfoAnnotation(annotation, "ERROR: ${fullMsg}".toString()))
+    }
+
+    void warn(String msg, Object... args) {
+        super.warn(msg, args)
+        String fullMsg = MessageFormatter.arrayFormat(msg, buildLoggingArgs(args)).getMessage()
+        wrappedElement.setAnnotation(createAppInfoAnnotation(annotation, "WARNING: ${fullMsg}".toString()))
+    }
 
     String extractDescriptionFromAnnotations() {
         extractDescriptionFromAnnotations(AnnotationContentWrapper.DOCUMENTATION_CONTENT)
@@ -111,7 +130,7 @@ abstract class AnnotatedWrapper<K extends Annotated> extends OpenAttrsWrapper<K>
     }
 
     void addMetadataToComponent(CatalogueItem component, String key, String value, User user) {
-        component.addToMetadata(XsdPlugin.METADATA_NAMESPACE, key, value, user.emailAddress)
+        component.addToMetadata(XsdMetadata.METADATA_NAMESPACE, key, value, user.emailAddress)
     }
 
 }

@@ -17,25 +17,18 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
-
-import com.google.common.base.Strings
-import org.apache.commons.lang3.tuple.Pair
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Text
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Appinfo
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Documentation
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.OpenAttrs
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.XsdNaming
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 import javax.xml.namespace.QName
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.parsers.ParserConfigurationException
 
 /**
  * @since 24/08/2017
@@ -73,7 +66,7 @@ abstract class OpenAttrsWrapper<K extends OpenAttrs> implements Comparable<OpenA
     void setName(String name, Boolean setWrappedElementName = false) {
         givenName = name
         if(setWrappedElementName) wrappedElement.setName(name)
-        }
+    }
 
     void debug(String msg, Object... args) {
         if (getLogger().isDebugEnabled()) getLogger().debug('{} - ' + msg, buildLoggingArgs(args))
@@ -106,43 +99,29 @@ abstract class OpenAttrsWrapper<K extends OpenAttrs> implements Comparable<OpenA
         LoggerFactory.getLogger(getClass())
     }
 
+    static Annotation createAnnotation(Annotation annotation, Object element) {
+        if (!element) {
+            if(annotation.appinfosAndDocumentations) return annotation
+            return null
+        }
+        Documentation documentation = new Documentation()
+        documentation.getContent().add(element)
+        annotation.getAppinfosAndDocumentations().add(documentation)
+        annotation
+    }
 
-      static Annotation createAnnotation(Object element) {
-          if (!element) return null
-          Annotation annotation = new Annotation()
-          Documentation documentation = new Documentation()
-          documentation.getContent().add(element)
-          annotation.getAppinfosAndDocumentations().add(documentation)
+    static Annotation createAppInfoAnnotation(Annotation annotation, Object element) {
+        if (!element) {
+            if(annotation.appinfosAndDocumentations) return annotation
+            return null
+        }
+        Appinfo appinfo = new Appinfo()
+        appinfo.getContent().add(element)
+        annotation.getAppinfosAndDocumentations().add(appinfo)
+        annotation
+    }
 
-          annotation
-      }
-
-      @SafeVarargs
-      static Annotation createAnnotationDocumentation(Pair<String, String>... dataPairs) {
-          DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
-          DocumentBuilder docBuilder = null
-          try {
-              docBuilder = docFactory.newDocumentBuilder()
-          } catch (ParserConfigurationException ignored) {
-          }
-
-          if (!docBuilder) return null
-
-          Document doc = docBuilder.newDocument()
-
-          Element element = doc.createElement('p')
-          for (Pair<String, String> pair : dataPairs) {
-              if (!Strings.isNullOrEmpty(pair.getValue())) {
-                  Text text = doc.createTextNode(pair.getKey() + ': ' + pair.getValue())
-                  element.appendChild(text)
-                  element.appendChild(doc.createElement('br'))
-              }
-          }
-
-          createAnnotation(element)
-      }
-
-      static QName getTypeForName(String name) {
-          XsdPlugin.PRIMITIVE_XML_TYPES.contains(name) ? new QName(XS_NAMESPACE, name) : new QName(name)
-      }
+    static QName getTypeForName(String name) {
+        XsdMetadata.PRIMITIVE_XML_TYPES.contains(name) ? new QName(XS_NAMESPACE, name) : new QName(name)
+    }
 }

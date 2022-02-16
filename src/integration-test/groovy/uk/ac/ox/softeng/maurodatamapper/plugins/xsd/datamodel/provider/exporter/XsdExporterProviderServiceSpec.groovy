@@ -33,11 +33,12 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.ReferenceType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.BaseXsdImporterExporterProviderServiceSpec
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.XsdImporterProviderService
 
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.*
 
 @Integration
 @Rollback
@@ -161,19 +162,10 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         checkAndSave(dataModel)
 
         when:
-        ByteArrayOutputStream byteArrayOutputStream = getXsdExporterProviderService().exportDomain(reader1, dataModel.getId())
-
-        String exportedXsd = byteArrayOutputStream.toString('ISO-8859-1')
-
-        Path p = Paths.get('build/tmp/', 'simple_test.xsd')
-        Files.write(p, exportedXsd.getBytes('ISO-8859-1'))
-
-        Path expPath = Paths.get('src/integration-test/resources/expected/simple.xsd')
-        String expected = new String(Files.readAllBytes(expPath), 'ISO-8859-1')
+        Tuple2<String,String> exported = testExport(dataModel.id, 'simple.xsd', 'simple_test.xsd')
 
         then:
-        completeCompareXml(fudgeDates(expected), fudgeDates(exportedXsd))
-
+        completeCompareXml(exported.v1, exported.v2)
     }
 
     void "test export complex"() {
@@ -498,18 +490,10 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         checkAndSave(dataModel)
 
         when:
-        ByteArrayOutputStream byteArrayOutputStream = getXsdExporterProviderService().exportDomain(reader1, dataModel.getId())
-
-        String exportedXsd = byteArrayOutputStream.toString('ISO-8859-1')
-
-        Path p = Paths.get('build/tmp/', 'complex_test.xsd')
-        Files.write(p, exportedXsd.getBytes('ISO-8859-1'))
-
-        Path expPath = Paths.get('src/integration-test/resources/expected/complex.xsd')
-        String expected = new String(Files.readAllBytes(expPath), 'ISO-8859-1')
+        Tuple2<String,String> exported = testExport(dataModel.id, 'complex.xsd', 'complex_test.xsd')
 
         then:
-        completeCompareXml(fudgeDates(expected), fudgeDates(exportedXsd))
+        completeCompareXml(exported.v1, exported.v2)
     }
 
     void "test export hepatitis"() {
@@ -522,20 +506,134 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         dataModelService.saveModelWithContent(dm)
 
         when:
-
-
-        ByteArrayOutputStream byteArrayOutputStream = getXsdExporterProviderService().exportDomain(reader1, dm.getId())
-
-        String exportedXsd = byteArrayOutputStream.toString('ISO-8859-1')
-
-        Path p = Paths.get('build/tmp/', 'hic__hepatitis_v2.0.0.xsd')
-        Files.write(p, exportedXsd.getBytes('ISO-8859-1'))
-
-        Path expPath = Paths.get('src/integration-test/resources/expected/hic__hepatitis_v2.0.0.xsd')
-        String expected = new String(Files.readAllBytes(expPath), 'ISO-8859-1')
+        Tuple2<String,String> exported = testExport(dm.id, 'hic__hepatitis_v2.0.0.xsd', 'hic__hepatitis_v2.0.0.xsd')
 
         then:
-        completeCompareXml(fudgeDates(expected), fudgeDates(exportedXsd))
+        completeCompareXml(exported.v1, exported.v2)
+    }
+
+    void 'test exporting with invalid characters in names'(){
+        given:
+        setupData()
+
+        def testAuthority = new Authority(label: 'XsdTestAuthority', url: 'http://localhost', createdBy: reader1.emailAddress)
+        checkAndSave(testAuthority)
+
+        dataModel = new DataModel(createdBy: reader1.emailAddress, label: 'XSD Test: Crap design model/Wibble', author: 'Test Author', organisation: 'Test Org',
+                                  description: 'Test description', type: DataModelType.DATA_STANDARD,
+                                  folder: folder, authority: testAuthority)
+        dataModel.save()
+
+        PrimitiveType mandatoryStringType = new PrimitiveType(label: "mandatory String (String which must exist)", description: "A mandatory string type", createdBy: reader1.emailAddress)
+        dataModel.addToDataTypes(mandatoryStringType)
+        checkAndSave(mandatoryStringType)
+
+        Metadata restrictionBaseString = new Metadata(createdBy: reader1.emailAddress, namespace: METADATA_NAMESPACE, key: METADATA_XSD_RESTRICTION_BASE, value: 'string')
+        mandatoryStringType.addToMetadata(restrictionBaseString)
+        Metadata restrictionPrefixMinLength1 = new Metadata(createdBy: reader1.emailAddress, namespace: METADATA_NAMESPACE, key: METADATA_LABEL_RESTRICTION_PREFIX + "MIN LENGTH", value: '1')
+        mandatoryStringType.addToMetadata(restrictionPrefixMinLength1)
+        checkAndSave(mandatoryStringType)
+
+        DataClass topElementClass = new DataClass(createdBy: reader1.emailAddress, label: 'top Element, which is really bad', description: 'The top element complex type', minMultiplicity: 1, maxMultiplicity: 1)
+        dataModel.addToDataClasses(topElementClass)
+        checkAndSave(topElementClass)
+
+        DataElement dataElement1 = new DataElement(createdBy: reader1.emailAddress, dataType: mandatoryStringType, label: 'element N/the first data', maxMultiplicity: 1, minMultiplicity: 1)
+        topElementClass.addToDataElements(dataElement1)
+        checkAndSave(dataElement1)
+        DataElement dataElement2 = new DataElement(createdBy: reader1.emailAddress, dataType: mandatoryStringType, label: 'element N, the second data', maxMultiplicity: 1, minMultiplicity: 1)
+        topElementClass.addToDataElements(dataElement2)
+        checkAndSave(dataElement2)
+        DataElement dataElement3 = new DataElement(createdBy: reader1.emailAddress, dataType: mandatoryStringType, label: 'element N (the third data)', maxMultiplicity: 1, minMultiplicity: 1)
+        topElementClass.addToDataElements(dataElement3)
+        checkAndSave(dataElement3)
+        checkAndSave(dataModel)
+
+        when:
+        Tuple2<String,String> exported = testExport(dataModel.id, 'invalid_chars.xsd', 'invalid_chars.xsd')
+
+        then:
+        completeCompareXml(exported.v1, exported.v2)
+    }
+
+    void 'EMP: test exporting with datatypes which dont do anything'(){
+        given:
+        setupData()
+
+        def testAuthority = new Authority(label: 'XsdTestAuthority', url: 'http://localhost', createdBy: reader1.emailAddress)
+        checkAndSave(testAuthority)
+
+        dataModel = new DataModel(createdBy: reader1.emailAddress, label: 'XSD Test: Crap design model/Wibble', author: 'Test Author', organisation: 'Test Org',
+                                  description: 'Test description', type: DataModelType.DATA_STANDARD,
+                                  folder: folder, authority: testAuthority)
+        dataModel.save()
+
+        PrimitiveType mandatoryStringType = new PrimitiveType(label: "mandatory String (String which must exist)", description: "A mandatory string type", createdBy: reader1.emailAddress)
+        dataModel.addToDataTypes(mandatoryStringType)
+        checkAndSave(mandatoryStringType)
+
+        Metadata restrictionBaseString = new Metadata(createdBy: reader1.emailAddress, namespace: METADATA_NAMESPACE, key: METADATA_XSD_RESTRICTION_BASE, value: 'string')
+        mandatoryStringType.addToMetadata(restrictionBaseString)
+        checkAndSave(mandatoryStringType)
+
+        DataClass topElementClass = new DataClass(createdBy: reader1.emailAddress, label: 'top Element, which is really bad', description: 'The top element complex type', minMultiplicity: 1, maxMultiplicity: 1)
+        dataModel.addToDataClasses(topElementClass)
+        checkAndSave(topElementClass)
+
+        DataElement dataElement1 = new DataElement(createdBy: reader1.emailAddress, dataType: mandatoryStringType, label: 'element N/the first data', maxMultiplicity: 1, minMultiplicity: 1)
+        topElementClass.addToDataElements(dataElement1)
+        checkAndSave(dataElement1)
+        DataElement dataElement2 = new DataElement(createdBy: reader1.emailAddress, dataType: mandatoryStringType, label: 'element N, the second data', maxMultiplicity: 1, minMultiplicity: 1)
+        topElementClass.addToDataElements(dataElement2)
+        checkAndSave(dataElement2)
+        DataElement dataElement3 = new DataElement(createdBy: reader1.emailAddress, dataType: mandatoryStringType, label: 'element N (the third data)', maxMultiplicity: 1, minMultiplicity: 1)
+        topElementClass.addToDataElements(dataElement3)
+        checkAndSave(dataElement3)
+        checkAndSave(dataModel)
+
+        when:
+        Tuple2<String,String> exported = testExport(dataModel.id, 'empty_datatypes.xsd', 'empty_datatypes.xsd')
+
+        then:
+        completeCompareXml(exported.v1, exported.v2)
+    }
+
+    void 'test exporting datamodel which doesnt have any XSD metadata'(){
+        given:
+        setupData()
+
+        def testAuthority = new Authority(label: 'XsdTestAuthority', url: 'http://localhost', createdBy: reader1.emailAddress)
+        checkAndSave(testAuthority)
+
+        dataModel = new DataModel(createdBy: reader1.emailAddress, label: 'XSD Test: Crap design model/Wibble', author: 'Test Author', organisation: 'Test Org',
+                                  description: 'Test description', type: DataModelType.DATA_STANDARD,
+                                  folder: folder, authority: testAuthority)
+        dataModel.save()
+
+        PrimitiveType mandatoryStringType = new PrimitiveType(label: "mandatory String (String which must exist)", description: "A mandatory string type", createdBy: reader1.emailAddress)
+        dataModel.addToDataTypes(mandatoryStringType)
+        checkAndSave(mandatoryStringType)
+
+        DataClass topElementClass = new DataClass(createdBy: reader1.emailAddress, label: 'top Element, which is really bad', description: 'The top element complex type', minMultiplicity: 1, maxMultiplicity: 1)
+        dataModel.addToDataClasses(topElementClass)
+        checkAndSave(topElementClass)
+
+        DataElement dataElement1 = new DataElement(createdBy: reader1.emailAddress, dataType: mandatoryStringType, label: 'element N/the first data', maxMultiplicity: 1, minMultiplicity: 1)
+        topElementClass.addToDataElements(dataElement1)
+        checkAndSave(dataElement1)
+        DataElement dataElement2 = new DataElement(createdBy: reader1.emailAddress, dataType: mandatoryStringType, label: 'element N, the second data', maxMultiplicity: 1, minMultiplicity: 1)
+        topElementClass.addToDataElements(dataElement2)
+        checkAndSave(dataElement2)
+        DataElement dataElement3 = new DataElement(createdBy: reader1.emailAddress, dataType: mandatoryStringType, label: 'element N (the third data)', maxMultiplicity: 1, minMultiplicity: 1)
+        topElementClass.addToDataElements(dataElement3)
+        checkAndSave(dataElement3)
+        checkAndSave(dataModel)
+
+        when:
+        Tuple2<String,String> exported = testExport(dataModel.id, 'no_metadata.xsd', 'no_metadata.xsd')
+
+        then:
+        completeCompareXml(exported.v1, exported.v2)
     }
 
 }

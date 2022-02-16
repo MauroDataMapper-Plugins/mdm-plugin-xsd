@@ -24,9 +24,9 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.*
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.*
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImporterProviderServiceParameters
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_NAMESPACE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_RESTRICTION_BASE
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_TARGET_NAMESPACE
+import static XsdMetadata.METADATA_NAMESPACE
+import static XsdMetadata.METADATA_XSD_RESTRICTION_BASE
+import static XsdMetadata.METADATA_XSD_TARGET_NAMESPACE
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull

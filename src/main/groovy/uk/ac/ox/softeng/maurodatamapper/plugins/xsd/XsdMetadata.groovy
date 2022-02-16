@@ -23,14 +23,13 @@ import uk.ac.ox.softeng.maurodatamapper.provider.plugin.MauroDataMapperPlugin
 /**
  * @since 14/09/2017
  */
-abstract class XsdPlugin implements MauroDataMapperPlugin
-{
+class XsdMetadata {
     //TODO This will have to be implemented as a trait to be shared between the importer and exporter
 
     public static final String METADATA_LABEL_PREFIX = 'XSD '
     public static final String METADATA_LABEL_RESTRICTION_PREFIX = METADATA_LABEL_PREFIX + 'Restriction '
 
-    public static final String METADATA_NAMESPACE = XsdPlugin.getPackage().getName()
+    public static final String METADATA_NAMESPACE = XsdMetadata.getPackage().getName()
 
     public static final String METADATA_XSD_TARGET_NAMESPACE = METADATA_LABEL_PREFIX + 'XML Target Namespace'
     public static final String METADATA_XSD_TARGET_NAMESPACE_PREFIX = METADATA_LABEL_PREFIX + 'XML Target Namespace Prefix'
@@ -95,11 +94,11 @@ abstract class XsdPlugin implements MauroDataMapperPlugin
         'unsignedByte',
         'positiveInteger')
 
-    Boolean allowsExtraMetadataKeys() {
+   static Boolean allowsExtraMetadataKeys() {
         false
     }
 
-    Set<String> getKnownMetadataKeys() {
+  static  Set<String> getKnownMetadataKeys() {
         ([METADATA_XSD_TARGET_NAMESPACE,
           METADATA_XSD_TARGET_NAMESPACE_PREFIX,
           METADATA_XSD_RESTRICTION_BASE,
