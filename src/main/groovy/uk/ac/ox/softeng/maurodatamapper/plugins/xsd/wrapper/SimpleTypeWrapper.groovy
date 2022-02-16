@@ -25,6 +25,8 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Appinfo
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.LocalSimpleType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NoFixedFacet
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Restriction
@@ -242,18 +244,15 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
     private void populateFromDataType(DataType dataType, String typeName) {
         setName(typeName)
         debug("Populating from {}", dataType)
-        wrappedElement.setAnnotation(createAnnotation(dataType.getDescription()))
+        wrappedElement.setAnnotation(createAnnotation(getAnnotation(),dataType.getDescription()))
 
         Set<Metadata> xsdMetadata = dataType.findMetadataByNamespace(METADATA_NAMESPACE)
 
-        if (xsdMetadata.isEmpty()) {
-            warn("SimpleType cannot be reliably created as no defined XSD data in {}", dataType.getLabel())
-            return
-        }
-
         String restrictionType = findMetadata(xsdMetadata, METADATA_XSD_RESTRICTION_BASE)
         if (Strings.isNullOrEmpty(restrictionType)) {
-            warn("SimpleType cannot be reliably created as no XSD restriction base defined in {}", dataType.getLabel())
+            warn("SimpleType cannot be reliably created as no XSD restriction base defined in {}, defaulting to xs:string", dataType.getLabel())
+            // Default simpleType of xs:string
+            setName('string')
             return
         }
 
@@ -291,11 +290,10 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
 
             ((EnumerationType) dataType).getEnumerationValues().sort().each {ev ->
                 Object element = RestrictionWrapper.createRestrictionElement(RestrictionKind.enumeration, ev.getKey(),
-                        createAnnotation(ev.getValue()))
+                        createAnnotation(new Annotation(), ev.getValue()))
                 if (element != null) restriction.getMinExclusivesAndMinInclusivesAndMaxExclusives().add(element)
             }
         }
-
 
         return restriction
     }
