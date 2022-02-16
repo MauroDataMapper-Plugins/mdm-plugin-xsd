@@ -2,23 +2,35 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="https://metadatacatalogue.com/uk/ac/ox/softeng/maurodatamapper/plugins/xsd/datamodel/provider/exporter/SNAPSHOT" xmlns="https://metadatacatalogue.com/uk/ac/ox/softeng/maurodatamapper/plugins/xsd/datamodel/provider/exporter/SNAPSHOT">
    <xs:annotation>
       <xs:documentation>
-         <p>Name: XSD Test: Crap design model/Wibble<br/>Author: Test Author<br/>Organisation: Test Org<br/>Description: Test description<br/>Last Updated: 2022-02-16T10:22:28.560807Z<br/>
+         <p>Name: XSD Test: Crap design model/Wibble<br/>Author: Test Author<br/>Organisation: Test Org<br/>Description: Test description<br/>Last Updated: 2022-02-16T13:12:43.506094Z<br/>
          </p>
       </xs:documentation>
    </xs:annotation>
-   <xs:element name="topElementWhichIsReallyBad" type="topElementWhichIsReallyBadType-335665249">
+   <xs:element name="topElementWhichIsReallyBad" type="topElementWhichIsReallyBadType-1076174570">
       <xs:annotation>
          <xs:documentation>The top element complex type</xs:documentation>
       </xs:annotation>
    </xs:element>
-   <xs:complexType name="topElementWhichIsReallyBadType-335665249">
+   <xs:complexType name="topElementWhichIsReallyBadType-1076174570">
       <xs:annotation>
          <xs:documentation>The top element complex type</xs:documentation>
       </xs:annotation>
       <xs:sequence>
-         <xs:element maxOccurs="1" minOccurs="1" name="elementNTheThirdData" type="xs:string"/>
-         <xs:element maxOccurs="1" minOccurs="1" name="elementNTheSecondData" type="xs:string"/>
-         <xs:element maxOccurs="1" minOccurs="1" name="elementNTheFirstData" type="xs:string"/>
+         <xs:element maxOccurs="1" minOccurs="1" name="elementNTheThirdData" type="xs:string">
+            <xs:annotation>
+               <xs:appinfo>WARNING: SimpleType is unnecessary as no additional XSD metadata in mandatoryStringStringWhichMustExist-1028557370, therefore removing</xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+         <xs:element maxOccurs="1" minOccurs="1" name="elementNTheSecondData" type="xs:string">
+            <xs:annotation>
+               <xs:appinfo>WARNING: SimpleType is unnecessary as no additional XSD metadata in mandatoryStringStringWhichMustExist-1028557370, therefore removing</xs:appinfo>
+            </xs:annotation>
+         </xs:element>
+         <xs:element maxOccurs="1" minOccurs="1" name="elementNTheFirstData" type="xs:string">
+            <xs:annotation>
+               <xs:appinfo>WARNING: SimpleType is unnecessary as no additional XSD metadata in mandatoryStringStringWhichMustExist-1028557370, therefore removing</xs:appinfo>
+            </xs:annotation>
+         </xs:element>
       </xs:sequence>
    </xs:complexType>
 </xs:schema>

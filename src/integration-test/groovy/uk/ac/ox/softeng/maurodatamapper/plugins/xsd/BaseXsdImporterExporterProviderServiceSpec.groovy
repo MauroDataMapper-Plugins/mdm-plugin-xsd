@@ -17,40 +17,30 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
 
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.XsdImporterProviderService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImporterProviderServiceParameters
-import uk.ac.ox.softeng.maurodatamapper.test.xml.XmlComparer
-
-import grails.gorm.transactions.Rollback
-import grails.gorm.transactions.Transactional
-import grails.testing.mixin.integration.Integration
-import grails.testing.spock.OnceBefore
-import grails.testing.spock.RunOnce
-import grails.util.BuildSettings
-import groovy.util.logging.Slf4j
-import groovy.xml.XmlUtil
-import org.xmlunit.builder.DiffBuilder
-import org.xmlunit.builder.Input
-import org.xmlunit.diff.*
-import org.xmlunit.input.CommentLessSource
-import spock.lang.Shared
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiException
-import uk.ac.ox.softeng.maurodatamapper.core.authority.Authority
 import uk.ac.ox.softeng.maurodatamapper.core.container.Folder
 import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.FileParameter
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.DataModelJsonImporterService
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelFileImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter.XsdExporterProviderService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.XsdImporterProviderService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.diff.evaluator.IgnoreNameAttributeDifferenceEvaluator
 import uk.ac.ox.softeng.maurodatamapper.test.integration.BaseIntegrationSpec
+import uk.ac.ox.softeng.maurodatamapper.test.xml.XmlComparer
 import uk.ac.ox.softeng.maurodatamapper.test.xml.evalutator.IgnoreOrderDifferenceEvaluator
-import uk.ac.ox.softeng.maurodatamapper.test.xml.selector.CustomElementSelector
+
+import grails.gorm.transactions.Transactional
+import grails.testing.spock.RunOnce
+import grails.util.BuildSettings
+import groovy.util.logging.Slf4j
+import org.xmlunit.diff.DifferenceEvaluator
+import org.xmlunit.diff.DifferenceEvaluators
+import spock.lang.Shared
 
 import java.nio.charset.Charset
-import javax.xml.transform.Source
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -159,7 +149,9 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
     }
 
     String fudgeDates(String s) {
-        return s.replaceAll('Last Updated:.+?<br\\s*/>', 'Last Updated:<br/>')
+        return s
+            .replaceAll('Last Updated:.+?<br\\s*/>', 'Last Updated:<br/>')
+            .replaceAll(/-\d+,/, '-xxxxxxxx,')
     }
 
     XsdImporterProviderServiceParameters createImportParameters(String filename, String modelName) throws IOException {

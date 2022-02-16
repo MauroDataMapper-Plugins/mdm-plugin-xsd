@@ -309,16 +309,16 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> impl
     void populateFromDataClass(SchemaWrapper schema, DataClass dataClass) {
         setName(createComplexTypeName(dataClass), true)
         debug("Populating from {}", dataClass)
-        wrappedElement.setAnnotation(createAnnotation(dataClass.getDescription()))
+        wrappedElement.setAnnotation(createAnnotation(getAnnotation(), dataClass.getDescription()))
 
         if (dataClass.getDataElements() != null) {
             Set<DataElement> childDataElements = xsdSchemaService.getDataElements(dataClass)
             Map<String, List<DataElement>> grouped = childDataElements
                     .sort {it.getLabel()}
                     .groupBy {dataElement ->
-                        Metadata md = dataElement.findMetadataByNamespaceAndKey(XsdMetadata.METADATA_NAMESPACE, XsdMetadata.METADATA_XSD_CHOICE)
+                        Metadata md = dataElement.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_CHOICE)
                         if (md != null) return md.getValue()
-                        md = dataElement.findMetadataByNamespaceAndKey(XsdMetadata.METADATA_NAMESPACE, XsdMetadata.METADATA_XSD_ALL)
+                        md = dataElement.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_ALL)
                         if (md != null) return "all"
                         return "sequence"
                     }

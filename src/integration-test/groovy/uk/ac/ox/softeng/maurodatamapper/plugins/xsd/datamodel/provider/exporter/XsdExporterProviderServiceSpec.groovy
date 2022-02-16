@@ -162,19 +162,10 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         checkAndSave(dataModel)
 
         when:
-        ByteArrayOutputStream byteArrayOutputStream = getXsdExporterProviderService().exportDomain(reader1, dataModel.getId())
-
-        String exportedXsd = byteArrayOutputStream.toString('ISO-8859-1')
-
-        Path p = Paths.get('build/tmp/', 'simple_test.xsd')
-        Files.write(p, exportedXsd.getBytes('ISO-8859-1'))
-
-        Path expPath = Paths.get('src/integration-test/resources/expected/simple.xsd')
-        String expected = new String(Files.readAllBytes(expPath), 'ISO-8859-1')
+        Tuple2<String,String> exported = testExport(dataModel.id, 'simple.xsd', 'simple_test.xsd')
 
         then:
-        completeCompareXml(fudgeDates(expected), fudgeDates(exportedXsd))
-
+        completeCompareXml(exported.v1, exported.v2)
     }
 
     void "test export complex"() {
@@ -515,13 +506,13 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         dataModelService.saveModelWithContent(dm)
 
         when:
-        Tuple2<String,String> exported = testExport(dataModel.id, 'hic__hepatitis_v2.0.0.xsd', 'hic__hepatitis_v2.0.0.xsd')
+        Tuple2<String,String> exported = testExport(dm.id, 'hic__hepatitis_v2.0.0.xsd', 'hic__hepatitis_v2.0.0.xsd')
 
         then:
         completeCompareXml(exported.v1, exported.v2)
     }
 
-    void 'INV: test exporting with invalid characters in names'(){
+    void 'test exporting with invalid characters in names'(){
         given:
         setupData()
 
@@ -565,7 +556,7 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         completeCompareXml(exported.v1, exported.v2)
     }
 
-    void 'test exporting with datatypes which dont do anything'(){
+    void 'EMP: test exporting with datatypes which dont do anything'(){
         given:
         setupData()
 
@@ -607,7 +598,7 @@ class XsdExporterProviderServiceSpec extends BaseXsdImporterExporterProviderServ
         completeCompareXml(exported.v1, exported.v2)
     }
 
-    void 'NO : test exporting datamodel which doesnt have any XSD metadata'(){
+    void 'test exporting datamodel which doesnt have any XSD metadata'(){
         given:
         setupData()
 

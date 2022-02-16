@@ -33,6 +33,9 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
 import uk.ac.ox.softeng.maurodatamapper.security.User
 import uk.ac.ox.softeng.maurodatamapper.util.Utils
 
+import org.w3c.dom.Document
+import org.w3c.dom.Text
+
 import javax.transaction.NotSupportedException
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
@@ -41,6 +44,9 @@ import javax.xml.namespace.QName
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.List
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.parsers.ParserConfigurationException
 
 import static java.util.stream.Collectors.toSet
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.*
@@ -527,4 +533,29 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
         jaxbUnmarshallerInstance
     }
 
+
+    @SafeVarargs
+    Annotation createAnnotationDocumentation(Pair<String, String>... dataPairs) {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance()
+        DocumentBuilder docBuilder = null
+        try {
+            docBuilder = docFactory.newDocumentBuilder()
+        } catch (ParserConfigurationException ignored) {
+        }
+
+        if (!docBuilder) return null
+
+        Document doc = docBuilder.newDocument()
+
+        org.w3c.dom.Element element = doc.createElement('p')
+        for (Pair<String, String> pair : dataPairs) {
+            if (!Strings.isNullOrEmpty(pair.getValue())) {
+                Text text = doc.createTextNode(pair.getKey() + ': ' + pair.getValue())
+                element.appendChild(text)
+                element.appendChild(doc.createElement('br'))
+            }
+        }
+
+        createAnnotation(new Annotation(), element)
+    }
 }
