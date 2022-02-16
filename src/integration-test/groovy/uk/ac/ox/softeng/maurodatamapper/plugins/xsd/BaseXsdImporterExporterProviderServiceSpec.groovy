@@ -150,6 +150,14 @@ abstract class BaseXsdImporterExporterProviderServiceSpec extends BaseIntegratio
 
     String failureReason
 
+    DifferenceEvaluator getDifferenceEvaluator() {
+        return DifferenceEvaluators.chain(
+            DifferenceEvaluators.Default,
+            new IgnoreOrderDifferenceEvaluator(),
+            new IgnoreNameAttributeDifferenceEvaluator()
+        )
+    }
+
     String fudgeDates(String s) {
         return s.replaceAll('Last Updated:.+?<br\\s*/>', 'Last Updated:<br/>')
     }

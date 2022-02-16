@@ -96,7 +96,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
             new SimpleTypeWrapper(xsdSchemaService, it as SimpleType)
         }
         importedSchemas.each {wrappers.addAll(it.getSimpleTypes())}
-        wrappers
+        wrappers.toSet()
     }
 
     SimpleTypeWrapper getSimpleTypeByName(String name) {
