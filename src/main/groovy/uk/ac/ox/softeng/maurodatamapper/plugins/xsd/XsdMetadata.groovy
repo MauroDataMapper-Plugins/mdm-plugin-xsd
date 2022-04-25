@@ -18,7 +18,6 @@
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
 
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind
-import uk.ac.ox.softeng.maurodatamapper.provider.plugin.MauroDataMapperPlugin
 
 /**
  * @since 14/09/2017

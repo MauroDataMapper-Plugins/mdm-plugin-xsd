@@ -19,13 +19,13 @@ package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter
 
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiBadRequestException
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiException
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
+import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 
 //import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiInternalException
 //import uk.ac.ox.softeng.maurodatamapper.core.provider.exporter.TemplateBasedExporter
 //import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
-import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.exporter.DataModelExporterProviderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
@@ -33,14 +33,14 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.SchemaWrapper
 import uk.ac.ox.softeng.maurodatamapper.security.User
 
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.JAXBException
+
 //import ox.softeng.metadatacatalogue.core.spi.exporter.DataModelExporterPlugin
 
-import javax.xml.bind.JAXBContext
+import javax.xml.bind.Marshaller
 
 //import groovy.text.Template
-
-import javax.xml.bind.JAXBException
-import javax.xml.bind.Marshaller
 
 /**
  * @since 11/09/2017

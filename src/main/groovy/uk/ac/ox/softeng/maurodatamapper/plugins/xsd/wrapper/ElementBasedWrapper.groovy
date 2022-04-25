@@ -110,13 +110,13 @@ abstract class ElementBasedWrapper<K extends Annotated> extends AnnotatedWrapper
             if (complexTypeWrapper) {
                 debug('Has a complex type {}', complexTypeWrapper.name)
 
-                if (!complexTypeWrapper.isActuallySimpleType()) {
-                    dataElement = createDataClassElement(user, parentDataModel, parentDataClass, schema, complexTypeWrapper)
-                } else {
+                if (complexTypeWrapper.isActuallySimpleType()) {
                     debug('Complex type {} is actually a simple type masquerading as a complex type', complexTypeWrapper.name)
                     SimpleTypeWrapper simpleTypeWrapper = complexTypeWrapper.convertToSimpleType()
-                    if(!complexTypeWrapper.attributes.isEmpty())  additionalMetadata[(METADATA_XSD_ATTRIBUTE_NAME)] = complexTypeWrapper.attributes.first().name
+                    if (!complexTypeWrapper.attributes.isEmpty()) additionalMetadata[(METADATA_XSD_ATTRIBUTE_NAME)] = complexTypeWrapper.attributes.first().name
                     dataElement = createDataTypeElement(user, parentDataModel, parentDataClass, schema, simpleTypeWrapper)
+                } else {
+                    dataElement = createDataClassElement(user, parentDataModel, parentDataClass, schema, complexTypeWrapper)
                 }
             } else dataElement = createDataTypeElement(user, parentDataModel, parentDataClass, schema, getSimpleTypeWrapper(schema))
         }

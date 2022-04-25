@@ -25,6 +25,7 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet
 
 import com.google.common.base.CaseFormat
 import org.slf4j.Logger
+
 import java.time.OffsetDateTime
 
 import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.PRIMITIVE_XML_TYPES

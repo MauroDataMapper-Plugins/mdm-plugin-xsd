@@ -156,7 +156,7 @@ class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
         choiceGroup = group
     }
 
-    private void populateFromDataClass(SchemaWrapper schema, DataClass dataClass) {
+    void populateFromDataClass(SchemaWrapper schema, DataClass dataClass) {
         wrappedElement.setName(createValidXsdName(dataClass.getLabel()))
         debug("Populate element from {}", dataClass)
         wrappedElement.setAnnotation(createAnnotation(getAnnotation(), dataClass.getDescription()))
@@ -164,7 +164,7 @@ class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
         wrappedElement.setType(new QName(complexTypeWrapper.getName()))
     }
 
-    private void populateFromDataElement(SchemaWrapper schema, DataElement dataElement) {
+    void populateFromDataElement(SchemaWrapper schema, DataElement dataElement) {
         wrappedElement.setName(createValidXsdName(dataElement.getLabel()))
         debug("Populating from {}", dataElement)
         wrappedElement.setAnnotation(createAnnotation(getAnnotation(), dataElement.getDescription()))
@@ -181,7 +181,7 @@ class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
             SimpleTypeWrapper simpleTypeWrapper = schema.findOrCreateSimpleType(dataElement.getDataType())
             debug("Setting {} type to {}", dataElement.getDataType(), simpleTypeWrapper.getType())
             wrappedElement.setType(simpleTypeWrapper.getType())
-            java.util.List<Appinfo> appinfoList = simpleTypeWrapper.getAllAppInfo()
+            List<Appinfo> appinfoList = simpleTypeWrapper.getAllAppInfo()
             if (appinfoList) {
                 Annotation annotation = getAnnotation()
                 annotation.appinfosAndDocumentations.addAll(appinfoList)
@@ -201,17 +201,17 @@ class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
         }
     }
 
-   static ElementWrapper createElement(SchemaWrapper schema, DataElement dataElement) {
+    static ElementWrapper createElement(SchemaWrapper schema, DataElement dataElement) {
 
-       ElementWrapper wrapper = new ElementWrapper(schema.xsdSchemaService, new LocalElement())
-       wrapper.populateFromDataElement(schema, dataElement)
-       wrapper
-   }
+        ElementWrapper wrapper = new ElementWrapper(schema.xsdSchemaService, new LocalElement())
+        wrapper.populateFromDataElement(schema, dataElement)
+        wrapper
+    }
 
-   static ElementWrapper createElement(SchemaWrapper schema, DataClass dataClass) {
+    static ElementWrapper createElement(SchemaWrapper schema, DataClass dataClass) {
 
-       ElementWrapper wrapper = new ElementWrapper(schema.xsdSchemaService, new Element())
-       wrapper.populateFromDataClass(schema, dataClass)
-       wrapper
-   }
+        ElementWrapper wrapper = new ElementWrapper(schema.xsdSchemaService, new Element())
+        wrapper.populateFromDataClass(schema, dataClass)
+        wrapper
+    }
 }

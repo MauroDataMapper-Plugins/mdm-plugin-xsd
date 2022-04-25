@@ -17,8 +17,6 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import com.google.common.base.Strings
-import org.apache.commons.lang3.tuple.Pair
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiInternalException
 import uk.ac.ox.softeng.maurodatamapper.core.facet.Metadata
 import uk.ac.ox.softeng.maurodatamapper.core.model.CatalogueItem
@@ -29,27 +27,43 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.EnumerationType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.PrimitiveType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractElement
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Element
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.FormChoice
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Import
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Include
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.OpenAttrs
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleType
 import uk.ac.ox.softeng.maurodatamapper.security.User
 import uk.ac.ox.softeng.maurodatamapper.util.Utils
 
+import com.google.common.base.Strings
+import org.apache.commons.lang3.tuple.Pair
 import org.w3c.dom.Document
 import org.w3c.dom.Text
 
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import javax.transaction.NotSupportedException
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
 import javax.xml.bind.Unmarshaller
 import javax.xml.namespace.QName
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.util.List
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_TARGET_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_TARGET_NAMESPACE_PREFIX
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.PRIMITIVE_XML_TYPES
+
 import static java.util.stream.Collectors.toSet
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.*
 
 /**
  * @since 24/08/2017

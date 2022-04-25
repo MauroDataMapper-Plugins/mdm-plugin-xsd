@@ -18,10 +18,9 @@
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter
 
 import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.FileParameter
-import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelFileImporterProviderServiceParameters
-import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.config.ImportGroupConfig
 import uk.ac.ox.softeng.maurodatamapper.core.provider.importer.parameter.config.ImportParameterConfig
+import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.parameter.DataModelFileImporterProviderServiceParameters
 
 /**
  * Created by james on 31/05/2017.

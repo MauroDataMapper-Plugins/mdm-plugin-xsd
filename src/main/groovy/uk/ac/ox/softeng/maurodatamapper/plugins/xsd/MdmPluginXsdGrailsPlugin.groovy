@@ -17,7 +17,6 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd
 
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.XsdDefaultDataTypeProvider
 
 import grails.plugins.Plugin
 
@@ -50,8 +49,9 @@ The Xsd services for the Mauro Data Mapper backend.
     def organization = [ name: 'Oxford University BRC Informatics', url: 'www.ox.ac.uk' ]
 
     // Any additional developers beyond the author specified above.
-    def developers = [[ name: 'James Welch', email: 'james.welch@bdi.ox.ac.uk'],
-                      [ name: 'Anthony Williams', email: 'anthony.williams@oxfordcc.co.uk']]
+    def developers = [[name: 'James Welch', email: 'james.welch@bdi.ox.ac.uk'],
+                      [name: 'Anthony Williams', email: 'anthony.williams@oxfordcc.co.uk'],
+                      [name: 'Peter Gammon', email: 'peter.gammon@oxfordcc.co.uk']]
 
     // Location of the plugin's issue tracker.
     def issueManagement = [ system: 'YouTrack', url: 'https://maurodatamapper.myjetbrains.com' ]
