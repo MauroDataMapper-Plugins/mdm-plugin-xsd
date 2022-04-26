@@ -233,17 +233,18 @@ class SimpleTypeWrapper extends AnnotatedWrapper<AbstractSimpleType> implements 
         return getTypeForName(getName())
     }
 
-    private void checkBaseTypeExists(User user, DataModel dataModel, SchemaWrapper schema, QName baseType) {
+    @Deprecated
+    void checkBaseTypeExists(User user, DataModel dataModel, SchemaWrapper schema, QName baseType) {
         debug("Find or create base type '{}'", baseType.getLocalPart())
         SimpleTypeWrapper base = schema.getSimpleTypeByName(getRestriction().getBase().getLocalPart())
         if (base == null) return
         base.createDataType(user, dataModel, schema)
     }
 
-    private void populateFromDataType(DataType dataType, String typeName) {
+    void populateFromDataType(DataType dataType, String typeName) {
         setName(typeName)
         debug("Populating from {}", dataType)
-        wrappedElement.setAnnotation(createAnnotation(getAnnotation(),dataType.getDescription()))
+        wrappedElement.setAnnotation(createAnnotation(getAnnotation(), dataType.getDescription()))
 
         Set<Metadata> xsdMetadata = dataType.findMetadataByNamespace(METADATA_NAMESPACE)
 
