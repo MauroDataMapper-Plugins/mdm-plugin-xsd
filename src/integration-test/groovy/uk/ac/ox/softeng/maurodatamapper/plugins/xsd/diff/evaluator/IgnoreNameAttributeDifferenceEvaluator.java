@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,8 +36,7 @@ public class IgnoreNameAttributeDifferenceEvaluator implements DifferenceEvaluat
     public ComparisonResult evaluate(Comparison comparison, ComparisonResult outcome) {
         if (outcome == ComparisonResult.EQUAL) return outcome; // only evaluate differences.
         if (comparison.getType() == ComparisonType.ATTR_VALUE) {
-            if (stripVersion((String) comparison.getTestDetails().getValue())
-                .equals(stripVersion((String) comparison.getTestDetails().getValue()))) {
+            if (stripVersion((String) comparison.getTestDetails().getValue()).equals(stripVersion((String) comparison.getTestDetails().getValue()))) {
                 return ComparisonResult.EQUAL;
             }
         }

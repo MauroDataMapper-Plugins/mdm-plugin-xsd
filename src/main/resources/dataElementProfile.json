@@ -1,0 +1,90 @@
+[
+  {
+    "sectionName": "Element Grouping Properties",
+    "sectionDescription": "Properties which define how the Element is grouped",
+    "fields": [
+      {
+        "fieldName": "Is in 'All' Group",
+        "metadataPropertyName": "XSD All Group",
+        "description": "The Element should exists in an 'all' group rather than a 'sequence' group.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Boolean"
+      },
+      {
+        "fieldName": "Is in 'Choice' group with name",
+        "metadataPropertyName": "XSD Choice Group",
+        "description": "The Element should exist in a 'choice' group rather than a 'sequence' group. The name isn't written to the XSD however it is used to identify distinct groups of elements.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      }
+    ]
+  },
+  {
+    "sectionName": "Element As An Attribute Properties",
+    "sectionDescription": "Properties which define the Element attribute",
+    "fields": [
+      {
+        "fieldName": "Is an Attribute",
+        "metadataPropertyName": "XSD Attribute",
+        "description": "The element is an XSD attribute for a ComplexType rather than being an XSD Element.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Boolean"
+      },
+      {
+        "fieldName": "Attribute Name",
+        "metadataPropertyName": "XSD Attribute Name",
+        "description": "The name of the attribute which this element actually maps to when defined as a complex type. Only used from an import to signify an element which is a simple type masquerading as a complex type",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      }
+    ]
+  },
+  {
+    "sectionName": "Element Value Properties",
+    "sectionDescription": "Properties which define the Element values",
+    "fields": [
+      {
+        "fieldName": "Default value",
+        "metadataPropertyName": "XSD Default",
+        "description": "The default value for the element. This is advice to the user of the XSD that if the element is not supplied then it will be set to the default.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      },
+      {
+        "fieldName": "Fixed value",
+        "metadataPropertyName": "XSD Fixed",
+        "description": "The 'fixed' value of the element. This informs the user that the element's value is fixed to the one supplied and cannot be overridden.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      }
+    ]
+  },
+  {
+    "sectionName": "Schema Properties",
+    "sectionDescription": "Properties which are applied defining the schema for the element",
+    "fields": [
+      {
+        "fieldName": "XML Target Namespace",
+        "metadataPropertyName": "XSD XML Target Namespace",
+        "description": "The target namespace for the Element in the XSD if different from the namespace defined at the schema level.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      },
+      {
+        "fieldName": "XML Target Namespace Prefix",
+        "metadataPropertyName": "XSD XML Target Namespace Prefix",
+        "description": "The optional prefix used to define the target namespace.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      }
+    ]
+  }
+]

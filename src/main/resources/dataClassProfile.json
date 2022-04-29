@@ -1,0 +1,55 @@
+[
+  {
+    "sectionName": "Complex Type Properties",
+    "sectionDescription" : "Properties applied to XSD Complex Types",
+    "fields": [
+      {
+        "fieldName": "Extension Base Type",
+        "metadataPropertyName": "XSD Extension Base",
+        "description": "The DataClass to used as a 'base type' with the derivation method of 'extension' for this complex type",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      },
+      {
+        "fieldName": "Restriction Base Type",
+        "metadataPropertyName": "XSD Restriction Restriction Base",
+        "description": "The DataClass to used as a 'base type' with the derivation method of 'restriction' for this complex type",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      },
+      {
+        "fieldName": "Is Abstract Type",
+        "metadataPropertyName": "XSD Abstract",
+        "description": "Is the DataClass an abstract Complex Type",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "Boolean",
+        "defaultValue": false
+      }
+    ]
+  },
+  {
+    "sectionName": "Schema Properties",
+    "sectionDescription" : "Properties which are applied defining the schema for the element",
+    "fields": [
+      {
+        "fieldName": "XML Target Namespace",
+        "metadataPropertyName": "XSD XML Target Namespace",
+        "description": "The target namespace for the Element in the XSD if different from the namespace defined at the schema level.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      },
+      {
+        "fieldName": "XML Target Namespace Prefix",
+        "metadataPropertyName": "XSD XML Target Namespace Prefix",
+        "description": "The optional prefix used to define the target namespace.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "String"
+      }
+    ]
+  }
+]

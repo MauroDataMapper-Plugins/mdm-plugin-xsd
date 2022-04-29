@@ -17,11 +17,11 @@
  */
 package ox.softeng.metadatacatalogue.plugins.xsd.utils
 
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.XsdNaming
 
 import org.junit.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.XsdNaming
 
 /**
  * @since 11/10/2018

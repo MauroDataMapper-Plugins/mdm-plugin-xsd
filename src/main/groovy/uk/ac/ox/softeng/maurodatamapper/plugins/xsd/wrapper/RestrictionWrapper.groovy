@@ -17,18 +17,40 @@
  */
 package uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotation
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Facet
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NoFixedFacet
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.NumFacet
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Pattern
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Restriction
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.RestrictionType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.TotalDigits
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.WhiteSpace
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.ExtensionCapable
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.JaxbHandler
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 import javax.xml.bind.JAXBElement
 import javax.xml.namespace.QName
-import java.util.List
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.*
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.enumeration
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.fractionDigits
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.length
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxExclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxInclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.maxLength
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minExclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minInclusive
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.minLength
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.pattern
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.totalDigits
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.RestrictionKind.whiteSpace
+
 /**
  * Can be
  * ox.softeng.metadatacatalogue.plugins.xsd.org.w3.xmlschema.Restriction or
@@ -117,15 +139,15 @@ class RestrictionWrapper extends ComplexContentWrapper<Annotated> implements Jax
 
     private List<Object> getMinExclusivesAndMinInclusivesAndMaxExclusives() {
         if (wrappedElement instanceof Restriction) {
-            return ((Restriction) wrappedElement).getMinExclusivesAndMinInclusivesAndMaxExclusives();
+            return ((Restriction) wrappedElement).getMinExclusivesAndMinInclusivesAndMaxExclusives()
         }
         if (wrappedElement instanceof RestrictionType) {
-            return ((RestrictionType) wrappedElement).getMinExclusivesAndMinInclusivesAndMaxExclusives();
+            return ((RestrictionType) wrappedElement).getMinExclusivesAndMinInclusivesAndMaxExclusives()
         }
         if (wrappedElement == null) {
-            warn("No restriction type inside wrapper");
-        } else warn("Unknown restriction type inside wrapper {}", wrappedElement.getClass().getCanonicalName());
-        return Collections.emptyList();
+            warn("No restriction type inside wrapper")
+        } else warn("Unknown restriction type inside wrapper {}", wrappedElement.getClass().getCanonicalName())
+        return Collections.emptyList()
     }
 
 

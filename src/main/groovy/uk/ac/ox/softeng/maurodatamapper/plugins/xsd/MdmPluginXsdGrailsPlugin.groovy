@@ -23,7 +23,7 @@ import grails.plugins.Plugin
 class MdmPluginXsdGrailsPlugin extends Plugin {
 
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = '5.1.2 > *'
+    def grailsVersion = '5.1.7 > *'
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
         "grails-app/views/error.gsp"
@@ -49,8 +49,9 @@ The Xsd services for the Mauro Data Mapper backend.
     def organization = [ name: 'Oxford University BRC Informatics', url: 'www.ox.ac.uk' ]
 
     // Any additional developers beyond the author specified above.
-    def developers = [[ name: 'James Welch', email: 'james.welch@bdi.ox.ac.uk'],
-                      [ name: 'Anthony Williams', email: 'anthony.williams@oxfordcc.co.uk']]
+    def developers = [[name: 'James Welch', email: 'james.welch@bdi.ox.ac.uk'],
+                      [name: 'Anthony Williams', email: 'anthony.williams@oxfordcc.co.uk'],
+                      [name: 'Peter Gammon', email: 'peter.gammon@oxfordcc.co.uk']]
 
     // Location of the plugin's issue tracker.
     def issueManagement = [ system: 'YouTrack', url: 'https://maurodatamapper.myjetbrains.com' ]
@@ -65,7 +66,6 @@ The Xsd services for the Mauro Data Mapper backend.
 
     Closure doWithSpring() {
         {->
-            xsdDefaultDataTypeProvider(XsdDefaultDataTypeProvider)
         }
     }
 

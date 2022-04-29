@@ -23,18 +23,29 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataClass
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.DataElement
 import uk.ac.ox.softeng.maurodatamapper.datamodel.item.datatype.DataType
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.*
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.All
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexContent
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ComplexType
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGroup
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleContent
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.RestrictionCapable
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.XsdNaming
 import uk.ac.ox.softeng.maurodatamapper.security.User
 
 import javax.xml.bind.JAXBElement
 import javax.xml.namespace.QName
-import java.util.List
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.*
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_LABEL_PREFIX
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_NAMESPACE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_ALL
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_CHOICE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_EXTENSION_BASE
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_RESTRICTION_BASE
+
 /**
  * @since 24/08/2017
  */
@@ -309,16 +320,16 @@ class ComplexTypeWrapper extends ComplexContentWrapper<AbstractComplexType> impl
     void populateFromDataClass(SchemaWrapper schema, DataClass dataClass) {
         setName(createComplexTypeName(dataClass), true)
         debug("Populating from {}", dataClass)
-        wrappedElement.setAnnotation(createAnnotation(dataClass.getDescription()))
+        wrappedElement.setAnnotation(createAnnotation(getAnnotation(), dataClass.getDescription()))
 
         if (dataClass.getDataElements() != null) {
             Set<DataElement> childDataElements = xsdSchemaService.getDataElements(dataClass)
             Map<String, List<DataElement>> grouped = childDataElements
                     .sort {it.getLabel()}
                     .groupBy {dataElement ->
-                        Metadata md = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_CHOICE)
+                        Metadata md = dataElement.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_CHOICE)
                         if (md != null) return md.getValue()
-                        md = dataElement.findMetadataByNamespaceAndKey(XsdPlugin.METADATA_NAMESPACE, XsdPlugin.METADATA_XSD_ALL)
+                        md = dataElement.findMetadataByNamespaceAndKey(METADATA_NAMESPACE, METADATA_XSD_ALL)
                         if (md != null) return "all"
                         return "sequence"
                     }

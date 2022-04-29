@@ -23,8 +23,6 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExplicitGro
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.ExtensionType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.ExtensionCapable
 
-import com.google.common.base.Strings
-
 import javax.xml.namespace.QName
 
 /**

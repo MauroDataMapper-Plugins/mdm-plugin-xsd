@@ -26,16 +26,13 @@ import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractCom
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.AbstractSimpleType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Annotated
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.BaseAttribute
-import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.LocalSimpleType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.SimpleExtensionType
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.utils.RestrictionCapable
 import uk.ac.ox.softeng.maurodatamapper.security.User
 
-import com.google.common.base.Strings
-
 import javax.xml.namespace.QName
 
-import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdPlugin.METADATA_XSD_ATTRIBUTE_NAME
+import static uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata.METADATA_XSD_ATTRIBUTE_NAME
 
 /**
  * @since 24/08/2017
@@ -113,13 +110,13 @@ abstract class ElementBasedWrapper<K extends Annotated> extends AnnotatedWrapper
             if (complexTypeWrapper) {
                 debug('Has a complex type {}', complexTypeWrapper.name)
 
-                if (!complexTypeWrapper.isActuallySimpleType()) {
-                    dataElement = createDataClassElement(user, parentDataModel, parentDataClass, schema, complexTypeWrapper)
-                } else {
+                if (complexTypeWrapper.isActuallySimpleType()) {
                     debug('Complex type {} is actually a simple type masquerading as a complex type', complexTypeWrapper.name)
                     SimpleTypeWrapper simpleTypeWrapper = complexTypeWrapper.convertToSimpleType()
-                    if(!complexTypeWrapper.attributes.isEmpty())  additionalMetadata[(METADATA_XSD_ATTRIBUTE_NAME)] = complexTypeWrapper.attributes.first().name
+                    if (!complexTypeWrapper.attributes.isEmpty()) additionalMetadata[(METADATA_XSD_ATTRIBUTE_NAME)] = complexTypeWrapper.attributes.first().name
                     dataElement = createDataTypeElement(user, parentDataModel, parentDataClass, schema, simpleTypeWrapper)
+                } else {
+                    dataElement = createDataClassElement(user, parentDataModel, parentDataClass, schema, complexTypeWrapper)
                 }
             } else dataElement = createDataTypeElement(user, parentDataModel, parentDataClass, schema, getSimpleTypeWrapper(schema))
         }
