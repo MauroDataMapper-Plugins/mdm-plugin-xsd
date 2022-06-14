@@ -46,6 +46,8 @@ import javax.xml.bind.Marshaller
  */
 class XsdExporterProviderService extends DataModelExporterProviderService {
 
+    public static final CONTENT_TYPE = 'application/xml'
+
     XsdSchemaService xsdSchemaService
 
     DataModelService dataModelService
@@ -56,8 +58,8 @@ class XsdExporterProviderService extends DataModelExporterProviderService {
     }
 
     @Override
-    String getFileType() {
-        'application/xml'
+    String getContentType() {
+        CONTENT_TYPE
     }
 
     @Override
@@ -82,7 +84,7 @@ class XsdExporterProviderService extends DataModelExporterProviderService {
 
     @Override
     ByteArrayOutputStream exportDataModel(User currentUser, DataModel dataModel, Map<String, Object> parameters) throws ApiException {
-        exportModel(dataModel, fileType)
+        exportModel(dataModel, contentType)
     }
 
     ByteArrayOutputStream exportModel(DataModel dataModel, String format) {
