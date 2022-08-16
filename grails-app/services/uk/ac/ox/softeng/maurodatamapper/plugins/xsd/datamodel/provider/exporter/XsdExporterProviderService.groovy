@@ -21,12 +21,12 @@ import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiBadRequestException
 import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiException
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModel
 import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
+import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.exporter.DataModelExporterProviderService
 
 //import uk.ac.ox.softeng.maurodatamapper.api.exception.ApiInternalException
 //import uk.ac.ox.softeng.maurodatamapper.core.provider.exporter.TemplateBasedExporter
 //import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelService
 
-import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.exporter.DataModelExporterProviderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.org.w3.xmlschema.Schema
@@ -35,10 +35,9 @@ import uk.ac.ox.softeng.maurodatamapper.security.User
 
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
+import javax.xml.bind.Marshaller
 
 //import ox.softeng.metadatacatalogue.core.spi.exporter.DataModelExporterPlugin
-
-import javax.xml.bind.Marshaller
 
 //import groovy.text.Template
 
@@ -46,6 +45,8 @@ import javax.xml.bind.Marshaller
  * @since 11/09/2017
  */
 class XsdExporterProviderService extends DataModelExporterProviderService {
+
+    public static final CONTENT_TYPE = 'application/xml'
 
     XsdSchemaService xsdSchemaService
 
@@ -57,8 +58,8 @@ class XsdExporterProviderService extends DataModelExporterProviderService {
     }
 
     @Override
-    String getFileType() {
-        'application/xml'
+    String getContentType() {
+        CONTENT_TYPE
     }
 
     @Override
@@ -82,8 +83,8 @@ class XsdExporterProviderService extends DataModelExporterProviderService {
     }
 
     @Override
-    ByteArrayOutputStream exportDataModel(User currentUser, DataModel dataModel) throws ApiException {
-        exportModel(dataModel, fileType)
+    ByteArrayOutputStream exportDataModel(User currentUser, DataModel dataModel, Map<String, Object> parameters) throws ApiException {
+        exportModel(dataModel, contentType)
     }
 
     ByteArrayOutputStream exportModel(DataModel dataModel, String format) {
@@ -97,7 +98,7 @@ class XsdExporterProviderService extends DataModelExporterProviderService {
     }
 
     @Override
-    ByteArrayOutputStream exportDataModels(User currentUser, List<DataModel> dataModel) throws ApiException {
+    ByteArrayOutputStream exportDataModels(User currentUser, List<DataModel> dataModel, Map<String, Object> parameters) throws ApiException {
         throw new ApiBadRequestException('XDES02', "${getName()} cannot export multiple DataModels")
     }
 

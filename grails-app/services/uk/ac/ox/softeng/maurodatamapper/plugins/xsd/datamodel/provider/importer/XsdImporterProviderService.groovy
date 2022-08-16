@@ -26,6 +26,7 @@ import uk.ac.ox.softeng.maurodatamapper.datamodel.DataModelType
 import uk.ac.ox.softeng.maurodatamapper.datamodel.provider.importer.DataModelImporterProviderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdMetadata
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.XsdSchemaService
+import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.exporter.XsdExporterProviderService
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.datamodel.provider.importer.parameter.XsdImporterProviderServiceParameters
 import uk.ac.ox.softeng.maurodatamapper.plugins.xsd.wrapper.SchemaWrapper
 import uk.ac.ox.softeng.maurodatamapper.security.User
@@ -59,6 +60,11 @@ class XsdImporterProviderService extends DataModelImporterProviderService<XsdImp
     @Override
     String getDisplayName() {
         'XML Schema (XSD) Importer'
+    }
+
+    @Override
+    Boolean handlesContentType(String contentType) {
+        contentType.equalsIgnoreCase(XsdExporterProviderService.CONTENT_TYPE)
     }
 
     @Override
