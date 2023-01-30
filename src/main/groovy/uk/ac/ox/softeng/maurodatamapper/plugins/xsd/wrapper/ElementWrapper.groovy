@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2022 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
+ * Copyright 2020-2023 University of Oxford and Health and Social Care Information Centre, also known as NHS Digital
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -168,14 +168,21 @@ class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
         wrappedElement.setName(createValidXsdName(dataElement.getLabel()))
         debug("Populating from {}", dataElement)
         wrappedElement.setAnnotation(createAnnotation(getAnnotation(), dataElement.getDescription()))
-        wrappedElement.setMinOccurs(BigInteger.valueOf(dataElement.getMinMultiplicity()))
-        wrappedElement.setMaxOccurs(dataElement.getMaxMultiplicity() == -1 ? "unbounded" : dataElement.getMaxMultiplicity().toString())
+        wrappedElement.setMinOccurs(BigInteger.valueOf(dataElement.getMinMultiplicity()?:0))
+        if(!dataElement.getMaxMultiplicity()) {
+            wrappedElement.setMaxOccurs("1")
+        } else {
+            wrappedElement.setMaxOccurs((dataElement.getMaxMultiplicity() == -1) ? "unbounded" : dataElement.getMaxMultiplicity().toString())
+        }
 
         DataType dataType = dataElement.getDataType()
         if (dataType.instanceOf(ReferenceType.class)) {
             trace("Is a complexType element")
-            ComplexTypeWrapper complexTypeWrapper = schema.findOrCreateComplexType(((ReferenceType) dataType).getReferenceClass())
-            wrappedElement.setType(new QName(complexTypeWrapper.getName()))
+            // ComplexTypeWrapper complexTypeWrapper = schema.findOrCreateComplexType(((ReferenceType) dataType).getReferenceClass())
+            // Instead, we'll assume that this type is going to be created with the appropriate type name
+            DataClass referenceDataClass = ((ReferenceType) dataType).getReferenceClass()
+            String typeName = createValidTypeName(referenceDataClass.getLabel() + ' Type', referenceDataClass.getLastUpdated())
+            wrappedElement.setType(new QName(typeName))
         } else {
             trace("Is a simpleType element")
             SimpleTypeWrapper simpleTypeWrapper = schema.findOrCreateSimpleType(dataElement.getDataType())
