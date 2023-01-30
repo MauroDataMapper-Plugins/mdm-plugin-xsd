@@ -168,8 +168,12 @@ class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
         wrappedElement.setName(createValidXsdName(dataElement.getLabel()))
         debug("Populating from {}", dataElement)
         wrappedElement.setAnnotation(createAnnotation(getAnnotation(), dataElement.getDescription()))
-        wrappedElement.setMinOccurs(BigInteger.valueOf(dataElement.getMinMultiplicity()))
-        wrappedElement.setMaxOccurs(dataElement.getMaxMultiplicity() == -1 ? "unbounded" : dataElement.getMaxMultiplicity().toString())
+        wrappedElement.setMinOccurs(BigInteger.valueOf(dataElement.getMinMultiplicity()?:0))
+        if(!dataElement.getMaxMultiplicity()) {
+            wrappedElement.setMaxOccurs("1")
+        } else {
+            wrappedElement.setMaxOccurs((dataElement.getMaxMultiplicity() == -1) ? "unbounded" : dataElement.getMaxMultiplicity().toString())
+        }
 
         DataType dataType = dataElement.getDataType()
         if (dataType.instanceOf(ReferenceType.class)) {

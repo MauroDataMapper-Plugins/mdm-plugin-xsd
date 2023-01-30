@@ -371,12 +371,7 @@ class SchemaWrapper extends OpenAttrsWrapper<Schema> {
         }
 
         debug("Adding in XSD elements")
-        addXsdElements(dataModel.getChildDataClasses().stream()
-                           .filter({dc ->
-                               dc.getMaxMultiplicity() != null &&
-                               dc.getMinMultiplicity() != null
-                           }
-                           ).collect(toSet()))
+        addXsdElements(dataModel.getChildDataClasses() as Set)
     }
 
 
