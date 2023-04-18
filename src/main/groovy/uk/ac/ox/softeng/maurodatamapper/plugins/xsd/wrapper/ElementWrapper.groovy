@@ -178,8 +178,8 @@ class ElementWrapper extends ElementBasedWrapper<AbstractElement> {
         DataType dataType = dataElement.getDataType()
         if (dataType.instanceOf(ReferenceType.class)) {
             trace("Is a complexType element")
-            ComplexTypeWrapper complexTypeWrapper = schema.findOrCreateComplexType(((ReferenceType) dataType).getReferenceClass())
-            wrappedElement.setType(new QName(complexTypeWrapper.getName()))
+            //ComplexTypeWrapper complexTypeWrapper = schema.findOrCreateComplexType()
+            wrappedElement.setType(new QName(((ReferenceType) dataType).getReferenceClass().label))
         } else {
             trace("Is a simpleType element")
             SimpleTypeWrapper simpleTypeWrapper = schema.findOrCreateSimpleType(dataElement.getDataType())
